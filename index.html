@@ -38,6 +38,12 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 .feedback{border-left:3px solid var(--cyan);padding:10px 12px;background:rgba(89,220,225,.05);margin-top:10px;font-size:12px}
 .ranking-list{width:100%;border-collapse:collapse}.ranking-list td,.ranking-list th{padding:10px;border-bottom:1px solid #34271e;text-align:left}.ranking-list th{color:var(--muted);font-size:11px}
 
+
+.mission-row:not(.locked),.mission:not(.locked),[data-activity]:not(.locked){cursor:pointer}
+.mission-row:not(.locked):hover,.mission:not(.locked):hover,[data-activity]:not(.locked):hover{outline:1px solid var(--gold);transform:translateY(-1px)}
+.project-match{border:1px solid var(--cyan);padding:14px;margin:12px 0;background:rgba(89,220,225,.05)}
+.qr-demo{background:#fff;padding:12px;display:inline-block;margin:12px 0}
+.qr-demo img{width:190px;height:190px;display:block}
 </style>
 </head>
 <body>
@@ -103,7 +109,8 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <button class="btn" type="button" id="nextBtn">CONTINUAR →</button>
       </div>
       <div class="toast" id="regToast" aria-live="polite"></div>
-    </form>
+    <datalist id="demoProjects"><option value="Super Floral"><option value="NovaLab"><option value="EcoLoop"><option value="BioRuta"></datalist>
+<div id="projectMatchBox"></div></form>
   </article>
 </section>
 
@@ -163,7 +170,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <div class="connection-card">
           <div><p>Comparte tu QR con clientes, mentores, emprendedores y aliados. Cada conexión podrá registrar cómo puede aportar a tu iniciativa.</p>
           <button class="btn" type="button" id="showConnectionForm">REGISTRAR CONEXIÓN</button></div>
-          <div class="qrbox"><div><b>QR DEL EQUIPO</b><br><small>Se activará al conectar el módulo de conexiones.</small></div></div>
+          <div class="qrbox"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyMTAnIGhlaWdodD0nMjEwJyB2aWV3Qm94PScwIDAgMjEgMjEnPgo8cmVjdCB3aWR0aD0nMjEnIGhlaWdodD0nMjEnIGZpbGw9J3doaXRlJy8+PGcgZmlsbD0nYmxhY2snPgo8cGF0aCBkPSdNMSAxaDd2N0gxek0xMyAxaDd2N2gtN3pNMSAxM2g3djdIMXonLz48ZyBmaWxsPSd3aGl0ZSc+PHBhdGggZD0nTTIgMmg1djVIMnpNMTQgMmg1djVoLTV6TTIgMTRoNXY1SDJ6Jy8+PC9nPjxwYXRoIGQ9J00zIDNoM3YzSDN6TTE1IDNoM3YzaC0zek0zIDE1aDN2M0gzek05IDFoMnYySDl6TTkgNGgxdjJIOXpNMTEgNWgxdjRoLTF6TTggOGgydjJIOHpNMTMgOWgydjJoLTJ6TTE2IDloMXYzaC0xek0xOCA5aDJ2MmgtMnpNOSAxMWgzdjFIOXpNOCAxM2gydjJIOHpNMTEgMTNoMXYzaC0xek0xMyAxMmgydjJoLTJ6TTE2IDE0aDR2MWgtNHpNMTMgMTZoMnY0aC0yek0xNiAxNmgxdjJoLTF6TTE4IDE3aDJ2M2gtMnpNOSAxOGgydjJIOXonLz48L2c+PC9zdmc+" alt="QR demo IdeaLab" style="width:190px;height:190px"><div class="hint">QR DEMO · Conectar con la iniciativa</div></b><br><small>Se activará al conectar el módulo de conexiones.</small></div></div>
         </div>
         <form id="connectionForm" class="hidden" style="margin-top:18px">
           <div class="formgrid">
@@ -271,6 +278,47 @@ function refreshScore(){if(!team.EquipoID)return;const o=demoDeliveries.filter(d
 document.querySelector('#adminFilter')?.addEventListener('change',renderAdmin);document.querySelector('#adminSearch')?.addEventListener('input',renderAdmin);
 const showBase=show;show=function(id){showBase(id);if(id==='adminScreen')renderAdmin();if(id==='passport')refreshScore()}
 renderAdmin();
+
+
+// V3.1 FIX: tarjetas de misión completas + QR demo + detección de proyecto demo
+document.addEventListener('click',function(e){
+  const card=e.target.closest('[data-activity]');
+  if(card && !card.classList.contains('locked')){
+    const id=card.getAttribute('data-activity');
+    if(id && typeof openActivity==='function') openActivity(id);
+  }
+});
+
+const DEMO_PROJECTS=[
+ {EquipoID:'IDEALAB-409740',NombreIniciativa:'Super Floral',Categoria:'Tradicional',Sector:'Agropecuario y agroindustria',miembros:['Felipe Caballero']},
+ {EquipoID:'IDEALAB-101',NombreIniciativa:'NovaLab',Categoria:'Innovación',Sector:'Tecnología',miembros:['Laura Gómez','Andrés Ruiz']},
+ {EquipoID:'IDEALAB-202',NombreIniciativa:'EcoLoop',Categoria:'Sostenibilidad',Sector:'Economía circular',miembros:['María Torres']}
+];
+function normProject(v){return (v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function checkExistingProject(){
+ const inp=document.querySelector('#NombreIniciativa,#nombreIniciativa,[name="NombreIniciativa"]');
+ const box=document.querySelector('#projectMatchBox'); if(!inp||!box)return;
+ const hit=DEMO_PROJECTS.find(p=>normProject(p.NombreIniciativa)===normProject(inp.value));
+ if(!hit){box.innerHTML='';return}
+ box.innerHTML=`<div class="project-match"><div class="eyebrow">PROYECTO ENCONTRADO</div><h3>${hit.NombreIniciativa}</h3><p>Este proyecto ya está registrado como <b>${hit.EquipoID}</b>. Para evitar duplicados, puedes unirte a la tripulación existente.</p><p class="hint">Tripulación actual: ${hit.miembros.join(', ')}</p><button class="btn" type="button" onclick="joinExistingProject('${hit.EquipoID}')">AÑADIRME A ESTE PROYECTO</button></div>`;
+}
+function joinExistingProject(id){
+ const p=DEMO_PROJECTS.find(x=>x.EquipoID===id);if(!p)return;
+ team.EquipoID=p.EquipoID;team.NombreIniciativa=p.NombreIniciativa;team.Categoria=p.Categoria;team.Sector=p.Sector;
+ localStorage.setItem('idealab_team',JSON.stringify(team));
+ alert('Proyecto identificado. Tu registro se añadirá a '+p.NombreIniciativa+' sin crear un equipo duplicado.');
+ const inp=document.querySelector('#NombreIniciativa,#nombreIniciativa,[name="NombreIniciativa"]');if(inp)inp.value=p.NombreIniciativa;
+}
+setTimeout(()=>{const inp=document.querySelector('#NombreIniciativa,#nombreIniciativa,[name="NombreIniciativa"]');if(inp){inp.addEventListener('input',checkExistingProject);inp.addEventListener('change',checkExistingProject)}},0);
+
+
+document.addEventListener('click',function(e){
+ const el=e.target.closest('.activity,.mission-card,.mission-item,.mission-row,.mission');
+ if(!el || el.classList.contains('locked')) return;
+ const txt=el.textContent||'';
+ const m=txt.match(/M?0?([1-8])/);
+ if(m){const id='M0'+m[1]; if(typeof openActivity==='function')openActivity(id);}
+});
 
 </script>
 </body>
