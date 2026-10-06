@@ -44,6 +44,22 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 .project-match{border:1px solid var(--cyan);padding:14px;margin:12px 0;background:rgba(89,220,225,.05)}
 .qr-demo{background:#fff;padding:12px;display:inline-block;margin:12px 0}
 .qr-demo img{width:190px;height:190px;display:block}
+
+.mission-screen-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:22px;flex-wrap:wrap}
+.mission-screen-head .btn{margin:0}
+.mission-screen-progress{display:flex;gap:14px;align-items:center;color:var(--muted);font-size:12px}
+.mission-screen-progress b{color:var(--gold)}
+.mission-focus{max-width:920px;margin:22px auto}
+.mission-submit-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.mission-success{display:grid;grid-template-columns:210px 1fr;gap:24px;align-items:center;border:1px solid var(--ok);background:rgba(123,215,161,.06);padding:24px;margin-top:18px}
+.mission-success img{width:100%;max-height:210px;object-fit:contain}
+.mission-success h2{font-family:'Black Ops One';font-weight:400;font-size:36px;margin:6px 0;color:var(--ok)}
+.success-actions{display:flex;gap:10px;flex-wrap:wrap}
+.project-match{grid-column:1/-1}
+.project-match strong{color:var(--cyan)}
+.project-found-input{border-color:var(--cyan)!important;box-shadow:0 0 0 1px rgba(89,220,225,.2)}
+@media(max-width:760px){.mission-success{grid-template-columns:1fr}.mission-success img{max-height:150px}.mission-screen-progress{width:100%;justify-content:space-between}}
+
 </style>
 </head>
 <body>
@@ -96,7 +112,12 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
       <div id="regStep3" hidden>
         <h3>03 · Datos de la iniciativa</h3>
         <div class="formgrid">
-          <div><label for="initiative">Nombre de la iniciativa</label><input id="initiative" required placeholder="Ej. NovaLab"></div>
+          <div>
+  <label for="initiative">Nombre de la iniciativa</label>
+  <input id="initiative" required list="demoProjects" placeholder="Ej. NovaLab" autocomplete="off">
+  <datalist id="demoProjects"><option value="Super Floral"><option value="NovaLab"><option value="EcoLoop"><option value="BioRuta"></datalist>
+</div>
+<div id="projectMatchBox" class="full"></div>
           <div><label for="origin">Proceso del que viene</label><select id="origin" required><option value="">Selecciona</option><option>Programa Conecta – Bridge for Billions</option><option>Founders Hub</option><option>Programa de incubación</option><option>Sandbox para emprendedores</option><option>Minor</option><option>Otro</option></select></div>
           <div class="full"><label for="description">Descripción de la iniciativa</label><textarea id="description" required placeholder="La iniciativa consiste en... Busca solucionar... Está dirigida a... Su propuesta de valor consiste en... y su principal objetivo es..."></textarea></div>
           <div><label for="category">Categoría</label><select id="category" required><option value="">Selecciona</option><option>Tradicional</option><option>Digital</option><option>Tech</option><option>Innovación</option></select></div>
@@ -109,8 +130,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <button class="btn" type="button" id="nextBtn">CONTINUAR →</button>
       </div>
       <div class="toast" id="regToast" aria-live="polite"></div>
-    <datalist id="demoProjects"><option value="Super Floral"><option value="NovaLab"><option value="EcoLoop"><option value="BioRuta"></datalist>
-<div id="projectMatchBox"></div></form>
+    </form>
   </article>
 </section>
 
@@ -141,36 +161,16 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <div id="missions"></div>
       </article>
 
-      <article class="card" id="missionWorkspace">
-        <div class="mission-kicker" id="missionCode">M01 · MISIÓN</div>
-        <h2 class="title" id="missionTitle">ESCANEO DE LA MISIÓN</h2>
-        <div class="rocky-dialog">
-          <img id="missionRocky" src="assets/rocky/rocky_04_aprendizaje.png" alt="Rocky, guía de la misión">
-          <div><h3>TRANSMISIÓN DE ROCKY</h3><p id="missionInstruction"></p></div>
-        </div>
-        <div class="resource">
-          <div><div class="label">RECURSO DE MISIÓN</div><b id="resourceName">Material de trabajo</b></div>
-          <a id="resourceLink" href="#" target="_blank" rel="noopener">ABRIR RECURSO ↗</a>
-        </div>
-        <form id="deliveryForm">
-          <input id="activity" type="hidden"><input id="team" type="hidden">
-          <div class="delivery-options">
-            <div class="full"><label for="answer">Resultado / observaciones</label><textarea id="answer" placeholder="Describe brevemente el resultado final de tu equipo..."></textarea></div>
-            <div><label for="deliveryUrl">Enlace al resultado</label><input id="deliveryUrl" type="url" placeholder="https://..."></div>
-            <div><label for="deliveryFile">Archivo</label><input id="deliveryFile" type="file"></div>
-          </div>
-          <button class="btn" type="submit">TRANSMITIR ENTREGA →</button><span class="points-pill" id="missionPoints"></span>
-          <div class="toast" id="toast" aria-live="polite"></div>
-        </form>
-      </article>
-
       <article class="card">
         <div class="eyebrow">PROTOCOLO DE CONEXIONES</div>
         <h2 class="title">AMPLÍA TU RED</h2>
         <div class="connection-card">
           <div><p>Comparte tu QR con clientes, mentores, emprendedores y aliados. Cada conexión podrá registrar cómo puede aportar a tu iniciativa.</p>
           <button class="btn" type="button" id="showConnectionForm">REGISTRAR CONEXIÓN</button></div>
-          <div class="qrbox"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyMTAnIGhlaWdodD0nMjEwJyB2aWV3Qm94PScwIDAgMjEgMjEnPgo8cmVjdCB3aWR0aD0nMjEnIGhlaWdodD0nMjEnIGZpbGw9J3doaXRlJy8+PGcgZmlsbD0nYmxhY2snPgo8cGF0aCBkPSdNMSAxaDd2N0gxek0xMyAxaDd2N2gtN3pNMSAxM2g3djdIMXonLz48ZyBmaWxsPSd3aGl0ZSc+PHBhdGggZD0nTTIgMmg1djVIMnpNMTQgMmg1djVoLTV6TTIgMTRoNXY1SDJ6Jy8+PC9nPjxwYXRoIGQ9J00zIDNoM3YzSDN6TTE1IDNoM3YzaC0zek0zIDE1aDN2M0gzek05IDFoMnYySDl6TTkgNGgxdjJIOXpNMTEgNWgxdjRoLTF6TTggOGgydjJIOHpNMTMgOWgydjJoLTJ6TTE2IDloMXYzaC0xek0xOCA5aDJ2MmgtMnpNOSAxMWgzdjFIOXpNOCAxM2gydjJIOHpNMTEgMTNoMXYzaC0xek0xMyAxMmgydjJoLTJ6TTE2IDE0aDR2MWgtNHpNMTMgMTZoMnY0aC0yek0xNiAxNmgxdjJoLTF6TTE4IDE3aDJ2M2gtMnpNOSAxOGgydjJIOXonLz48L2c+PC9zdmc+" alt="QR demo IdeaLab" style="width:190px;height:190px"><div class="hint">QR DEMO · Conectar con la iniciativa</div></b><br><small>Se activará al conectar el módulo de conexiones.</small></div></div>
+          <div class="qrbox">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWgAAAFoAQAAAABSnlx4AAACkklEQVR4nO2bwVIDMQxDJab//8viINvZwKkzu8UhKRxK9x00bsaW7UDhjdfXO/ChD33oQx/6QfoFAPR7UQBFEYDiY9XTh5XsQb8AOJYgREGIgAOiqPH0YSVb0SQBUARBERIYP/X0M0p2okUABAQSoH55xaa6F6Jf85/KvC1nEcwh76N7VTri7bA6eVS+dvbGJeh9dK9KO96Rnl0hCYqK5CKWQXlYyR70Cxjn177EthAc2fwjSjaibUNIR5wi4VrpkskkuulelbbjFqrTAVwxBX8NEe5uutelOTw2CEhx5EEJgsIattO9Jh1BhRsdEKCgaDidzX3qm+lemq4jLQGiQyxSDJv4MSX/mU5/IqYBdHmMvqes4Mnfd9KuljYljHQd+VxjVNhP93p09JdxoNNqc3gVSkxn3kj3qjTDZ9eQmxF44jKY/YSSjWgK8m8c5WHB68SfenkfLbfvPsxUdjcESF2/gWa6F6QZDbtYXaY/r9RSa56HlexES5RoK+JOM/doLpfHD95FlyWZKmfMYP0+HzysZA+auSquHidjfV055Birj+5V6cjfyhSOnBSOVcMlq/fRvSod9yGqPCqWxQDisIuRyB9WshEdJ1seyzI3xbEzHr19N90L0nm/ij7NHr/6WF9Wl1lU++helY75oL1gDQdBhe32DaCsm310r0pnvbQRVGbr6xgFiATfSfeqdO3no1Bed/LlvnnyyV30dD8275/MF36c0c+86hZ6vh+bQ3BPqaJgjvayke5V6WnfkHPBWGAyd8XIo95H97+hpYv/9jpNIM9+/gGa85I47QlrgNVU90L0dD+2EnbtLn/cuuqje1V6uh/r+I5/bwh3Qt8qfFjJHvSYf/+1kkMf+tCHPvQ7r28rMSvyQ9IKXgAAAABJRU5ErkJggg==" alt="QR demo IdeaLab" style="width:190px;height:190px">
+              <div><b>QR DE CONEXIÓN · DEMO</b><br><small>Escanéalo para abrir la ficha de conexión de prueba.</small></div>
+            </div></div>
         </div>
         <form id="connectionForm" class="hidden" style="margin-top:18px">
           <div class="formgrid">
@@ -189,6 +189,70 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
       <article class="card"><h2 class="title">ESTADO DE MISIÓN</h2><p class="hint">La entrega otorga puntos automáticos. Impacta podrá validar o corregir la puntuación.</p><table class="admin-table"><thead><tr><th>Misión</th><th>Estado</th><th>Puntos</th></tr></thead><tbody id="scoreTable"></tbody></table></article>
     </aside>
   </div>
+</section>
+
+
+<section id="missionScreen" class="screen">
+  <div class="mission-screen-head">
+    <button class="btn alt" type="button" id="backToPassportTop">← VOLVER AL CONTROL DE MISIÓN</button>
+    <div class="mission-screen-progress"><span id="missionScreenTeam"></span><b id="missionScreenProgress">0/8 MISIONES</b></div>
+  </div>
+
+  <article class="card mission-focus" id="missionWorkspace">
+    <div class="mission-kicker" id="missionCode">M01 · MISIÓN</div>
+    <h2 class="title" id="missionTitle">ESCANEO DE LA MISIÓN</h2>
+
+    <div class="rocky-dialog">
+      <img id="missionRocky" src="assets/rocky/rocky_04_aprendizaje.png" alt="Rocky, guía de la misión">
+      <div>
+        <h3>TRANSMISIÓN DE ROCKY</h3>
+        <p id="missionInstruction"></p>
+      </div>
+    </div>
+
+    <div class="resource">
+      <div><div class="label">RECURSO DE MISIÓN</div><b id="resourceName">Material de trabajo</b></div>
+      <a id="resourceLink" href="#" target="_blank" rel="noopener">ABRIR RECURSO ↗</a>
+    </div>
+
+    <form id="deliveryForm">
+      <input id="activity" type="hidden"><input id="team" type="hidden">
+      <div class="eyebrow">ENTREGA DE LA MISIÓN</div>
+      <p class="hint">Puedes entregar texto, un enlace, un archivo o una combinación de los tres.</p>
+      <div class="delivery-options">
+        <div class="full">
+          <label for="answer">Resultado / observaciones</label>
+          <textarea id="answer" placeholder="Describe brevemente el resultado final de tu equipo..."></textarea>
+        </div>
+        <div>
+          <label for="deliveryUrl">Enlace al resultado</label>
+          <input id="deliveryUrl" type="url" placeholder="https://...">
+        </div>
+        <div>
+          <label for="deliveryFile">Archivo</label>
+          <input id="deliveryFile" type="file">
+        </div>
+      </div>
+      <div class="mission-submit-row">
+        <button class="btn" type="submit">TRANSMITIR ENTREGA →</button>
+        <span class="points-pill" id="missionPoints"></span>
+      </div>
+      <div class="toast" id="toast" aria-live="polite"></div>
+    </form>
+
+    <div id="missionSuccess" class="mission-success hidden">
+      <img src="assets/rocky/rocky_01_cool.png" alt="Rocky celebrando">
+      <div>
+        <div class="eyebrow">TRANSMISIÓN RECIBIDA</div>
+        <h2>¡MISIÓN COMPLETADA!</h2>
+        <p>La entrega quedó registrada y recibió <b id="successPoints">20 puntos automáticos</b>. La evaluación del mentor queda pendiente.</p>
+        <div class="success-actions">
+          <button class="btn" type="button" id="backToPassportSuccess">VOLVER AL CONTROL DE MISIÓN</button>
+          <button class="btn alt" type="button" id="nextMissionBtn">IR A LA SIGUIENTE MISIÓN →</button>
+        </div>
+      </div>
+    </div>
+  </article>
 </section>
 
 <section id="continueScreen" class="screen">
@@ -235,8 +299,38 @@ document.querySelector('#nextBtn').addEventListener('click',()=>{if(!validateVis
 document.querySelector('#backBtn').addEventListener('click',()=>setStep(Math.max(1,step-1)));
 function collectMembers(){return [...document.querySelectorAll('.member')].map(b=>{const q=n=>b.querySelector(`[name="${n}"]`)?.value||'';return {ParticipanteID:(crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())),Nombre:q('nombre'),Rol:q('rol'),TipoDocumento:q('tipoDocumento'),Documento:q('documento'),Correo:q('correo'),Telefono:q('telefono'),Programa:q('programa'),Modalidad:q('modalidad'),Semestre:q('semestre'),AnoGraduacion:q('graduacion')}})}
 async function postJSON(url,payload){if(!url)return {demo:true};const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw new Error('No fue posible registrar la información ('+r.status+')');return r.json().catch(()=>({ok:true}))}
-async function finishRegistration(){const initiative=document.querySelector('#initiative').value.trim();const code='IDEALAB-'+String(Date.now()).slice(-6);team={EquipoID:code,NombreIniciativa:initiative,Descripcion:document.querySelector('#description').value.trim(),Categoria:document.querySelector('#category').value,Sector:document.querySelector('#sector').value,ProcesoOrigen:document.querySelector('#origin').value,Estado:'Activo',Participantes:collectMembers()};localStorage.setItem('idealab_team',JSON.stringify(team));document.querySelector('#bpCode').textContent=code;document.querySelector('#bpInitiative').textContent=initiative;document.querySelector('#bpMembers').textContent=`${team.Participantes.length} tripulante${team.Participantes.length===1?'':'s'}`;document.querySelector('#bpCategory').textContent=team.Categoria;document.querySelector('#bpSector').textContent=team.Sector;hydrateTeam();show('boardingScreen');try{await postJSON(API.registrarEquipo,team)}catch(e){document.querySelector('#regToast').textContent=e.message}}
-document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();show('passport')});
+async function finishRegistration(){
+  const initiative=document.querySelector('#initiative').value.trim();
+  const exact=availableProjects().find(p=>normProject(p.NombreIniciativa)===normProject(initiative));
+  const existing=selectedExistingProject || exact || null;
+  const code=existing?existing.EquipoID:'IDEALAB-'+String(Date.now()).slice(-6);
+  const newMembers=collectMembers();
+  team={
+    EquipoID:code,
+    NombreIniciativa:initiative,
+    Descripcion:document.querySelector('#description').value.trim(),
+    Categoria:document.querySelector('#category').value,
+    Sector:document.querySelector('#sector').value,
+    ProcesoOrigen:document.querySelector('#origin').value,
+    Estado:'Activo',
+    Participantes:newMembers,
+    ProyectoExistente:!!existing
+  };
+  localStorage.setItem('idealab_team',JSON.stringify(team));
+  document.querySelector('#bpCode').textContent=code;
+  document.querySelector('#bpInitiative').textContent=initiative;
+  document.querySelector('#bpMembers').textContent=`${newMembers.length} tripulante${newMembers.length===1?'':'s'}${existing?' · añadido a proyecto existente':''}`;
+  document.querySelector('#bpCategory').textContent=team.Categoria;
+  document.querySelector('#bpSector').textContent=team.Sector;
+  hydrateTeam();
+  show('boardingScreen');
+  try{
+    await postJSON(API.registrarEquipo,{...team,Accion:existing?'AgregarParticipantes':'CrearEquipo'});
+  }catch(e){
+    document.querySelector('#regToast').textContent=e.message;
+  }
+}
+document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();renderMissions();show('passport')});
 
 const activities=[
 {id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Construyan su Canvas Go-to-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",resource:"Canvas Go-to-Market",url:"#",points:20,state:"open"},
@@ -249,13 +343,110 @@ const activities=[
 {id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",resource:"Registro de acción comercial",url:"#",points:20,state:"locked"}
 ];
 function hydrateTeam(){if(!team.EquipoID){try{team=JSON.parse(localStorage.getItem('idealab_team')||'{}')}catch{}}if(team.EquipoID){document.querySelector('#dashInitiative').textContent=team.NombreIniciativa;document.querySelector('#dashCode').textContent=team.EquipoID;document.querySelector('#team').value=team.EquipoID}}
-function selectMission(id,rerender=true){const a=activities.find(x=>x.id===id);if(!a||a.state==='locked')return;selectedMission=id;document.querySelector('#missionCode').textContent=a.id+' · MISIÓN';document.querySelector('#missionTitle').textContent=a.name.toUpperCase();document.querySelector('#missionRocky').src='assets/rocky/'+a.rocky;document.querySelector('#missionInstruction').textContent=a.instruction;document.querySelector('#resourceName').textContent=a.resource;document.querySelector('#resourceLink').href=a.url;document.querySelector('#activity').value=a.id;document.querySelector('#missionPoints').textContent='+'+a.points+' PUNTOS AL ENTREGAR';document.querySelector('#deliveryForm').classList.toggle('hidden',a.state==='done');if(rerender)renderMissions()}
-function renderMissions(){const wrap=document.querySelector('#missions');wrap.innerHTML='';activities.forEach((a,i)=>{const row=document.createElement('div');row.className='mission '+(a.id===selectedMission?'selected':'');row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div><h4>${a.name}</h4><p>${a.points} puntos automáticos</p></div><span class="status ${a.state}">${a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA'}</span>`;if(a.state!=='locked')row.addEventListener('click',()=>selectMission(a.id));wrap.appendChild(row)});const done=activities.filter(x=>x.state==='done'),pct=Math.round(done.length/activities.length*100),xp=done.reduce((s,x)=>s+x.points,0),next=activities.find(x=>x.state==='open');document.querySelector('#pct').textContent=pct+'%';document.querySelector('#bar').style.width=pct+'%';document.querySelector('#completed').textContent=`${done.length}/${activities.length}`;document.querySelector('#xp').textContent=xp;document.querySelector('#nextMission').textContent=next?next.id:'COMPLETA';document.querySelector('#scoreTable').innerHTML=activities.map(a=>`<tr><td>${a.id}</td><td>${a.state==='done'?'Entregada':a.state==='open'?'Disponible':'Bloqueada'}</td><td>${a.state==='done'?a.points:'-'}</td></tr>`).join('');selectMission(selectedMission,false)}
-try{const p=JSON.parse(localStorage.getItem('idealab_progress')||'[]');p.forEach(s=>{const a=activities.find(x=>x.id===s.id);if(a)a.state=s.state})}catch{}
+
+function populateMission(id){
+  const a=activities.find(x=>x.id===id);
+  if(!a||a.state==='locked')return false;
+  selectedMission=id;
+  document.querySelector('#missionCode').textContent=a.id+' · MISIÓN';
+  document.querySelector('#missionTitle').textContent=a.name.toUpperCase();
+  document.querySelector('#missionRocky').src='assets/rocky/'+a.rocky;
+  document.querySelector('#missionInstruction').textContent=a.instruction;
+  document.querySelector('#resourceName').textContent=a.resource;
+  document.querySelector('#resourceLink').href=a.url;
+  document.querySelector('#activity').value=a.id;
+  document.querySelector('#missionPoints').textContent='+'+a.points+' PUNTOS AL ENTREGAR';
+  document.querySelector('#deliveryForm').classList.toggle('hidden',a.state==='done');
+  document.querySelector('#missionSuccess').classList.add('hidden');
+  document.querySelector('#missionScreenTeam').textContent=(team.NombreIniciativa||'')+' · '+(team.EquipoID||'');
+  const done=activities.filter(x=>x.state==='done').length;
+  document.querySelector('#missionScreenProgress').textContent=done+'/8 MISIONES';
+  return true;
+}
+function openMission(id){
+  hydrateTeam();
+  if(!populateMission(id))return;
+  show('missionScreen');
+}
+function renderMissions(){
+  const wrap=document.querySelector('#missions');
+  wrap.innerHTML='';
+  activities.forEach((a,i)=>{
+    const row=document.createElement('div');
+    row.className='mission '+(a.id===selectedMission?'selected':'');
+    row.setAttribute('data-activity',a.id);
+    row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div><h4>${a.name}</h4><p>${a.points} puntos automáticos</p></div><span class="status ${a.state}">${a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA'}</span>`;
+    if(a.state!=='locked'){
+      row.setAttribute('role','button');
+      row.setAttribute('tabindex','0');
+      row.addEventListener('click',()=>openMission(a.id));
+      row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')openMission(a.id)});
+    }
+    wrap.appendChild(row);
+  });
+  const done=activities.filter(x=>x.state==='done');
+  const pct=Math.round(done.length/activities.length*100);
+  const xp=done.reduce((sum,x)=>sum+x.points,0);
+  const next=activities.find(x=>x.state==='open');
+  document.querySelector('#pct').textContent=pct+'%';
+  document.querySelector('#bar').style.width=pct+'%';
+  document.querySelector('#completed').textContent=`${done.length}/${activities.length}`;
+  document.querySelector('#xp').textContent=xp;
+  document.querySelector('#nextMission').textContent=next?next.id:'COMPLETA';
+  document.querySelector('#scoreTable').innerHTML=activities.map(a=>`<tr><td>${a.id}</td><td>${a.state==='done'?'Entregada':a.state==='open'?'Disponible':'Bloqueada'}</td><td>${a.state==='done'?a.points:'-'}</td></tr>`).join('');
+}
+try{
+  const p=JSON.parse(localStorage.getItem('idealab_progress')||'[]');
+  p.forEach(st=>{const a=activities.find(x=>x.id===st.id);if(a)a.state=st.state});
+}catch{}
 renderMissions();
 
+
 document.querySelector('#resourceLink').addEventListener('click',e=>{if(e.currentTarget.getAttribute('href')==='#'){e.preventDefault();document.querySelector('#toast').textContent='Recurso pendiente de cargar por Impacta.'}});
-document.querySelector('#deliveryForm').addEventListener('submit',async e=>{e.preventDefault();hydrateTeam();if(!team.EquipoID){document.querySelector('#toast').textContent='Primero debes registrar tu equipo.';return}const a=activities.find(x=>x.id===selectedMission),answer=document.querySelector('#answer').value.trim(),url=document.querySelector('#deliveryUrl').value.trim(),file=document.querySelector('#deliveryFile').files[0];if(!answer&&!url&&!file){document.querySelector('#toast').textContent='Incluye al menos una evidencia: texto, enlace o archivo.';return}const payload={EquipoID:team.EquipoID,ActividadID:a.id,Respuesta:answer,Enlace:url,Estado:'Entregada',PuntosObtenidos:a.points,EstadoEvaluacion:'Pendiente',FechaHoraEntrega:new Date().toISOString()};try{document.querySelector('#toast').textContent='Transmitiendo entrega…';await postJSON(API.guardarEntrega,payload);syncParticipantDelivery(payload,file?.name||'');a.state='done';const next=activities[activities.indexOf(a)+1];if(next)next.state='open';localStorage.setItem('idealab_progress',JSON.stringify(activities.map(x=>({id:x.id,state:x.state}))));document.querySelector('#answer').value='';document.querySelector('#deliveryUrl').value='';document.querySelector('#deliveryFile').value='';selectedMission=next?next.id:a.id;renderMissions();document.querySelector('#toast').textContent=API.guardarEntrega?'Entrega registrada. Puntos asignados y evaluación pendiente.':'Modo demo: entrega registrada localmente. Backend pendiente.'}catch(err){document.querySelector('#toast').textContent=err.message}});
+document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  hydrateTeam();
+  if(!team.EquipoID){document.querySelector('#toast').textContent='Primero debes registrar tu equipo.';return}
+  const a=activities.find(x=>x.id===selectedMission);
+  const answer=document.querySelector('#answer').value.trim();
+  const url=document.querySelector('#deliveryUrl').value.trim();
+  const file=document.querySelector('#deliveryFile').files[0];
+  if(!answer&&!url&&!file){document.querySelector('#toast').textContent='Incluye al menos una evidencia: texto, enlace o archivo.';return}
+  const payload={EquipoID:team.EquipoID,ActividadID:a.id,Respuesta:answer,Enlace:url,Estado:'Entregada',PuntosObtenidos:a.points,EstadoEvaluacion:'Pendiente',FechaHoraEntrega:new Date().toISOString()};
+  try{
+    document.querySelector('#toast').textContent='Transmitiendo entrega…';
+    await postJSON(API.guardarEntrega,payload);
+    syncParticipantDelivery(payload,file?.name||'');
+    a.state='done';
+    const next=activities[activities.indexOf(a)+1];
+    if(next)next.state='open';
+    localStorage.setItem('idealab_progress',JSON.stringify(activities.map(x=>({id:x.id,state:x.state}))));
+    document.querySelector('#answer').value='';
+    document.querySelector('#deliveryUrl').value='';
+    document.querySelector('#deliveryFile').value='';
+    renderMissions();
+    document.querySelector('#deliveryForm').classList.add('hidden');
+    document.querySelector('#successPoints').textContent=a.points+' puntos automáticos';
+    document.querySelector('#missionSuccess').classList.remove('hidden');
+    const nextBtn=document.querySelector('#nextMissionBtn');
+    if(next){
+      nextBtn.classList.remove('hidden');
+      nextBtn.textContent='IR A '+next.id+' →';
+      nextBtn.onclick=()=>openMission(next.id);
+    }else{
+      nextBtn.classList.add('hidden');
+    }
+    document.querySelector('#toast').textContent='';
+    document.querySelector('#missionScreenProgress').textContent=activities.filter(x=>x.state==='done').length+'/8 MISIONES';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(err){
+    document.querySelector('#toast').textContent=err.message;
+  }
+});
+
+
+document.querySelector('#backToPassportTop').addEventListener('click',()=>{renderMissions();show('passport')});
+document.querySelector('#backToPassportSuccess').addEventListener('click',()=>{renderMissions();show('passport')});
 
 document.querySelector('#showConnectionForm').addEventListener('click',()=>document.querySelector('#connectionForm').classList.toggle('hidden'));
 document.querySelector('#connectionForm').addEventListener('submit',async e=>{e.preventDefault();hydrateTeam();const payload={EquipoID:team.EquipoID,Nombre:document.querySelector('#connName').value.trim(),Correo:document.querySelector('#connEmail').value.trim(),TipoConexion:document.querySelector('#connType').value,Seguimiento:document.querySelector('#connFollow').value,Observacion:document.querySelector('#connNote').value.trim(),Fecha:new Date().toISOString()};try{await postJSON(API.registrarConexion,payload);document.querySelector('#connToast').textContent=API.registrarConexion?'Conexión registrada.':'Modo demo: conexión preparada para SharePoint.';e.target.reset()}catch(err){document.querySelector('#connToast').textContent=err.message}});
@@ -280,45 +471,65 @@ const showBase=show;show=function(id){showBase(id);if(id==='adminScreen')renderA
 renderAdmin();
 
 
-// V3.1 FIX: tarjetas de misión completas + QR demo + detección de proyecto demo
-document.addEventListener('click',function(e){
-  const card=e.target.closest('[data-activity]');
-  if(card && !card.classList.contains('locked')){
-    const id=card.getAttribute('data-activity');
-    if(id && typeof openActivity==='function') openActivity(id);
-  }
-});
 
-const DEMO_PROJECTS=[
- {EquipoID:'IDEALAB-409740',NombreIniciativa:'Super Floral',Categoria:'Tradicional',Sector:'Agropecuario y agroindustria',miembros:['Felipe Caballero']},
- {EquipoID:'IDEALAB-101',NombreIniciativa:'NovaLab',Categoria:'Innovación',Sector:'Tecnología',miembros:['Laura Gómez','Andrés Ruiz']},
- {EquipoID:'IDEALAB-202',NombreIniciativa:'EcoLoop',Categoria:'Sostenibilidad',Sector:'Economía circular',miembros:['María Torres']}
+
+
+
+
+
+let selectedExistingProject=null;
+const BASE_DEMO_PROJECTS=[
+ {EquipoID:'IDEALAB-409740',NombreIniciativa:'Super Floral',Categoria:'Tradicional',Sector:'Agropecuario y agroindustria',Descripcion:'Marketplace B2B para conectar floristas con proveedores.',miembros:['Tripulación registrada']},
+ {EquipoID:'IDEALAB-101',NombreIniciativa:'NovaLab',Categoria:'Innovación',Sector:'Tecnología y software',Descripcion:'Solución tecnológica para validación de mercado.',miembros:['Laura Gómez','Andrés Ruiz']},
+ {EquipoID:'IDEALAB-202',NombreIniciativa:'EcoLoop',Categoria:'Innovación',Sector:'Otro',Descripcion:'Solución de economía circular.',miembros:['María Torres']}
 ];
 function normProject(v){return (v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function availableProjects(){
+  const list=[...BASE_DEMO_PROJECTS];
+  try{
+    const local=JSON.parse(localStorage.getItem('idealab_team')||'{}');
+    if(local.EquipoID&&local.NombreIniciativa){
+      const idx=list.findIndex(x=>normProject(x.NombreIniciativa)===normProject(local.NombreIniciativa));
+      const p={EquipoID:local.EquipoID,NombreIniciativa:local.NombreIniciativa,Categoria:local.Categoria||'',Sector:local.Sector||'',Descripcion:local.Descripcion||'',miembros:(local.Participantes||[]).map(x=>x.Nombre).filter(Boolean)};
+      if(idx>=0)list[idx]=p;else list.push(p);
+    }
+  }catch{}
+  return list;
+}
 function checkExistingProject(){
- const inp=document.querySelector('#NombreIniciativa,#nombreIniciativa,[name="NombreIniciativa"]');
- const box=document.querySelector('#projectMatchBox'); if(!inp||!box)return;
- const hit=DEMO_PROJECTS.find(p=>normProject(p.NombreIniciativa)===normProject(inp.value));
- if(!hit){box.innerHTML='';return}
- box.innerHTML=`<div class="project-match"><div class="eyebrow">PROYECTO ENCONTRADO</div><h3>${hit.NombreIniciativa}</h3><p>Este proyecto ya está registrado como <b>${hit.EquipoID}</b>. Para evitar duplicados, puedes unirte a la tripulación existente.</p><p class="hint">Tripulación actual: ${hit.miembros.join(', ')}</p><button class="btn" type="button" onclick="joinExistingProject('${hit.EquipoID}')">AÑADIRME A ESTE PROYECTO</button></div>`;
+  const inp=document.querySelector('#initiative');
+  const box=document.querySelector('#projectMatchBox');
+  if(!inp||!box)return;
+  selectedExistingProject=null;
+  inp.classList.remove('project-found-input');
+  const query=normProject(inp.value);
+  if(query.length<3){box.innerHTML='';return}
+  const hit=availableProjects().find(p=>normProject(p.NombreIniciativa)===query);
+  if(!hit){box.innerHTML='<div class="hint">✓ Nombre disponible. Se creará un nuevo proyecto si continúas.</div>';return}
+  inp.classList.add('project-found-input');
+  box.innerHTML=`<div class="project-match">
+    <div class="eyebrow">PROYECTO YA REGISTRADO</div>
+    <h3>${hit.NombreIniciativa}</h3>
+    <p>Encontramos esta iniciativa con el código <strong>${hit.EquipoID}</strong>. No crearemos un duplicado.</p>
+    <p class="hint">Tripulación actual: ${hit.miembros.length?hit.miembros.join(', '):'Equipo registrado'}</p>
+    <button class="btn" type="button" id="joinExistingBtn">AÑADIRME A ESTE PROYECTO</button>
+  </div>`;
+  document.querySelector('#joinExistingBtn').onclick=()=>joinExistingProject(hit);
 }
-function joinExistingProject(id){
- const p=DEMO_PROJECTS.find(x=>x.EquipoID===id);if(!p)return;
- team.EquipoID=p.EquipoID;team.NombreIniciativa=p.NombreIniciativa;team.Categoria=p.Categoria;team.Sector=p.Sector;
- localStorage.setItem('idealab_team',JSON.stringify(team));
- alert('Proyecto identificado. Tu registro se añadirá a '+p.NombreIniciativa+' sin crear un equipo duplicado.');
- const inp=document.querySelector('#NombreIniciativa,#nombreIniciativa,[name="NombreIniciativa"]');if(inp)inp.value=p.NombreIniciativa;
+function joinExistingProject(p){
+  selectedExistingProject=p;
+  document.querySelector('#initiative').value=p.NombreIniciativa;
+  if(p.Categoria)document.querySelector('#category').value=p.Categoria;
+  if(p.Sector&&[...document.querySelector('#sector').options].some(o=>o.value===p.Sector))document.querySelector('#sector').value=p.Sector;
+  if(p.Descripcion)document.querySelector('#description').value=p.Descripcion;
+  document.querySelector('#projectMatchBox').innerHTML=`<div class="project-match">
+    <div class="eyebrow">TRIPULACIÓN EXISTENTE SELECCIONADA</div>
+    <h3>${p.NombreIniciativa}</h3>
+    <p>Tu participante se añadirá al proyecto <strong>${p.EquipoID}</strong>. No se creará un proyecto nuevo.</p>
+  </div>`;
 }
-setTimeout(()=>{const inp=document.querySelector('#NombreIniciativa,#nombreIniciativa,[name="NombreIniciativa"]');if(inp){inp.addEventListener('input',checkExistingProject);inp.addEventListener('change',checkExistingProject)}},0);
-
-
-document.addEventListener('click',function(e){
- const el=e.target.closest('.activity,.mission-card,.mission-item,.mission-row,.mission');
- if(!el || el.classList.contains('locked')) return;
- const txt=el.textContent||'';
- const m=txt.match(/M?0?([1-8])/);
- if(m){const id='M0'+m[1]; if(typeof openActivity==='function')openActivity(id);}
-});
+document.querySelector('#initiative').addEventListener('input',checkExistingProject);
+document.querySelector('#initiative').addEventListener('change',checkExistingProject);
 
 </script>
 </body>
