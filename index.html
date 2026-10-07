@@ -267,7 +267,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
   <div id="savedPassportBox" style="margin:18px 0;padding:16px;border:1px solid var(--cyan);background:rgba(89,220,225,.05)">
     <div class="eyebrow">PASAPORTE EN ESTE DISPOSITIVO</div>
     <div id="savedPassportText" style="margin:8px 0 14px">Buscando registro local...</div>
-    <button class="btn" id="openSavedPassport" type="button">ABRIR MI PASAPORTE →</button>
+    <button class="btn" id="openSavedPassport" type="button" onclick="openLocalPassport()">ABRIR MI PASAPORTE →</button>
   </div>
 
   <div style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)">
@@ -517,17 +517,35 @@ function refreshSavedPassportBox(){
   text.textContent='No hay un pasaporte guardado en este navegador.';
   btn.disabled=true;
 }
-document.querySelector('#openSavedPassport').addEventListener('click',()=>{
+function openLocalPassport(){
+  const toast=document.querySelector('#recoverToast');
+  let saved=null;
   try{
-    const saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
-    if(!saved?.EquipoID)return;
-    team=saved;
-    hydrateTeam();
-    renderMissions();
-    refreshParticipantQR();
-    show('passport');
-  }catch{}
-});
+    saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
+  }catch(e){
+    if(toast)toast.textContent='No fue posible leer el pasaporte guardado en este navegador.';
+    return;
+  }
+
+  if(!saved?.EquipoID){
+    if(toast)toast.textContent='No hay un pasaporte guardado en este navegador.';
+    return;
+  }
+
+  team=saved;
+
+  // Primero navegamos al pasaporte. Las funciones auxiliares no deben impedir el acceso.
+  show('passport');
+
+  try{ hydrateTeam(); }catch(e){ console.warn('hydrateTeam:',e); }
+  try{ renderMissions(); }catch(e){ console.warn('renderMissions:',e); }
+  try{ refreshParticipantQR(); }catch(e){ console.warn('refreshParticipantQR:',e); }
+  try{ refreshParticipantTelemetry(); }catch(e){ console.warn('refreshParticipantTelemetry:',e); }
+
+  if(toast)toast.textContent='';
+}
+window.openLocalPassport=openLocalPassport;
+
 refreshSavedPassportBox();
 
 const DEMO_KEY='idealab_demo_deliveries_v3';
