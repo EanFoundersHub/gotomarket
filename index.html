@@ -220,7 +220,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <p id="missionInstruction"></p>
       </div>
     </div>
-<form id="deliveryForm">
+<form id="deliveryForm" onsubmit="return false;">
       <input id="activity" type="hidden"><input id="team" type="hidden">
       <div class="eyebrow">ENTREGA DE LA MISIÓN</div>
       <p class="hint">Para completar la misión debes adjuntar un archivo o incluir un enlace. Con uno de los dos es suficiente.</p>
@@ -448,7 +448,7 @@ try{
 renderMissions();
 
 
-document.querySelector('#resourceLink').addEventListener('click',e=>{if(e.currentTarget.getAttribute('href')==='#'){e.preventDefault();document.querySelector('#toast').textContent='Recurso pendiente de cargar por Impacta.'}});
+document.querySelector('#resourceLink')?.addEventListener('click',e=>{if(e.currentTarget.getAttribute('href')==='#'){e.preventDefault();document.querySelector('#toast').textContent='Recurso pendiente de cargar por Impacta.'}});
 document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
   e.preventDefault();
   hydrateTeam();
@@ -493,14 +493,14 @@ document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
     document.querySelector('#missionScreenProgress').textContent=activities.filter(x=>x.state==='done').length+'/8 MISIONES';
     window.scrollTo({top:0,behavior:'smooth'});
   }catch(err){
-    document.querySelector('#toast').textContent=err.message;
+    document.querySelector('#toast').textContent='No fue posible transmitir la entrega: '+(err?.message||'error desconocido');
   }finally{if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=oldText}}
 });
 
 document.querySelector('#backToPassportTop').addEventListener('click',()=>{renderMissions();show('passport')});
 document.querySelector('#backToPassportSuccess').addEventListener('click',()=>{renderMissions();show('passport')});
 
-document.querySelector('#showConnectionForm').addEventListener('click',()=>document.querySelector('#connectionForm').classList.toggle('hidden'));
+document.querySelector('#showConnectionForm')?.addEventListener('click',()=>document.querySelector('#connectionForm')?.classList.toggle('hidden'));
 document.querySelector('#connectionForm').addEventListener('submit',async e=>{e.preventDefault();hydrateTeam();const payload={EquipoID:team.EquipoID,Nombre:document.querySelector('#connName').value.trim(),Correo:document.querySelector('#connEmail').value.trim(),TipoConexion:document.querySelector('#connType').value,Seguimiento:document.querySelector('#connFollow').value,Observacion:document.querySelector('#connNote').value.trim(),Fecha:new Date().toISOString()};try{await postJSON(API.registrarConexion,payload);document.querySelector('#connToast').textContent=API.registrarConexion?'Conexión registrada.':'Modo demo: conexión preparada para SharePoint.';e.target.reset()}catch(err){document.querySelector('#connToast').textContent=err.message}});
 function normalizeRecoveredTeam(result){
   const e=result?.Equipo||{};
