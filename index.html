@@ -74,7 +74,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 <header class="top">
   <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">IDEALAB</div><div class="sub">Aceleratón Go-To-Market · 48 horas para llevar una idea al mercado</div></div>
   <div class="chip">MICROSOFT 365 READY</div>
-</header><div class="demo-banner">MODO CONECTADO · Registro y entregas sincronizados con Microsoft 365.</div>
+</header><div class="demo-banner">MODO CONECTADO · Registro, entregas y recuperación sincronizados con Microsoft 365.</div>
 
 <section id="welcome" class="screen active">
   <div class="hero">
@@ -262,7 +262,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 
 <section id="continueScreen" class="screen">
   <article class="card admin-login"><div class="eyebrow">RECUPERACIÓN DE PASAPORTE</div><h2 class="title">CONTINUAR MI MISIÓN</h2>
-  <div class="rocky-dialog"><img src="assets/rocky/rocky_03_silencio.png" alt="Rocky"><div><h3>ROCKY TE AYUDA</h3><p>Si registraste tu equipo en este mismo navegador, puedes volver directamente a tu pasaporte y continuar desde la última misión guardada.</p></div></div>
+  <div class="rocky-dialog"><img src="assets/rocky/rocky_03_silencio.png" alt="Rocky"><div><h3>ROCKY TE AYUDA</h3><p>Si registraste tu equipo en este mismo navegador, puedes volver directamente a tu pasaporte. También puedes recuperar tu equipo por correo desde otro navegador.</p></div></div>
 
   <div id="savedPassportBox" style="margin:18px 0;padding:16px;border:1px solid var(--cyan);background:rgba(89,220,225,.05)">
     <div class="eyebrow">PASAPORTE EN ESTE DISPOSITIVO</div>
@@ -272,10 +272,10 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 
   <div style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)">
     <div class="eyebrow">RECUPERACIÓN POR CORREO</div>
-    <p class="hint">Esta opción quedará disponible cuando conectemos la consulta a SharePoint. Por ahora usa el botón anterior en este mismo dispositivo.</p>
+    <p class="hint">Ingresa el correo con el que te registraste. IdeaLab consultará SharePoint y reconstruirá tu pasaporte y progreso.</p>
     <label>Correo registrado</label>
-    <input id="recoverEmail" type="email" placeholder="correo@ejemplo.com" disabled>
-    <button class="btn alt" id="recoverSearch" type="button" disabled>RECUPERAR DESDE OTRO DISPOSITIVO</button>
+    <input id="recoverEmail" type="email" placeholder="correo@ejemplo.com">
+    <button class="btn alt" id="recoverSearch" type="button">BUSCAR MI EQUIPO →</button>
     <div class="toast" id="recoverToast"></div>
   </div>
 
@@ -285,7 +285,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 </main>
 
 <script>
-const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"",admin:""};
+const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"",admin:"",recuperarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/00b46863cb3d4c7c9fc6601082f978fe/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CJwLvUjbgS5XTsOf4_Mx9kyNw1ZPfuSbzPNNy_EBj1o"};
 function loadApiConfig(){
   return {...API_DEFAULT};
 }
@@ -328,7 +328,7 @@ async function postJSON(url,payload){
     const text=await r.text();
     let data={};
     try{data=text?JSON.parse(text):{}}catch{data={raw:text}}
-    if(!r.ok)throw new Error(data?.error?.message||data?.message||('IdeaLab respondió '+r.status));
+    if(!r.ok)throw new Error(data?.error?.message||data?.message||data?.mensaje||('IdeaLab respondió '+r.status));
     return data;
   }catch(err){
     if(err.name==='AbortError')throw new Error('La transmisión tardó demasiado. Intenta nuevamente.');
@@ -502,6 +502,54 @@ document.querySelector('#backToPassportSuccess').addEventListener('click',()=>{r
 
 document.querySelector('#showConnectionForm').addEventListener('click',()=>document.querySelector('#connectionForm').classList.toggle('hidden'));
 document.querySelector('#connectionForm').addEventListener('submit',async e=>{e.preventDefault();hydrateTeam();const payload={EquipoID:team.EquipoID,Nombre:document.querySelector('#connName').value.trim(),Correo:document.querySelector('#connEmail').value.trim(),TipoConexion:document.querySelector('#connType').value,Seguimiento:document.querySelector('#connFollow').value,Observacion:document.querySelector('#connNote').value.trim(),Fecha:new Date().toISOString()};try{await postJSON(API.registrarConexion,payload);document.querySelector('#connToast').textContent=API.registrarConexion?'Conexión registrada.':'Modo demo: conexión preparada para SharePoint.';e.target.reset()}catch(err){document.querySelector('#connToast').textContent=err.message}});
+function normalizeRecoveredTeam(result){
+  const e=result?.Equipo||{};
+  const participantsRaw=Array.isArray(result?.Participantes)?result.Participantes:[];
+  const participants=participantsRaw.map(p=>({
+    ParticipanteID:p.Title||'',
+    EquipoID:p.field_1||result.EquipoID||'',
+    Nombre:p.field_2||'',
+    TipoDocumento:p.field_3||'',
+    Documento:p.field_4||'',
+    Correo:p.field_5||'',
+    Telefono:p.field_6||'',
+    Rol:p.field_7||'',
+    Programa:p.field_8||'',
+    Modalidad:p.field_9||'',
+    Semestre:p.field_10||'',
+    AnoGraduacion:p.field_11||'',
+    CodigoQR:p.CodigoQR||''
+  }));
+  return {
+    EquipoID:result?.EquipoID||e.Title||'',
+    NombreIniciativa:e.field_1||'',
+    Descripcion:e.field_2||'',
+    Categoria:e.field_3||'',
+    Sector:e.field_4||'',
+    ProcesoOrigen:e.field_5||'',
+    Estado:e.field_6||'Activo',
+    ProyectoExistente:true,
+    Participantes:participants
+  };
+}
+
+function restoreMissionProgress(entregas){
+  const delivered=new Set((Array.isArray(entregas)?entregas:[]).map(e=>{
+    const direct=e.ActividadID||e.field_2||'';
+    if(/^M\d{2}$/i.test(String(direct))) return String(direct).toUpperCase();
+    const parts=String(e.Title||'').split('|');
+    return /^M\d{2}$/i.test(parts[1]||'')?parts[1].toUpperCase():'';
+  }).filter(Boolean));
+  activities.forEach(a=>a.state='locked');
+  let firstOpenSet=false;
+  for(const a of activities){
+    if(delivered.has(a.id)) a.state='done';
+    else if(!firstOpenSet){a.state='open';firstOpenSet=true;}
+  }
+  if(!firstOpenSet&&activities.length) activities.forEach(a=>a.state='done');
+  localStorage.setItem('idealab_progress',JSON.stringify(activities.map(a=>({id:a.id,state:a.state}))));
+}
+
 function refreshSavedPassportBox(){
   const text=document.querySelector('#savedPassportText');
   const btn=document.querySelector('#openSavedPassport');
@@ -545,6 +593,32 @@ function openLocalPassport(){
   if(toast)toast.textContent='';
 }
 window.openLocalPassport=openLocalPassport;
+
+document.querySelector('#recoverSearch')?.addEventListener('click', async ()=>{
+  const email=document.querySelector('#recoverEmail')?.value.trim();
+  const toast=document.querySelector('#recoverToast');
+  const btn=document.querySelector('#recoverSearch');
+  if(!email){if(toast)toast.textContent='Ingresa el correo con el que te registraste.';return;}
+  const oldText=btn?.textContent||'';
+  try{
+    if(btn){btn.disabled=true;btn.textContent='BUSCANDO…';}
+    if(toast)toast.textContent='Consultando tu pasaporte en SharePoint…';
+    const result=await postJSON(API.recuperarEquipo,{Correo:email});
+    if(!result?.ok)throw new Error(result?.mensaje||'No fue posible recuperar el equipo.');
+    team=normalizeRecoveredTeam(result);
+    if(!team.EquipoID)throw new Error('La respuesta no contiene un EquipoID válido.');
+    localStorage.setItem('idealab_team',JSON.stringify(team));
+    restoreMissionProgress(result.Entregas);
+    try{hydrateTeam()}catch(e){console.warn('hydrateTeam:',e)}
+    try{renderMissions()}catch(e){console.warn('renderMissions:',e)}
+    try{refreshParticipantQR()}catch(e){console.warn('refreshParticipantQR:',e)}
+    try{refreshParticipantTelemetry()}catch(e){console.warn('refreshParticipantTelemetry:',e)}
+    if(toast)toast.textContent='Pasaporte recuperado correctamente.';
+    show('passport');
+    refreshSavedPassportBox();
+  }catch(err){if(toast)toast.textContent=err.message||'No fue posible recuperar el equipo.';}
+  finally{if(btn){btn.disabled=false;btn.textContent=oldText;}}
+});
 
 refreshSavedPassportBox();
 
