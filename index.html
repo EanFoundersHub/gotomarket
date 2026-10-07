@@ -74,7 +74,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 <header class="top">
   <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">IDEALAB</div><div class="sub">Aceleratón Go-To-Market · 48 horas para llevar una idea al mercado</div></div>
   <div class="chip">MICROSOFT 365 READY</div>
-</header><div class="demo-banner">MODO DEMOSTRACIÓN · Flujo completo preparado para grabación. La persistencia Microsoft 365 se conectará después.</div>
+</header><div class="demo-banner">MODO CONECTADO · Registro y entregas sincronizados con Microsoft 365.</div>
 
 <section id="welcome" class="screen active">
   <div class="hero">
@@ -270,12 +270,12 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 </main>
 
 <script>
-const API_DEFAULT={registrarEquipo:"",guardarEntrega:"",consultarProgreso:"",ranking:"",registrarConexion:"",admin:""};
+const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"",admin:""};
 function loadApiConfig(){
-  try{return {...API_DEFAULT,...JSON.parse(localStorage.getItem('idealab_api_config')||'{}')}}catch{return {...API_DEFAULT}}
+  return {...API_DEFAULT};
 }
 let API=loadApiConfig();
-function saveApiConfig(cfg){API={...API_DEFAULT,...cfg};localStorage.setItem('idealab_api_config',JSON.stringify(API))}
+function saveApiConfig(cfg){API={...API_DEFAULT,...cfg}}
 function apiReady(){return Boolean(API.registrarEquipo&&API.guardarEntrega)}
 
 const screens=[...document.querySelectorAll('.screen')];
