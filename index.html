@@ -275,8 +275,8 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
     <p class="hint">Ingresa el correo con el que te registraste. IdeaLab consultará SharePoint y reconstruirá tu pasaporte y progreso.</p>
     <label>Correo registrado</label>
     <input id="recoverEmail" type="email" placeholder="correo@ejemplo.com">
-    <button class="btn alt" id="recoverSearch" type="button">BUSCAR MI EQUIPO →</button>
-    <div class="toast" id="recoverToast"></div>
+    <button class="btn alt" id="recoverSearch" type="button" onclick="recoverByEmail(event)">BUSCAR MI EQUIPO →</button>
+    <div class="toast" id="recoverToast" style="min-height:22px;margin-top:10px"></div>
   </div>
 
   <button class="btn alt" type="button" onclick="show('welcome')" style="margin-top:18px">← VOLVER</button></article>
@@ -594,31 +594,58 @@ function openLocalPassport(){
 }
 window.openLocalPassport=openLocalPassport;
 
-document.querySelector('#recoverSearch')?.addEventListener('click', async ()=>{
-  const email=document.querySelector('#recoverEmail')?.value.trim();
+async function recoverByEmail(event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  const emailEl=document.querySelector('#recoverEmail');
   const toast=document.querySelector('#recoverToast');
   const btn=document.querySelector('#recoverSearch');
-  if(!email){if(toast)toast.textContent='Ingresa el correo con el que te registraste.';return;}
-  const oldText=btn?.textContent||'';
+  const email=String(emailEl?.value||'').trim();
+
+  if(!email){
+    if(toast)toast.textContent='Ingresa el correo con el que te registraste.';
+    if(emailEl)emailEl.focus();
+    return false;
+  }
+
+  if(!API?.recuperarEquipo){
+    if(toast)toast.textContent='La recuperación por correo no está configurada.';
+    return false;
+  }
+
+  const oldText=btn?.textContent||'BUSCAR MI EQUIPO →';
   try{
     if(btn){btn.disabled=true;btn.textContent='BUSCANDO…';}
     if(toast)toast.textContent='Consultando tu pasaporte en SharePoint…';
+
     const result=await postJSON(API.recuperarEquipo,{Correo:email});
-    if(!result?.ok)throw new Error(result?.mensaje||'No fue posible recuperar el equipo.');
+    if(!result || result.ok!==true){
+      throw new Error(result?.mensaje||result?.message||'No fue posible recuperar el equipo.');
+    }
+
     team=normalizeRecoveredTeam(result);
-    if(!team.EquipoID)throw new Error('La respuesta no contiene un EquipoID válido.');
+    if(!team.EquipoID)throw new Error('IdeaLab encontró el registro, pero no devolvió el EquipoID.');
+
     localStorage.setItem('idealab_team',JSON.stringify(team));
-    restoreMissionProgress(result.Entregas);
+    restoreMissionProgress(result.Entregas||[]);
+
     try{hydrateTeam()}catch(e){console.warn('hydrateTeam:',e)}
     try{renderMissions()}catch(e){console.warn('renderMissions:',e)}
     try{refreshParticipantQR()}catch(e){console.warn('refreshParticipantQR:',e)}
     try{refreshParticipantTelemetry()}catch(e){console.warn('refreshParticipantTelemetry:',e)}
-    if(toast)toast.textContent='Pasaporte recuperado correctamente.';
-    show('passport');
+
+    if(toast)toast.textContent='Pasaporte recuperado. Abriendo misión…';
     refreshSavedPassportBox();
-  }catch(err){if(toast)toast.textContent=err.message||'No fue posible recuperar el equipo.';}
-  finally{if(btn){btn.disabled=false;btn.textContent=oldText;}}
-});
+    show('passport');
+  }catch(err){
+    console.error('IdeaLab recuperación:',err);
+    if(toast)toast.textContent=err?.message||'No fue posible recuperar el equipo.';
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=oldText;}
+  }
+  return false;
+}
+window.recoverByEmail=recoverByEmail;
+document.querySelector('#recoverEmail')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();recoverByEmail(e);}});
 
 refreshSavedPassportBox();
 
