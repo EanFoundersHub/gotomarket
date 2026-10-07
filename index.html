@@ -262,9 +262,24 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 
 <section id="continueScreen" class="screen">
   <article class="card admin-login"><div class="eyebrow">RECUPERACIÓN DE PASAPORTE</div><h2 class="title">CONTINUAR MI MISIÓN</h2>
-  <div class="rocky-dialog"><img src="assets/rocky/rocky_03_silencio.png" alt="Rocky"><div><h3>ROCKY TE AYUDA</h3><p>Ingresa el correo de uno de los integrantes. La búsqueda en SharePoint se conectará en el siguiente paso.</p></div></div>
-  <label>Correo registrado</label><input id="recoverEmail" type="email" placeholder="correo@ejemplo.com"><button class="btn" id="recoverSearch" type="button">BUSCAR MI EQUIPO</button><div class="toast" id="recoverToast"></div>
-  <button class="btn alt" type="button" onclick="show('welcome')">← VOLVER</button></article>
+  <div class="rocky-dialog"><img src="assets/rocky/rocky_03_silencio.png" alt="Rocky"><div><h3>ROCKY TE AYUDA</h3><p>Si registraste tu equipo en este mismo navegador, puedes volver directamente a tu pasaporte y continuar desde la última misión guardada.</p></div></div>
+
+  <div id="savedPassportBox" style="margin:18px 0;padding:16px;border:1px solid var(--cyan);background:rgba(89,220,225,.05)">
+    <div class="eyebrow">PASAPORTE EN ESTE DISPOSITIVO</div>
+    <div id="savedPassportText" style="margin:8px 0 14px">Buscando registro local...</div>
+    <button class="btn" id="openSavedPassport" type="button">ABRIR MI PASAPORTE →</button>
+  </div>
+
+  <div style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)">
+    <div class="eyebrow">RECUPERACIÓN POR CORREO</div>
+    <p class="hint">Esta opción quedará disponible cuando conectemos la consulta a SharePoint. Por ahora usa el botón anterior en este mismo dispositivo.</p>
+    <label>Correo registrado</label>
+    <input id="recoverEmail" type="email" placeholder="correo@ejemplo.com" disabled>
+    <button class="btn alt" id="recoverSearch" type="button" disabled>RECUPERAR DESDE OTRO DISPOSITIVO</button>
+    <div class="toast" id="recoverToast"></div>
+  </div>
+
+  <button class="btn alt" type="button" onclick="show('welcome')" style="margin-top:18px">← VOLVER</button></article>
 </section>
 
 </main>
@@ -281,7 +296,10 @@ function apiReady(){return Boolean(API.registrarEquipo&&API.guardarEntrega)}
 const screens=[...document.querySelectorAll('.screen')];
 function show(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));window.scrollTo({top:0,behavior:'smooth'})}
 document.querySelector('#startBtn').addEventListener('click',()=>show('register'));
-document.querySelector('#continueBtn').addEventListener('click',()=>show('continueScreen'));
+document.querySelector('#continueBtn').addEventListener('click',()=>{
+  show('continueScreen');
+  refreshSavedPassportBox();
+});
 
 let step=1,memberN=0,team={},selectedMission="M01";
 const stepEls=[...document.querySelectorAll('.step')];
@@ -484,7 +502,33 @@ document.querySelector('#backToPassportSuccess').addEventListener('click',()=>{r
 
 document.querySelector('#showConnectionForm').addEventListener('click',()=>document.querySelector('#connectionForm').classList.toggle('hidden'));
 document.querySelector('#connectionForm').addEventListener('submit',async e=>{e.preventDefault();hydrateTeam();const payload={EquipoID:team.EquipoID,Nombre:document.querySelector('#connName').value.trim(),Correo:document.querySelector('#connEmail').value.trim(),TipoConexion:document.querySelector('#connType').value,Seguimiento:document.querySelector('#connFollow').value,Observacion:document.querySelector('#connNote').value.trim(),Fecha:new Date().toISOString()};try{await postJSON(API.registrarConexion,payload);document.querySelector('#connToast').textContent=API.registrarConexion?'Conexión registrada.':'Modo demo: conexión preparada para SharePoint.';e.target.reset()}catch(err){document.querySelector('#connToast').textContent=err.message}});
-document.querySelector('#recoverSearch').addEventListener('click',()=>{const email=document.querySelector('#recoverEmail').value.trim();document.querySelector('#recoverToast').textContent=email?'Búsqueda preparada. El siguiente paso es conectarla a IDEALAB_Participantes.':'Ingresa un correo registrado.'});
+function refreshSavedPassportBox(){
+  const text=document.querySelector('#savedPassportText');
+  const btn=document.querySelector('#openSavedPassport');
+  try{
+    const saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
+    if(saved?.EquipoID){
+      const name=saved.NombreIniciativa||'Equipo IdeaLab';
+      text.innerHTML='<b>'+name+'</b><br><span class="hint">'+saved.EquipoID+'</span>';
+      btn.disabled=false;
+      return;
+    }
+  }catch{}
+  text.textContent='No hay un pasaporte guardado en este navegador.';
+  btn.disabled=true;
+}
+document.querySelector('#openSavedPassport').addEventListener('click',()=>{
+  try{
+    const saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
+    if(!saved?.EquipoID)return;
+    team=saved;
+    hydrateTeam();
+    renderMissions();
+    refreshParticipantQR();
+    show('passport');
+  }catch{}
+});
+refreshSavedPassportBox();
 
 const DEMO_KEY='idealab_demo_deliveries_v3';
 const demoSeed=[
