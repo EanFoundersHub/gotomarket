@@ -58,6 +58,18 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 .project-match{grid-column:1/-1}
 .project-match strong{color:var(--cyan)}
 .project-found-input{border-color:var(--cyan)!important;box-shadow:0 0 0 1px rgba(89,220,225,.2)}
+
+.large-file-box{margin-top:14px;border:1px solid var(--gold);background:rgba(255,208,0,.06);padding:16px}
+.large-file-box h4{margin:0 0 8px;color:var(--gold)}
+.large-file-box p{margin:6px 0}
+.large-file-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.pending-evidence-list{display:grid;gap:8px;margin-top:14px}
+.pending-evidence-item{display:flex;gap:10px;align-items:flex-start;border:1px solid #4b392b;background:#0d0a08;padding:11px}
+.pending-evidence-item input{width:auto;margin-top:3px}
+.pending-evidence-item b{display:block}
+.pending-evidence-item small{color:var(--muted)}
+.file-limit-note{display:block;margin-top:6px;color:var(--muted);font-size:11px}
+
 @media(max-width:760px){.mission-success{grid-template-columns:1fr}.mission-success img{max-height:150px}.mission-screen-progress{width:100%;justify-content:space-between}}
 
 
@@ -74,7 +86,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 <header class="top">
   <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">IDEALAB</div><div class="sub">Aceleratón Go-To-Market · 48 horas para llevar una idea al mercado</div></div>
   <div class="chip">MICROSOFT 365 READY</div>
-</header><div class="demo-banner">MODO CONECTADO · Registro, entregas y recuperación sincronizados con Microsoft 365.</div>
+</header><div class="demo-banner">MODO CONECTADO · Registro, entregas, recuperación y evidencias sincronizados con Microsoft 365.</div>
 
 <section id="welcome" class="screen active">
   <div class="hero">
@@ -236,8 +248,23 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <div>
           <label for="deliveryFile">Archivo <span class="hint">(opción 2)</span></label>
           <input id="deliveryFile" type="file">
+          <span class="file-limit-note">Carga directa hasta 50 MB. Si el archivo pesa más, IdeaLab te enviará a la carpeta de evidencias de tu equipo.</span>
         </div>
       </div>
+
+      <div id="largeFileBox" class="large-file-box hidden">
+        <h4>⚠ ARCHIVO DE GRAN TAMAÑO</h4>
+        <p id="largeFileMessage">Este archivo supera el límite de carga directa de 50 MB.</p>
+        <p class="hint">Cárgalo directamente en la carpeta de evidencias de tu equipo. Después vuelve aquí y asócialo a esta misión.</p>
+        <div class="large-file-actions">
+          <a class="btn alt" id="openEvidenceFolder" href="#" target="_blank" rel="noopener">ABRIR CARPETA DE EVIDENCIAS ↗</a>
+          <button class="btn" id="refreshPendingEvidence" type="button">YA CARGUÉ MI ARCHIVO</button>
+        </div>
+        <div id="pendingEvidenceStatus" class="toast" aria-live="polite"></div>
+        <div id="pendingEvidenceList" class="pending-evidence-list"></div>
+        <button class="btn hidden" id="associatePendingEvidence" type="button" style="margin-top:12px">ASOCIAR ARCHIVO A ESTA MISIÓN →</button>
+      </div>
+
       <div class="mission-submit-row">
         <button class="btn" type="submit">TRANSMITIR ENTREGA →</button>
         <span class="points-pill" id="missionPoints"></span>
@@ -285,12 +312,22 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 </main>
 
 <script>
-const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"",admin:"",recuperarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/00b46863cb3d4c7c9fc6601082f978fe/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CJwLvUjbgS5XTsOf4_Mx9kyNw1ZPfuSbzPNNy_EBj1o"};
+const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"",admin:"",recuperarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/00b46863cb3d4c7c9fc6601082f978fe/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CJwLvUjbgS5XTsOf4_Mx9kyNw1ZPfuSbzPNNy_EBj1o",buscarEvidencias:"",asociarEvidencia:""};
+const API_CONFIG_KEY='idealab_api_config_v9';
 function loadApiConfig(){
-  return {...API_DEFAULT};
+  let saved={};
+  try{saved=JSON.parse(localStorage.getItem(API_CONFIG_KEY)||'{}')}catch{}
+  return {...API_DEFAULT,...saved};
 }
 let API=loadApiConfig();
-function saveApiConfig(cfg){API={...API_DEFAULT,...cfg}}
+function saveApiConfig(cfg){
+  const clean={...API,...cfg};
+  API=clean;
+  try{localStorage.setItem(API_CONFIG_KEY,JSON.stringify({
+    buscarEvidencias:clean.buscarEvidencias||'',
+    asociarEvidencia:clean.asociarEvidencia||''
+  }))}catch{}
+}
 function apiReady(){return Boolean(API.registrarEquipo&&API.guardarEntrega)}
 
 const screens=[...document.querySelectorAll('.screen')];
@@ -337,6 +374,84 @@ async function postJSON(url,payload){
   }finally{clearTimeout(timer)}
 }
 function fileToBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]||'');reader.onerror=()=>reject(new Error('No fue posible leer el archivo.'));reader.readAsDataURL(file)})}
+
+const DIRECT_FILE_LIMIT=50*1024*1024;
+const SHAREPOINT_EVIDENCE_BASE='https://universidadeaneduco.sharepoint.com/sites/ComunidadTngara/IDEALAB_Evidencias/';
+
+function evidenceFolderUrl(){
+  hydrateTeam();
+  return team?.EquipoID ? SHAREPOINT_EVIDENCE_BASE+encodeURIComponent(team.EquipoID) : '#';
+}
+function resetLargeFileUI(){
+  const box=document.querySelector('#largeFileBox');
+  const status=document.querySelector('#pendingEvidenceStatus');
+  const list=document.querySelector('#pendingEvidenceList');
+  const associate=document.querySelector('#associatePendingEvidence');
+  if(box)box.classList.add('hidden');
+  if(status)status.textContent='';
+  if(list)list.innerHTML='';
+  if(associate){associate.classList.add('hidden');associate.dataset.fileId=''}
+}
+function refreshEvidenceFolderLink(){
+  const link=document.querySelector('#openEvidenceFolder');
+  if(link)link.href=evidenceFolderUrl();
+}
+function normalizePendingEvidence(f){
+  const id=Number(f?.ArchivoID ?? f?.ID ?? f?.ItemInternalId ?? 0);
+  const name=f?.NombreArchivo || f?.['{FilenameWithExtension}'] || f?.FileLeafRef || f?.Name || f?.['{Name}'] || ('Archivo '+id);
+  const link=f?.EvidenciaURL || f?.['{Link}'] || '';
+  const modified=f?.FechaModificacion || f?.Modified || f?.Created || '';
+  return {id,name,link,modified,raw:f};
+}
+async function loadPendingEvidence(){
+  hydrateTeam();
+  const status=document.querySelector('#pendingEvidenceStatus');
+  const list=document.querySelector('#pendingEvidenceList');
+  const associate=document.querySelector('#associatePendingEvidence');
+  if(!team?.EquipoID){status.textContent='No se encontró el equipo.';return}
+  if(!API.buscarEvidencias){status.textContent='Falta configurar el flujo de búsqueda de evidencias.';return}
+  status.textContent='Buscando archivos pendientes en SharePoint…';
+  list.innerHTML='';
+  associate.classList.add('hidden');
+  associate.dataset.fileId='';
+  try{
+    const result=await postJSON(API.buscarEvidencias,{EquipoID:team.EquipoID});
+    const files=(Array.isArray(result?.Archivos)?result.Archivos:[]).map(normalizePendingEvidence).filter(x=>x.id);
+    if(!files.length){status.textContent='No encontramos archivos pendientes. Si acabas de subirlo, espera unos segundos y vuelve a intentar.';return}
+    status.textContent=`${files.length} archivo${files.length===1?' encontrado':'s encontrados'}. Selecciona el que corresponde a esta misión.`;
+    list.innerHTML=files.map((f,i)=>`<label class="pending-evidence-item">
+      <input type="radio" name="pendingEvidence" value="${f.id}" ${i===0?'checked':''}>
+      <span><b>${String(f.name).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</b><small>${f.modified?new Date(f.modified).toLocaleString('es-CO'):''}</small></span>
+    </label>`).join('');
+    const checked=list.querySelector('input[name="pendingEvidence"]:checked');
+    associate.dataset.fileId=checked?.value||'';
+    associate.classList.remove('hidden');
+    list.querySelectorAll('input[name="pendingEvidence"]').forEach(r=>r.addEventListener('change',()=>associate.dataset.fileId=r.value));
+  }catch(err){
+    status.textContent='No fue posible consultar SharePoint: '+(err?.message||'error desconocido');
+  }
+}
+function markMissionCompleted(a){
+  a.state='done';
+  const next=activities[activities.indexOf(a)+1];
+  if(next)next.state='open';
+  localStorage.setItem('idealab_progress',JSON.stringify(activities.map(x=>({id:x.id,state:x.state}))));
+  document.querySelector('#answer').value='';
+  document.querySelector('#deliveryUrl').value='';
+  document.querySelector('#deliveryFile').value='';
+  resetLargeFileUI();
+  renderMissions();
+  document.querySelector('#deliveryForm').classList.add('hidden');
+  document.querySelector('#successPoints').textContent='validación del mentor pendiente';
+  document.querySelector('#missionSuccess').classList.remove('hidden');
+  const nextBtn=document.querySelector('#nextMissionBtn');
+  if(next){nextBtn.classList.remove('hidden');nextBtn.textContent='IR A '+next.id+' →';nextBtn.onclick=()=>openMission(next.id)}
+  else{nextBtn.classList.add('hidden')}
+  document.querySelector('#toast').textContent='';
+  document.querySelector('#missionScreenProgress').textContent=activities.filter(x=>x.state==='done').length+'/8 MISIONES';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 
 async function finishRegistration(){
   const initiative=document.querySelector('#initiative').value.trim();
@@ -406,6 +521,8 @@ function populateMission(id){
   document.querySelector('#missionPoints').textContent='ENTREGA SUJETA A VALIDACIÓN';
   document.querySelector('#deliveryForm').classList.toggle('hidden',a.state==='done');
   document.querySelector('#missionSuccess').classList.add('hidden');
+  resetLargeFileUI();
+  refreshEvidenceFolderLink();
   document.querySelector('#missionScreenTeam').textContent=(team.NombreIniciativa||'')+' · '+(team.EquipoID||'');
   const done=activities.filter(x=>x.state==='done').length;
   document.querySelector('#missionScreenProgress').textContent=done+'/8 MISIONES';
@@ -449,6 +566,47 @@ renderMissions();
 
 
 document.querySelector('#resourceLink')?.addEventListener('click',e=>{if(e.currentTarget.getAttribute('href')==='#'){e.preventDefault();document.querySelector('#toast').textContent='Recurso pendiente de cargar por Impacta.'}});
+
+document.querySelector('#deliveryFile')?.addEventListener('change',e=>{
+  const file=e.target.files?.[0];
+  const box=document.querySelector('#largeFileBox');
+  const msg=document.querySelector('#largeFileMessage');
+  const submit=document.querySelector('#deliveryForm button[type="submit"]');
+  refreshEvidenceFolderLink();
+  if(file && file.size>DIRECT_FILE_LIMIT){
+    box.classList.remove('hidden');
+    const mb=(file.size/1024/1024).toFixed(1);
+    msg.textContent=`${file.name} pesa ${mb} MB y supera el límite de carga directa de 50 MB.`;
+    if(submit)submit.dataset.oversize='1';
+  }else{
+    resetLargeFileUI();
+    if(submit)delete submit.dataset.oversize;
+  }
+});
+document.querySelector('#refreshPendingEvidence')?.addEventListener('click',loadPendingEvidence);
+document.querySelector('#associatePendingEvidence')?.addEventListener('click',async e=>{
+  hydrateTeam();
+  const a=activities.find(x=>x.id===selectedMission);
+  const fileId=Number(e.currentTarget.dataset.fileId||0);
+  const status=document.querySelector('#pendingEvidenceStatus');
+  if(!fileId){status.textContent='Selecciona un archivo para asociarlo.';return}
+  if(!API.asociarEvidencia){status.textContent='Falta configurar el flujo para asociar evidencias.';return}
+  const old=e.currentTarget.textContent;
+  try{
+    e.currentTarget.disabled=true;
+    e.currentTarget.textContent='ASOCIANDO…';
+    status.textContent='Asociando archivo a '+a.id+'…';
+    const result=await postJSON(API.asociarEvidencia,{ArchivoID:fileId,EquipoID:team.EquipoID,ActividadID:a.id});
+    if(result?.ok===false)throw new Error(result?.mensaje||result?.error||'No fue posible asociar el archivo.');
+    markMissionCompleted(a);
+  }catch(err){
+    status.textContent='No fue posible asociar el archivo: '+(err?.message||'error desconocido');
+  }finally{
+    e.currentTarget.disabled=false;
+    e.currentTarget.textContent=old;
+  }
+});
+
 document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
   e.preventDefault();
   hydrateTeam();
@@ -458,7 +616,7 @@ document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
   const url=document.querySelector('#deliveryUrl').value.trim();
   const file=document.querySelector('#deliveryFile').files[0];
   if(!url&&!file){document.querySelector('#toast').textContent='Para completar la misión debes adjuntar un archivo o incluir un enlace.';return}
-  if(file && file.size>5*1024*1024){document.querySelector('#toast').textContent='El archivo supera 5 MB. Usa un enlace o carga una versión más liviana.';return}
+  if(file && file.size>DIRECT_FILE_LIMIT){document.querySelector('#largeFileBox').classList.remove('hidden');refreshEvidenceFolderLink();document.querySelector('#toast').textContent='Este archivo supera 50 MB. Cárgalo en la carpeta de evidencias y luego asócialo a esta misión.';return}
   const submitBtn=e.submitter||document.querySelector('#deliveryForm button[type="submit"]');
   const oldText=submitBtn?.textContent||'';
   try{
@@ -476,22 +634,7 @@ document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
     };
     const result=await postJSON(API.guardarEntrega,payload);
     if(result.ok===false)throw new Error(result.error||'No fue posible guardar la entrega.');
-    a.state='done';
-    const next=activities[activities.indexOf(a)+1];
-    if(next)next.state='open';
-    localStorage.setItem('idealab_progress',JSON.stringify(activities.map(x=>({id:x.id,state:x.state}))));
-    document.querySelector('#answer').value='';
-    document.querySelector('#deliveryUrl').value='';
-    document.querySelector('#deliveryFile').value='';
-    renderMissions();
-    document.querySelector('#deliveryForm').classList.add('hidden');
-    document.querySelector('#successPoints').textContent='validación del mentor pendiente';
-    document.querySelector('#missionSuccess').classList.remove('hidden');
-    const nextBtn=document.querySelector('#nextMissionBtn');
-    if(next){nextBtn.classList.remove('hidden');nextBtn.textContent='IR A '+next.id+' →';nextBtn.onclick=()=>openMission(next.id)}else{nextBtn.classList.add('hidden')}
-    document.querySelector('#toast').textContent='';
-    document.querySelector('#missionScreenProgress').textContent=activities.filter(x=>x.state==='done').length+'/8 MISIONES';
-    window.scrollTo({top:0,behavior:'smooth'});
+    markMissionCompleted(a);
   }catch(err){
     document.querySelector('#toast').textContent='No fue posible transmitir la entrega: '+(err?.message||'error desconocido');
   }finally{if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=oldText}}
@@ -770,6 +913,8 @@ document.querySelector('#qrParticipant')?.addEventListener('change',refreshParti
     <p class="hint">Las URLs se guardan solo en este navegador. No quedan escritas en el HTML ni en GitHub.</p>
     <label>Registrar Equipo</label><input id="cfgRegistrar" type="password" autocomplete="off" placeholder="URL del flujo">
     <label>Guardar Entrega</label><input id="cfgEntrega" type="password" autocomplete="off" placeholder="URL del flujo">
+    <label>Buscar Evidencias Pendientes</label><input id="cfgBuscarEvidencias" type="password" autocomplete="off" placeholder="URL del flujo IDEALAB - Buscar Evidencias Pendientes">
+    <label>Asociar Evidencia</label><input id="cfgAsociarEvidencia" type="password" autocomplete="off" placeholder="URL del flujo IDEALAB - Asociar Evidencia">
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><button class="btn" id="cfgSave" type="button">GUARDAR EN ESTE NAVEGADOR</button><button class="btn alt" id="cfgClose" type="button">CERRAR</button></div>
   </div>
 </div>
@@ -777,9 +922,22 @@ document.querySelector('#qrParticipant')?.addEventListener('change',refreshParti
 (function(){
   const params=new URLSearchParams(location.search);
   const box=document.getElementById('apiSetup');
-  if(params.get('config')==='1'){box.style.display='flex';document.getElementById('cfgRegistrar').value=API.registrarEquipo||'';document.getElementById('cfgEntrega').value=API.guardarEntrega||''}
+  if(params.get('config')==='1'){
+    box.style.display='flex';
+    document.getElementById('cfgRegistrar').value=API.registrarEquipo||'';
+    document.getElementById('cfgEntrega').value=API.guardarEntrega||'';
+    document.getElementById('cfgBuscarEvidencias').value=API.buscarEvidencias||'';
+    document.getElementById('cfgAsociarEvidencia').value=API.asociarEvidencia||'';
+  }
   document.getElementById('cfgClose')?.addEventListener('click',()=>box.style.display='none');
-  document.getElementById('cfgSave')?.addEventListener('click',()=>{saveApiConfig({registrarEquipo:document.getElementById('cfgRegistrar').value.trim(),guardarEntrega:document.getElementById('cfgEntrega').value.trim()});box.style.display='none';alert('Conexión guardada solo en este navegador.');});
+  document.getElementById('cfgSave')?.addEventListener('click',()=>{
+    saveApiConfig({
+      buscarEvidencias:document.getElementById('cfgBuscarEvidencias').value.trim(),
+      asociarEvidencia:document.getElementById('cfgAsociarEvidencia').value.trim()
+    });
+    box.style.display='none';
+    alert('Conexión de evidencias guardada en este navegador.');
+  });
 })();
 </script>
 
