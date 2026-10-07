@@ -60,6 +60,13 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 .project-found-input{border-color:var(--cyan)!important;box-shadow:0 0 0 1px rgba(89,220,225,.2)}
 @media(max-width:760px){.mission-success{grid-template-columns:1fr}.mission-success img{max-height:150px}.mission-screen-progress{width:100%;justify-content:space-between}}
 
+
+.delivery-requirement{border:1px solid var(--cyan);background:rgba(89,220,225,.05);padding:10px 12px;margin:10px 0 16px;color:var(--cyan);font-size:12px}
+
+
+.qrbox img{object-fit:contain}
+#qrParticipant{margin-top:6px}
+.validation-note{border-left:3px solid var(--cyan);padding:10px 12px;background:rgba(89,220,225,.05)}
 </style>
 </head>
 <body>
@@ -78,7 +85,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
       <button class="btn" id="startBtn">INICIAR MISIÓN →</button>
       <div class="navtools">
         <button class="btn alt" id="continueBtn" type="button">CONTINUAR MI MISIÓN</button>
-        <button class="btn alt" id="adminBtn" type="button">CONTROL DE MISIÓN</button>
+        
       </div>
     </div>
     <div><div class="rockyWrap"><img class="rocky" src="assets/rocky/rocky_01_cool.png" alt="Rocky, guía de la misión IdeaLab"></div><div class="hud"><div class="label">SU MISIÓN</div><strong>48 HORAS</strong><p>Validar la idea · tomar decisiones · construir estrategia · conseguir ventas.</p><div class="hint">PROTOCOLO IDEALAB // GTM-2026</div></div></div>
@@ -165,12 +172,16 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <div class="eyebrow">PROTOCOLO DE CONEXIONES</div>
         <h2 class="title">AMPLÍA TU RED</h2>
         <div class="connection-card">
-          <div><p>Comparte tu QR con clientes, mentores, emprendedores y aliados. Cada conexión podrá registrar cómo puede aportar a tu iniciativa.</p>
-          <button class="btn" type="button" id="showConnectionForm">REGISTRAR CONEXIÓN</button></div>
+          <div>
+            <p>Cada integrante tiene un QR personal. Compártelo para registrar conexiones con clientes, mentores, aliados y otros emprendedores.</p>
+            <label for="qrParticipant">QR de</label>
+            <select id="qrParticipant"></select>
+            <a class="btn alt" id="openConnectionPage" href="#" target="_blank" style="display:inline-block;margin-top:10px">ABRIR FICHA DE CONEXIÓN</a>
+          </div>
           <div class="qrbox">
-              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWgAAAFoAQAAAABSnlx4AAACkklEQVR4nO2bwVIDMQxDJab//8viINvZwKkzu8UhKRxK9x00bsaW7UDhjdfXO/ChD33oQx/6QfoFAPR7UQBFEYDiY9XTh5XsQb8AOJYgREGIgAOiqPH0YSVb0SQBUARBERIYP/X0M0p2okUABAQSoH55xaa6F6Jf85/KvC1nEcwh76N7VTri7bA6eVS+dvbGJeh9dK9KO96Rnl0hCYqK5CKWQXlYyR70Cxjn177EthAc2fwjSjaibUNIR5wi4VrpkskkuulelbbjFqrTAVwxBX8NEe5uutelOTw2CEhx5EEJgsIattO9Jh1BhRsdEKCgaDidzX3qm+lemq4jLQGiQyxSDJv4MSX/mU5/IqYBdHmMvqes4Mnfd9KuljYljHQd+VxjVNhP93p09JdxoNNqc3gVSkxn3kj3qjTDZ9eQmxF44jKY/YSSjWgK8m8c5WHB68SfenkfLbfvPsxUdjcESF2/gWa6F6QZDbtYXaY/r9RSa56HlexES5RoK+JOM/doLpfHD95FlyWZKmfMYP0+HzysZA+auSquHidjfV055Birj+5V6cjfyhSOnBSOVcMlq/fRvSod9yGqPCqWxQDisIuRyB9WshEdJ1seyzI3xbEzHr19N90L0nm/ij7NHr/6WF9Wl1lU++helY75oL1gDQdBhe32DaCsm310r0pnvbQRVGbr6xgFiATfSfeqdO3no1Bed/LlvnnyyV30dD8275/MF36c0c+86hZ6vh+bQ3BPqaJgjvayke5V6WnfkHPBWGAyd8XIo95H97+hpYv/9jpNIM9+/gGa85I47QlrgNVU90L0dD+2EnbtLn/cuuqje1V6uh/r+I5/bwh3Qt8qfFjJHvSYf/+1kkMf+tCHPvQ7r28rMSvyQ9IKXgAAAABJRU5ErkJggg==" alt="QR demo IdeaLab" style="width:190px;height:190px">
-              <div><b>QR DE CONEXIÓN · DEMO</b><br><small>Escanéalo para abrir la ficha de conexión de prueba.</small></div>
-            </div></div>
+            <img id="participantQR" alt="QR personal de conexión" style="width:190px;height:190px;background:#fff;padding:8px">
+            <div><b id="qrOwner">QR PERSONAL</b><br><small id="qrOwnerMeta">Conexiones IdeaLab</small></div>
+          </div>
         </div>
         <form id="connectionForm" class="hidden" style="margin-top:18px">
           <div class="formgrid">
@@ -185,8 +196,8 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
       </article>
     </div>
     <aside>
-      <article class="card"><h2 class="title">TELEMETRÍA</h2><div class="stats"><div class="stat"><b id="xp">0</b><span>PUNTOS</span></div><div class="stat"><b id="completed">0/8</b><span>MISIONES</span></div><div class="stat"><b id="rankPos">--</b><span>RANKING</span></div><div class="stat"><b id="nextMission">M01</b><span>SIGUIENTE</span></div></div></article>
-      <article class="card"><h2 class="title">ESTADO DE MISIÓN</h2><p class="hint">La entrega otorga puntos automáticos. Impacta podrá validar o corregir la puntuación.</p><table class="admin-table"><thead><tr><th>Misión</th><th>Estado</th><th>Puntos</th></tr></thead><tbody id="scoreTable"></tbody></table></article>
+      <article class="card"><h2 class="title">TELEMETRÍA</h2><div class="stats"><div class="stat"><b id="completed">0/8</b><span>MISIONES</span></div><div class="stat"><b id="pendingValidation">0</b><span>POR VALIDAR</span></div><div class="stat"><b id="connectionCount">0</b><span>CONEXIONES</span></div><div class="stat"><b id="nextMission">M01</b><span>SIGUIENTE</span></div></div></article>
+      <article class="card"><h2 class="title">ESTADO DE MISIÓN</h2><p class="hint">Tus calificaciones permanecerán ocultas durante la Aceleratón. Aquí solo verás el estado de cada entrega.</p><table class="admin-table"><thead><tr><th>Misión</th><th>Estado</th></tr></thead><tbody id="scoreTable"></tbody></table></article>
     </aside>
   </div>
 </section>
@@ -209,27 +220,21 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <p id="missionInstruction"></p>
       </div>
     </div>
-
-    <div class="resource">
-      <div><div class="label">RECURSO DE MISIÓN</div><b id="resourceName">Material de trabajo</b></div>
-      <a id="resourceLink" href="#" target="_blank" rel="noopener">ABRIR RECURSO ↗</a>
-    </div>
-
-    <form id="deliveryForm">
+<form id="deliveryForm">
       <input id="activity" type="hidden"><input id="team" type="hidden">
       <div class="eyebrow">ENTREGA DE LA MISIÓN</div>
-      <p class="hint">Puedes entregar texto, un enlace, un archivo o una combinación de los tres.</p>
-      <div class="delivery-options">
+      <p class="hint">Para completar la misión debes adjuntar un archivo o incluir un enlace. Con uno de los dos es suficiente.</p>
+      <div class="delivery-requirement">✓ ENTREGA VÁLIDA: adjunta un archivo <b>o</b> pega un enlace. No necesitas completar ambos.</div><div class="delivery-options">
         <div class="full">
-          <label for="answer">Resultado / observaciones</label>
-          <textarea id="answer" placeholder="Describe brevemente el resultado final de tu equipo..."></textarea>
+          <label for="answer">Observaciones <span class="hint">(opcional)</span></label>
+          <textarea id="answer" placeholder="Puedes agregar una nota breve sobre la entrega..."></textarea>
         </div>
         <div>
-          <label for="deliveryUrl">Enlace al resultado</label>
+          <label for="deliveryUrl">Enlace al resultado <span class="hint">(opción 1)</span></label>
           <input id="deliveryUrl" type="url" placeholder="https://...">
         </div>
         <div>
-          <label for="deliveryFile">Archivo</label>
+          <label for="deliveryFile">Archivo <span class="hint">(opción 2)</span></label>
           <input id="deliveryFile" type="file">
         </div>
       </div>
@@ -245,7 +250,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
       <div>
         <div class="eyebrow">TRANSMISIÓN RECIBIDA</div>
         <h2>¡MISIÓN COMPLETADA!</h2>
-        <p>La entrega quedó registrada y recibió <b id="successPoints">20 puntos automáticos</b>. La evaluación del mentor queda pendiente.</p>
+        <p>La entrega quedó registrada correctamente. Estado: <b id="successPoints">validación del mentor pendiente</b>.</p>
         <div class="success-actions">
           <button class="btn" type="button" id="backToPassportSuccess">VOLVER AL CONTROL DE MISIÓN</button>
           <button class="btn alt" type="button" id="nextMissionBtn">IR A LA SIGUIENTE MISIÓN →</button>
@@ -262,23 +267,21 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
   <button class="btn alt" type="button" onclick="show('welcome')">← VOLVER</button></article>
 </section>
 
-<section id="adminScreen" class="screen">
-<article class="card"><div class="eyebrow">IMPACTA · CENTRO DE CONTROL</div><h2 class="title">CONTROL DE MISIÓN</h2>
-<div class="rocky-dialog"><img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky evaluador"><div><h3>VALIDACIÓN DE ENTREGAS</h3><p>Revisa la evidencia, confirma los puntos automáticos o ajusta la calificación y deja retroalimentación.</p></div></div>
-<div class="admin-grid"><div class="admin-kpi"><b id="admTeams">4</b><span>Equipos</span></div><div class="admin-kpi"><b id="admDeliveries">4</b><span>Entregas</span></div><div class="admin-kpi"><b id="admPending">3</b><span>Pendientes</span></div><div class="admin-kpi"><b>7</b><span>Conexiones</span></div></div>
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0"><div style="flex:1"><label>Estado</label><select id="adminFilter"><option value="all">Todas</option><option>Pendiente</option><option>Validada</option><option>Requiere ajuste</option></select></div><div style="flex:2"><label>Buscar equipo</label><input id="adminSearch" placeholder="Nombre del equipo"></div></div>
-<div id="deliveryList" class="delivery-list"></div><button class="btn alt" type="button" onclick="show('welcome')">← VOLVER</button></article>
-<article class="card"><div class="eyebrow">RANKING</div><h2 class="title">TABLERO DE TRIPULACIONES</h2><table class="ranking-list"><thead><tr><th>#</th><th>Equipo</th><th>Puntos</th><th>Misiones</th></tr></thead><tbody id="adminRanking"></tbody></table></article>
-</section>
 </main>
 
 <script>
-const API={registrarEquipo:"",guardarEntrega:"",consultarProgreso:"",ranking:"",registrarConexion:"",admin:""};
+const API_DEFAULT={registrarEquipo:"",guardarEntrega:"",consultarProgreso:"",ranking:"",registrarConexion:"",admin:""};
+function loadApiConfig(){
+  try{return {...API_DEFAULT,...JSON.parse(localStorage.getItem('idealab_api_config')||'{}')}}catch{return {...API_DEFAULT}}
+}
+let API=loadApiConfig();
+function saveApiConfig(cfg){API={...API_DEFAULT,...cfg};localStorage.setItem('idealab_api_config',JSON.stringify(API))}
+function apiReady(){return Boolean(API.registrarEquipo&&API.guardarEntrega)}
+
 const screens=[...document.querySelectorAll('.screen')];
 function show(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));window.scrollTo({top:0,behavior:'smooth'})}
 document.querySelector('#startBtn').addEventListener('click',()=>show('register'));
 document.querySelector('#continueBtn').addEventListener('click',()=>show('continueScreen'));
-document.querySelector('#adminBtn').addEventListener('click',()=>show('adminScreen'));
 
 let step=1,memberN=0,team={},selectedMission="M01";
 const stepEls=[...document.querySelectorAll('.step')];
@@ -297,50 +300,79 @@ function setStep(n){step=n;['regStep1','regStep2','regStep3'].forEach((id,i)=>do
 function validateVisible(){for(const f of document.querySelector('#regStep'+step).querySelectorAll('input,select,textarea'))if(f.required&&!f.checkValidity()){f.reportValidity();return false}return true}
 document.querySelector('#nextBtn').addEventListener('click',()=>{if(!validateVisible())return;if(step<3)return setStep(step+1);finishRegistration()});
 document.querySelector('#backBtn').addEventListener('click',()=>setStep(Math.max(1,step-1)));
-function collectMembers(){return [...document.querySelectorAll('.member')].map(b=>{const q=n=>b.querySelector(`[name="${n}"]`)?.value||'';return {ParticipanteID:(crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())),Nombre:q('nombre'),Rol:q('rol'),TipoDocumento:q('tipoDocumento'),Documento:q('documento'),Correo:q('correo'),Telefono:q('telefono'),Programa:q('programa'),Modalidad:q('modalidad'),Semestre:q('semestre'),AnoGraduacion:q('graduacion')}})}
-async function postJSON(url,payload){if(!url)return {demo:true};const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw new Error('No fue posible registrar la información ('+r.status+')');return r.json().catch(()=>({ok:true}))}
+function collectMembers(){return [...document.querySelectorAll('.member')].map(b=>{const q=n=>b.querySelector(`[name="${n}"]`)?.value||'';return {ParticipanteID:"",Nombre:q('nombre'),Rol:q('rol'),TipoDocumento:q('tipoDocumento'),Documento:q('documento'),Correo:q('correo'),Telefono:q('telefono'),Programa:q('programa'),Modalidad:q('modalidad'),Semestre:q('semestre'),AnoGraduacion:q('graduacion')}})}
+async function postJSON(url,payload){
+  if(!url)throw new Error('La conexión con IdeaLab aún no está configurada en este navegador.');
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),45000);
+  try{
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+    const text=await r.text();
+    let data={};
+    try{data=text?JSON.parse(text):{}}catch{data={raw:text}}
+    if(!r.ok)throw new Error(data?.error?.message||data?.message||('IdeaLab respondió '+r.status));
+    return data;
+  }catch(err){
+    if(err.name==='AbortError')throw new Error('La transmisión tardó demasiado. Intenta nuevamente.');
+    if(err instanceof TypeError)throw new Error('El navegador no pudo conectarse con IdeaLab. Puede ser un bloqueo CORS o de red.');
+    throw err;
+  }finally{clearTimeout(timer)}
+}
+function fileToBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]||'');reader.onerror=()=>reject(new Error('No fue posible leer el archivo.'));reader.readAsDataURL(file)})}
+
 async function finishRegistration(){
   const initiative=document.querySelector('#initiative').value.trim();
-  const exact=availableProjects().find(p=>normProject(p.NombreIniciativa)===normProject(initiative));
-  const existing=selectedExistingProject || exact || null;
-  const code=existing?existing.EquipoID:'IDEALAB-'+String(Date.now()).slice(-6);
   const newMembers=collectMembers();
-  team={
-    EquipoID:code,
+  const payload={
+    EquipoID:"",
     NombreIniciativa:initiative,
     Descripcion:document.querySelector('#description').value.trim(),
     Categoria:document.querySelector('#category').value,
     Sector:document.querySelector('#sector').value,
     ProcesoOrigen:document.querySelector('#origin').value,
     Estado:'Activo',
-    Participantes:newMembers,
-    ProyectoExistente:!!existing
+    Participantes:newMembers
   };
-  localStorage.setItem('idealab_team',JSON.stringify(team));
-  document.querySelector('#bpCode').textContent=code;
-  document.querySelector('#bpInitiative').textContent=initiative;
-  document.querySelector('#bpMembers').textContent=`${newMembers.length} tripulante${newMembers.length===1?'':'s'}${existing?' · añadido a proyecto existente':''}`;
-  document.querySelector('#bpCategory').textContent=team.Categoria;
-  document.querySelector('#bpSector').textContent=team.Sector;
-  hydrateTeam();
-  show('boardingScreen');
+  const btn=document.querySelector('#nextBtn');
+  const oldText=btn.textContent;
+  btn.disabled=true;btn.textContent='GENERANDO BOARDING PASS…';
+  document.querySelector('#regToast').textContent='Registrando tripulación en IdeaLab…';
   try{
-    await postJSON(API.registrarEquipo,{...team,Accion:existing?'AgregarParticipantes':'CrearEquipo'});
+    const result=await postJSON(API.registrarEquipo,payload);
+    const returnedParticipants=Array.isArray(result.Participantes)?result.Participantes:[];
+    const mergedMembers=newMembers.map((p,i)=>({...p,...(returnedParticipants[i]||{})}));
+    team={
+      ...payload,
+      EquipoID:result.EquipoID||payload.EquipoID,
+      ProyectoExistente:Boolean(result.ProyectoExistente),
+      Participantes:mergedMembers
+    };
+    if(!team.EquipoID)throw new Error('IdeaLab no devolvió el código del equipo.');
+    localStorage.setItem('idealab_team',JSON.stringify(team));
+    localStorage.removeItem('idealab_progress');
+    activities.forEach((a,i)=>a.state=i===0?'open':'locked');
+    document.querySelector('#bpCode').textContent=team.EquipoID;
+    document.querySelector('#bpInitiative').textContent=initiative;
+    document.querySelector('#bpMembers').textContent=`${mergedMembers.length} tripulante${mergedMembers.length===1?'':'s'}${team.ProyectoExistente?' · añadido a proyecto existente':''}`;
+    document.querySelector('#bpCategory').textContent=team.Categoria;
+    document.querySelector('#bpSector').textContent=team.Sector;
+    document.querySelector('#regToast').textContent='';
+    hydrateTeam();refreshParticipantQR();renderMissions();show('boardingScreen');
   }catch(e){
     document.querySelector('#regToast').textContent=e.message;
-  }
+  }finally{btn.disabled=false;btn.textContent=oldText}
 }
 document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();renderMissions();show('passport')});
 
 const activities=[
-{id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Construyan su Canvas Go-to-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",resource:"Canvas Go-to-Market",url:"#",points:20,state:"open"},
-{id:"M02",name:"Coordenadas de lanzamiento",rocky:"rocky_01_cool.png",instruction:"Definan con precisión a quién quieren llegar y por qué esa persona debería elegirlos. Construyan el Perfil de Cliente y su Propuesta de Valor.",resource:"Perfil de Cliente + Propuesta de Valor",url:"#",points:20,state:"locked"},
-{id:"M03",name:"Ruta de entrada",rocky:"rocky_03_silencio.png",instruction:"Diseñen la ruta inicial para entrar al mercado: mercado objetivo, posicionamiento, canales y primeras acciones comerciales.",resource:"Plan Go-to-Market inicial",url:"#",points:20,state:"locked"},
-{id:"M04",name:"Sistema de comunicación",rocky:"rocky_06_comunicacion.png",instruction:"Construyan una herramienta comercial funcional que les permita presentar su propuesta y captar interés real: landing, página de ventas, catálogo o formulario de leads.",resource:"Herramienta comercial",url:"#",points:20,state:"locked"},
-{id:"M05",name:"La ruta del cliente",rocky:"rocky_02_trabajando.png",instruction:"Mapeen el recorrido de su cliente y definan los momentos clave que lo llevan desde el descubrimiento hasta la conversión.",resource:"Customer Journey + mapa de conversión",url:"#",points:20,state:"locked"},
-{id:"M06",name:"Radar de misión",rocky:"rocky_07_metricas.png",instruction:"Definan qué señales demostrarán que su estrategia funciona. Seleccionen indicadores de impacto y tracción y establezcan metas concretas.",resource:"Indicadores + metas",url:"#",points:20,state:"locked"},
-{id:"M07",name:"Código de transmisión",rocky:"rocky_06_comunicacion.png",instruction:"Construyan un pitch comercial breve y claro. Debe explicar el valor de su iniciativa y cerrar con un llamado a la acción concreto.",resource:"Pitch comercial + CTA",url:"#",points:20,state:"locked"},
-{id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",resource:"Registro de acción comercial",url:"#",points:20,state:"locked"}
+{id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Construyan su Canvas Go-to-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",resource:"Canvas Go-to-Market",url:"#",points:10,state:"open"},
+{id:"M02",name:"Coordenadas de lanzamiento",rocky:"rocky_01_cool.png",instruction:"Definan con precisión a quién quieren llegar y por qué esa persona debería elegirlos. Construyan el Perfil de Cliente y su Propuesta de Valor.",resource:"Perfil de Cliente + Propuesta de Valor",url:"#",points:15,state:"locked"},
+{id:"M03",name:"Ruta de entrada",rocky:"rocky_03_silencio.png",instruction:"Diseñen la ruta inicial para entrar al mercado: mercado objetivo, posicionamiento, canales y primeras acciones comerciales.",resource:"Plan Go-to-Market inicial",url:"#",points:10,state:"locked"},
+{id:"M04",name:"Sistema de comunicación",rocky:"rocky_06_comunicacion.png",instruction:"Construyan una herramienta comercial funcional que les permita presentar su propuesta y captar interés real: landing, página de ventas, catálogo o formulario de leads.",resource:"Herramienta comercial",url:"#",points:15,state:"locked"},
+{id:"M05",name:"La ruta del cliente",rocky:"rocky_02_trabajando.png",instruction:"Mapeen el recorrido de su cliente y definan los momentos clave que lo llevan desde el descubrimiento hasta la conversión.",resource:"Customer Journey + mapa de conversión",url:"#",points:15,state:"locked"},
+{id:"M06",name:"Radar de misión",rocky:"rocky_07_metricas.png",instruction:"Definan qué señales demostrarán que su estrategia funciona. Seleccionen indicadores de impacto y tracción y establezcan metas concretas.",resource:"Indicadores + metas",url:"#",points:10,state:"locked"},
+{id:"M07",name:"Código de transmisión",rocky:"rocky_06_comunicacion.png",instruction:"Construyan un pitch comercial breve y claro. Debe explicar el valor de su iniciativa y cerrar con un llamado a la acción concreto.",resource:"Pitch comercial + CTA",url:"#",points:10,state:"locked"},
+{id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",resource:"Registro de acción comercial",url:"#",points:15,state:"locked"}
 ];
 function hydrateTeam(){if(!team.EquipoID){try{team=JSON.parse(localStorage.getItem('idealab_team')||'{}')}catch{}}if(team.EquipoID){document.querySelector('#dashInitiative').textContent=team.NombreIniciativa;document.querySelector('#dashCode').textContent=team.EquipoID;document.querySelector('#team').value=team.EquipoID}}
 
@@ -352,10 +384,8 @@ function populateMission(id){
   document.querySelector('#missionTitle').textContent=a.name.toUpperCase();
   document.querySelector('#missionRocky').src='assets/rocky/'+a.rocky;
   document.querySelector('#missionInstruction').textContent=a.instruction;
-  document.querySelector('#resourceName').textContent=a.resource;
-  document.querySelector('#resourceLink').href=a.url;
   document.querySelector('#activity').value=a.id;
-  document.querySelector('#missionPoints').textContent='+'+a.points+' PUNTOS AL ENTREGAR';
+  document.querySelector('#missionPoints').textContent='ENTREGA SUJETA A VALIDACIÓN';
   document.querySelector('#deliveryForm').classList.toggle('hidden',a.state==='done');
   document.querySelector('#missionSuccess').classList.add('hidden');
   document.querySelector('#missionScreenTeam').textContent=(team.NombreIniciativa||'')+' · '+(team.EquipoID||'');
@@ -375,7 +405,7 @@ function renderMissions(){
     const row=document.createElement('div');
     row.className='mission '+(a.id===selectedMission?'selected':'');
     row.setAttribute('data-activity',a.id);
-    row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div><h4>${a.name}</h4><p>${a.points} puntos automáticos</p></div><span class="status ${a.state}">${a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA'}</span>`;
+    row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div><h4>${a.name}</h4><p>${a.state==='done'?'Pendiente de validación':a.state==='open'?'Lista para trabajar':'Completa la misión anterior'}</p></div><span class="status ${a.state}">${a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA'}</span>`;
     if(a.state!=='locked'){
       row.setAttribute('role','button');
       row.setAttribute('tabindex','0');
@@ -386,14 +416,12 @@ function renderMissions(){
   });
   const done=activities.filter(x=>x.state==='done');
   const pct=Math.round(done.length/activities.length*100);
-  const xp=done.reduce((sum,x)=>sum+x.points,0);
   const next=activities.find(x=>x.state==='open');
   document.querySelector('#pct').textContent=pct+'%';
   document.querySelector('#bar').style.width=pct+'%';
   document.querySelector('#completed').textContent=`${done.length}/${activities.length}`;
-  document.querySelector('#xp').textContent=xp;
-  document.querySelector('#nextMission').textContent=next?next.id:'COMPLETA';
-  document.querySelector('#scoreTable').innerHTML=activities.map(a=>`<tr><td>${a.id}</td><td>${a.state==='done'?'Entregada':a.state==='open'?'Disponible':'Bloqueada'}</td><td>${a.state==='done'?a.points:'-'}</td></tr>`).join('');
+    document.querySelector('#nextMission').textContent=next?next.id:'COMPLETA';
+  document.querySelector('#scoreTable').innerHTML=activities.map(a=>`<tr><td>${a.id}</td><td>${a.state==='done'?'Pendiente de validación':a.state==='open'?'Disponible':'Bloqueada'}</td></tr>`).join('');
 }
 try{
   const p=JSON.parse(localStorage.getItem('idealab_progress')||'[]');
@@ -411,12 +439,25 @@ document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
   const answer=document.querySelector('#answer').value.trim();
   const url=document.querySelector('#deliveryUrl').value.trim();
   const file=document.querySelector('#deliveryFile').files[0];
-  if(!answer&&!url&&!file){document.querySelector('#toast').textContent='Incluye al menos una evidencia: texto, enlace o archivo.';return}
-  const payload={EquipoID:team.EquipoID,ActividadID:a.id,Respuesta:answer,Enlace:url,Estado:'Entregada',PuntosObtenidos:a.points,EstadoEvaluacion:'Pendiente',FechaHoraEntrega:new Date().toISOString()};
+  if(!url&&!file){document.querySelector('#toast').textContent='Para completar la misión debes adjuntar un archivo o incluir un enlace.';return}
+  if(file && file.size>5*1024*1024){document.querySelector('#toast').textContent='El archivo supera 5 MB. Usa un enlace o carga una versión más liviana.';return}
+  const submitBtn=e.submitter||document.querySelector('#deliveryForm button[type="submit"]');
+  const oldText=submitBtn?.textContent||'';
   try{
-    document.querySelector('#toast').textContent='Transmitiendo entrega…';
-    await postJSON(API.guardarEntrega,payload);
-    syncParticipantDelivery(payload,file?.name||'');
+    if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='TRANSMITIENDO…'}
+    document.querySelector('#toast').textContent=file?'Preparando archivo y transmitiendo…':'Transmitiendo entrega…';
+    const ArchivoBase64=file?await fileToBase64(file):'';
+    const payload={
+      EquipoID:team.EquipoID,
+      ActividadID:a.id,
+      Respuesta:answer,
+      Enlace:url,
+      NombreArchivo:file?.name||'',
+      ArchivoBase64,
+      FechaHoraEntrega:new Date().toISOString()
+    };
+    const result=await postJSON(API.guardarEntrega,payload);
+    if(result.ok===false)throw new Error(result.error||'No fue posible guardar la entrega.');
     a.state='done';
     const next=activities[activities.indexOf(a)+1];
     if(next)next.state='open';
@@ -426,24 +467,17 @@ document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
     document.querySelector('#deliveryFile').value='';
     renderMissions();
     document.querySelector('#deliveryForm').classList.add('hidden');
-    document.querySelector('#successPoints').textContent=a.points+' puntos automáticos';
+    document.querySelector('#successPoints').textContent='validación del mentor pendiente';
     document.querySelector('#missionSuccess').classList.remove('hidden');
     const nextBtn=document.querySelector('#nextMissionBtn');
-    if(next){
-      nextBtn.classList.remove('hidden');
-      nextBtn.textContent='IR A '+next.id+' →';
-      nextBtn.onclick=()=>openMission(next.id);
-    }else{
-      nextBtn.classList.add('hidden');
-    }
+    if(next){nextBtn.classList.remove('hidden');nextBtn.textContent='IR A '+next.id+' →';nextBtn.onclick=()=>openMission(next.id)}else{nextBtn.classList.add('hidden')}
     document.querySelector('#toast').textContent='';
     document.querySelector('#missionScreenProgress').textContent=activities.filter(x=>x.state==='done').length+'/8 MISIONES';
     window.scrollTo({top:0,behavior:'smooth'});
   }catch(err){
     document.querySelector('#toast').textContent=err.message;
-  }
+  }finally{if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=oldText}}
 });
-
 
 document.querySelector('#backToPassportTop').addEventListener('click',()=>{renderMissions();show('passport')});
 document.querySelector('#backToPassportSuccess').addEventListener('click',()=>{renderMissions();show('passport')});
@@ -454,20 +488,20 @@ document.querySelector('#recoverSearch').addEventListener('click',()=>{const ema
 
 const DEMO_KEY='idealab_demo_deliveries_v3';
 const demoSeed=[
-{id:'D001',EquipoID:'IDEALAB-101',Equipo:'NovaLab',ActividadID:'M03',Mision:'Ruta de entrada',Respuesta:'Definimos entrada B2B mediante aliados y venta consultiva.',Enlace:'https://example.com',Archivo:'Plan_GTM_NovaLab.pdf',PuntosAutomaticos:20,PuntosValidados:null,EstadoEvaluacion:'Pendiente',Retroalimentacion:'',Fecha:'06/10/2026 10:42'},
-{id:'D002',EquipoID:'IDEALAB-202',Equipo:'EcoLoop',ActividadID:'M02',Mision:'Coordenadas de lanzamiento',Respuesta:'Priorizamos empresas medianas con metas de circularidad.',Enlace:'',Archivo:'Cliente_Propuesta_EcoLoop.pdf',PuntosAutomaticos:20,PuntosValidados:18,EstadoEvaluacion:'Validada',Retroalimentacion:'Buen foco. Falta precisar el decisor de compra.',Fecha:'06/10/2026 11:15'},
-{id:'D003',EquipoID:'IDEALAB-303',Equipo:'BioRuta',ActividadID:'M04',Mision:'Sistema de comunicación',Respuesta:'Creamos una landing con formulario para leads.',Enlace:'https://example.com',Archivo:'',PuntosAutomaticos:20,PuntosValidados:null,EstadoEvaluacion:'Pendiente',Retroalimentacion:'',Fecha:'06/10/2026 12:03'}];
+{id:'D001',EquipoID:'IDEALAB-101',Equipo:'NovaLab',ActividadID:'M03',Mision:'Ruta de entrada',Respuesta:'Definimos entrada B2B mediante aliados y venta consultiva.',Enlace:'https://example.com',Archivo:'Plan_GTM_NovaLab.pdf',PuntosProvisionales:10,PuntosValidados:null,EstadoEvaluacion:'Pendiente',Retroalimentacion:'',Fecha:'06/10/2026 10:42'},
+{id:'D002',EquipoID:'IDEALAB-202',Equipo:'EcoLoop',ActividadID:'M02',Mision:'Coordenadas de lanzamiento',Respuesta:'Priorizamos empresas medianas con metas de circularidad.',Enlace:'',Archivo:'Cliente_Propuesta_EcoLoop.pdf',PuntosProvisionales:15,PuntosValidados:18,EstadoEvaluacion:'Validada',Retroalimentacion:'Buen foco. Falta precisar el decisor de compra.',Fecha:'06/10/2026 11:15'},
+{id:'D003',EquipoID:'IDEALAB-303',Equipo:'BioRuta',ActividadID:'M04',Mision:'Sistema de comunicación',Respuesta:'Creamos una landing con formulario para leads.',Enlace:'https://example.com',Archivo:'',PuntosProvisionales:15,PuntosValidados:null,EstadoEvaluacion:'Pendiente',Retroalimentacion:'',Fecha:'06/10/2026 12:03'}];
 function loadD(){try{return JSON.parse(localStorage.getItem(DEMO_KEY))||[...demoSeed]}catch{return [...demoSeed]}}
 let demoDeliveries=loadD();function saveD(){localStorage.setItem(DEMO_KEY,JSON.stringify(demoDeliveries))}if(!localStorage.getItem(DEMO_KEY))saveD();
-function effectivePoints(d){return d.PuntosValidados==null?d.PuntosAutomaticos:Number(d.PuntosValidados)}
+function effectivePoints(d){return d.PuntosValidados==null?d.PuntosProvisionales:Number(d.PuntosValidados)}
 function sclass(s){return s==='Validada'?'validated':s==='Requiere ajuste'?'adjust':'pending'}
-function syncParticipantDelivery(p,fileName){const a=activities.find(x=>x.id===p.ActividadID);const old=demoDeliveries.find(d=>d.EquipoID===p.EquipoID&&d.ActividadID===p.ActividadID);const d={id:old?.id||'D'+Date.now(),EquipoID:p.EquipoID,Equipo:team.NombreIniciativa||p.EquipoID,ActividadID:p.ActividadID,Mision:a?.name||p.ActividadID,Respuesta:p.Respuesta||'',Enlace:p.Enlace||'',Archivo:fileName||'',PuntosAutomaticos:a?.points||20,PuntosValidados:old?.PuntosValidados??null,EstadoEvaluacion:old?.EstadoEvaluacion||'Pendiente',Retroalimentacion:old?.Retroalimentacion||'',Fecha:new Date().toLocaleString('es-CO')};old?Object.assign(old,d):demoDeliveries.unshift(d);saveD();renderAdmin()}
-function renderAdmin(){const list=document.querySelector('#deliveryList');if(!list)return;const f=document.querySelector('#adminFilter')?.value||'all',q=(document.querySelector('#adminSearch')?.value||'').toLowerCase();const rows=demoDeliveries.filter(d=>(f==='all'||d.EstadoEvaluacion===f)&&(!q||d.Equipo.toLowerCase().includes(q)));list.innerHTML=rows.map(d=>`<div class="delivery-card ${sclass(d.EstadoEvaluacion)}"><div class="delivery-head"><div><div class="mission-kicker">${d.ActividadID} · ${d.Mision}</div><h3>${d.Equipo}</h3><div class="delivery-meta">${d.Fecha} · ${d.EquipoID}</div></div><span class="badge ${sclass(d.EstadoEvaluacion)}">${d.EstadoEvaluacion.toUpperCase()}</span></div><div class="evidence-box"><div class="label">EVIDENCIA</div>${d.Respuesta?`<p>${d.Respuesta}</p>`:''}${d.Enlace?`<p>🔗 <a href="${d.Enlace}" target="_blank">ABRIR ENLACE</a></p>`:''}${d.Archivo?`<p>📎 <b>${d.Archivo}</b> <button class="btn alt" type="button" style="padding:6px;margin:0" onclick="alert('Vista previa demo: ${d.Archivo}\\nEn producción abrirá el archivo de SharePoint.')">VER ARCHIVO</button></p>`:''}</div><div class="grade-panel"><div><label>Puntos automáticos</label><input value="${d.PuntosAutomaticos}" readonly></div><div><label>Calificación final</label><input id="g_${d.id}" type="number" min="0" max="${d.PuntosAutomaticos}" value="${d.PuntosValidados??d.PuntosAutomaticos}"></div><div class="full"><label>Retroalimentación</label><textarea id="f_${d.id}">${d.Retroalimentacion||''}</textarea></div><div class="full grade-actions"><button class="btn" type="button" onclick="grade('${d.id}','Validada')">CONFIRMAR EVALUACIÓN</button><button class="btn alt" type="button" onclick="grade('${d.id}','Requiere ajuste')">REQUIERE AJUSTE</button></div></div>${d.Retroalimentacion?`<div class="feedback"><b>Retroalimentación:</b> ${d.Retroalimentacion}</div>`:''}</div>`).join('')||'<p class="hint">No hay entregas.</p>';document.querySelector('#admDeliveries').textContent=demoDeliveries.length;document.querySelector('#admPending').textContent=demoDeliveries.filter(d=>d.EstadoEvaluacion==='Pendiente').length;ranking()}
-function grade(id,status){const d=demoDeliveries.find(x=>x.id===id);if(!d)return;d.PuntosValidados=Math.max(0,Math.min(d.PuntosAutomaticos,Number(document.querySelector('#g_'+id).value)));d.EstadoEvaluacion=status;d.Retroalimentacion=document.querySelector('#f_'+id).value.trim();d.EvaluadoPor='Mentor IdeaLab';d.FechaEvaluacion=new Date().toLocaleString('es-CO');saveD();renderAdmin();refreshScore()}
+function syncParticipantDelivery(p,fileName){const a=activities.find(x=>x.id===p.ActividadID);const old=demoDeliveries.find(d=>d.EquipoID===p.EquipoID&&d.ActividadID===p.ActividadID);const d={id:old?.id||'D'+Date.now(),EquipoID:p.EquipoID,Equipo:team.NombreIniciativa||p.EquipoID,ActividadID:p.ActividadID,Mision:a?.name||p.ActividadID,Respuesta:p.Respuesta||'',Enlace:p.Enlace||'',Archivo:fileName||'',PuntosProvisionales:a?.points||10,PuntosValidados:old?.PuntosValidados??null,EstadoEvaluacion:old?.EstadoEvaluacion||'Pendiente',Retroalimentacion:old?.Retroalimentacion||'',Fecha:new Date().toLocaleString('es-CO')};old?Object.assign(old,d):demoDeliveries.unshift(d);saveD();renderAdmin()}
+function renderAdmin(){const list=document.querySelector('#deliveryList');if(!list)return;const f=document.querySelector('#adminFilter')?.value||'all',q=(document.querySelector('#adminSearch')?.value||'').toLowerCase();const rows=demoDeliveries.filter(d=>(f==='all'||d.EstadoEvaluacion===f)&&(!q||d.Equipo.toLowerCase().includes(q)));list.innerHTML=rows.map(d=>`<div class="delivery-card ${sclass(d.EstadoEvaluacion)}"><div class="delivery-head"><div><div class="mission-kicker">${d.ActividadID} · ${d.Mision}</div><h3>${d.Equipo}</h3><div class="delivery-meta">${d.Fecha} · ${d.EquipoID}</div></div><span class="badge ${sclass(d.EstadoEvaluacion)}">${d.EstadoEvaluacion.toUpperCase()}</span></div><div class="evidence-box"><div class="label">EVIDENCIA</div>${d.Respuesta?`<p>${d.Respuesta}</p>`:''}${d.Enlace?`<p>🔗 <a href="${d.Enlace}" target="_blank">ABRIR ENLACE</a></p>`:''}${d.Archivo?`<p>📎 <b>${d.Archivo}</b> <button class="btn alt" type="button" style="padding:6px;margin:0" onclick="alert('Vista previa demo: ${d.Archivo}\\nEn producción abrirá el archivo de SharePoint.')">VER ARCHIVO</button></p>`:''}</div><div class="grade-panel"><div><label>Puntos automáticos</label><input value="${d.PuntosProvisionales}" readonly></div><div><label>Calificación final</label><input id="g_${d.id}" type="number" min="0" max="${d.PuntosProvisionales}" value="${d.PuntosValidados??d.PuntosProvisionales}"></div><div class="full"><label>Retroalimentación</label><textarea id="f_${d.id}">${d.Retroalimentacion||''}</textarea></div><div class="full grade-actions"><button class="btn" type="button" onclick="grade('${d.id}','Validada')">CONFIRMAR EVALUACIÓN</button><button class="btn alt" type="button" onclick="grade('${d.id}','Requiere ajuste')">REQUIERE AJUSTE</button></div></div>${d.Retroalimentacion?`<div class="feedback"><b>Retroalimentación:</b> ${d.Retroalimentacion}</div>`:''}</div>`).join('')||'<p class="hint">No hay entregas.</p>';document.querySelector('#admDeliveries').textContent=demoDeliveries.length;document.querySelector('#admPending').textContent=demoDeliveries.filter(d=>d.EstadoEvaluacion==='Pendiente').length;ranking()}
+function grade(id,status){const d=demoDeliveries.find(x=>x.id===id);if(!d)return;d.PuntosValidados=Math.max(0,Math.min(d.PuntosProvisionales,Number(document.querySelector('#g_'+id).value)));d.EstadoEvaluacion=status;d.Retroalimentacion=document.querySelector('#f_'+id).value.trim();d.EvaluadoPor='Mentor IdeaLab';d.FechaEvaluacion=new Date().toLocaleString('es-CO');saveD();renderAdmin();refreshScore()}
 function ranking(){const b=document.querySelector('#adminRanking');if(!b)return;const r=[{n:'NovaLab',p:58,m:3},{n:'EcoLoop',p:54,m:3},{n:'BioRuta',p:40,m:2}];if(team.EquipoID){const o=demoDeliveries.filter(d=>d.EquipoID===team.EquipoID);r.push({n:team.NombreIniciativa||'Tu equipo',p:o.reduce((s,d)=>s+effectivePoints(d),0),m:o.length})}r.sort((a,b)=>b.p-a.p);b.innerHTML=r.map((x,i)=>`<tr><td>${i+1}</td><td>${x.n}</td><td>${x.p}</td><td>${x.m}/8</td></tr>`).join('')}
-function refreshScore(){if(!team.EquipoID)return;const o=demoDeliveries.filter(d=>d.EquipoID===team.EquipoID);const xp=document.querySelector('#xp');if(xp)xp.textContent=o.reduce((s,d)=>s+effectivePoints(d),0);ranking()}
+function refreshScore(){refreshParticipantTelemetry();}
 document.querySelector('#adminFilter')?.addEventListener('change',renderAdmin);document.querySelector('#adminSearch')?.addEventListener('input',renderAdmin);
-const showBase=show;show=function(id){showBase(id);if(id==='adminScreen')renderAdmin();if(id==='passport')refreshScore()}
+const showBase=show;show=function(id){showBase(id);if(id==='passport')refreshScore()}
 renderAdmin();
 
 
@@ -478,11 +512,7 @@ renderAdmin();
 
 
 let selectedExistingProject=null;
-const BASE_DEMO_PROJECTS=[
- {EquipoID:'IDEALAB-409740',NombreIniciativa:'Super Floral',Categoria:'Tradicional',Sector:'Agropecuario y agroindustria',Descripcion:'Marketplace B2B para conectar floristas con proveedores.',miembros:['Tripulación registrada']},
- {EquipoID:'IDEALAB-101',NombreIniciativa:'NovaLab',Categoria:'Innovación',Sector:'Tecnología y software',Descripcion:'Solución tecnológica para validación de mercado.',miembros:['Laura Gómez','Andrés Ruiz']},
- {EquipoID:'IDEALAB-202',NombreIniciativa:'EcoLoop',Categoria:'Innovación',Sector:'Otro',Descripcion:'Solución de economía circular.',miembros:['María Torres']}
-];
+const BASE_DEMO_PROJECTS=[];
 function normProject(v){return (v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function availableProjects(){
   const list=[...BASE_DEMO_PROJECTS];
@@ -531,6 +561,64 @@ function joinExistingProject(p){
 document.querySelector('#initiative').addEventListener('input',checkExistingProject);
 document.querySelector('#initiative').addEventListener('change',checkExistingProject);
 
+
+const CONNECTION_KEY='idealab_connections_v1';
+function connectionUrlForParticipant(p){
+  const code=p?.CodigoQR||'';
+  if(!code)return '';
+  return new URL('conectar.html?c='+encodeURIComponent(code),location.href).href;
+}
+function refreshParticipantQR(){
+  const sel=document.querySelector('#qrParticipant');
+  if(!sel||!team.Participantes)return;
+  const current=sel.value;
+  sel.innerHTML=team.Participantes.map((p,i)=>`<option value="${i}">${p.Nombre}</option>`).join('');
+  if(current && team.Participantes[Number(current)])sel.value=current;
+  const p=team.Participantes[Number(sel.value)||0];
+  if(!p)return;
+  const url=connectionUrlForParticipant(p);
+  const img=document.querySelector('#participantQR');
+  const open=document.querySelector('#openConnectionPage');
+  if(url){img.src='https://api.qrserver.com/v1/create-qr-code/?size=240x240&data='+encodeURIComponent(url);open.href=url;open.classList.remove('hidden')}
+  else{img.removeAttribute('src');open.removeAttribute('href');open.classList.add('hidden')}
+  document.querySelector('#qrOwner').textContent=p.Nombre;
+  document.querySelector('#qrOwnerMeta').textContent=url?team.NombreIniciativa+' · QR personal':'Código QR pendiente de sincronización';
+}
+function participantConnectionCount(){
+  try{
+    const arr=JSON.parse(localStorage.getItem(CONNECTION_KEY)||'[]');
+    return arr.filter(x=>x.EquipoID===team.EquipoID).length;
+  }catch{return 0}
+}
+function refreshParticipantTelemetry(){
+  const done=activities.filter(x=>x.state==='done').length;
+  const pending=demoDeliveries.filter(d=>d.EquipoID===team.EquipoID && d.EstadoEvaluacion==='Pendiente').length;
+  const p=document.querySelector('#pendingValidation'); if(p)p.textContent=pending;
+  const c=document.querySelector('#connectionCount'); if(c)c.textContent=participantConnectionCount();
+}
+document.querySelector('#qrParticipant')?.addEventListener('change',refreshParticipantQR);
+
 </script>
+
+<div id="apiSetup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="max-width:760px;width:100%;background:#111;border:1px solid #ffd000;border-radius:18px;padding:24px;color:#fff">
+    <div class="eyebrow">CONFIGURACIÓN LOCAL DE PRUEBA</div>
+    <h2 style="margin-top:8px">Conectar este navegador</h2>
+    <p class="hint">Las URLs se guardan solo en este navegador. No quedan escritas en el HTML ni en GitHub.</p>
+    <label>Registrar Equipo</label><input id="cfgRegistrar" type="password" autocomplete="off" placeholder="URL del flujo">
+    <label>Guardar Entrega</label><input id="cfgEntrega" type="password" autocomplete="off" placeholder="URL del flujo">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><button class="btn" id="cfgSave" type="button">GUARDAR EN ESTE NAVEGADOR</button><button class="btn alt" id="cfgClose" type="button">CERRAR</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  const params=new URLSearchParams(location.search);
+  const box=document.getElementById('apiSetup');
+  if(params.get('config')==='1'){box.style.display='flex';document.getElementById('cfgRegistrar').value=API.registrarEquipo||'';document.getElementById('cfgEntrega').value=API.guardarEntrega||''}
+  document.getElementById('cfgClose')?.addEventListener('click',()=>box.style.display='none');
+  document.getElementById('cfgSave')?.addEventListener('click',()=>{saveApiConfig({registrarEquipo:document.getElementById('cfgRegistrar').value.trim(),guardarEntrega:document.getElementById('cfgEntrega').value.trim()});box.style.display='none';alert('Conexión guardada solo en este navegador.');});
+})();
+</script>
+
 </body>
 </html>
