@@ -96,6 +96,13 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,s
 .evidence-open-btn:disabled{opacity:.6;cursor:wait}
 .evidence-name{font-size:12px;color:var(--muted);word-break:break-word}
 
+
+.evaluation-history{
+  margin-top:12px;
+  border-color:rgba(255,201,74,.45);
+  background:rgba(255,201,74,.035);
+}
+
 </style>
 </head>
 <body>
@@ -448,8 +455,9 @@ function renderDeliveries(){
     const m=MISSIONS[d.ActividadID]||{name:d.ActividadID,max:num(d.PuntosObtenidos)||0,criteria:[]};
     const team=teamById(d.EquipoID);
     const status=d.EstadoEvaluacion||'Pendiente';
-    const current=d.PuntosValidados==null?'':num(d.PuntosValidados);
-    const needsReason=status==='Validada';
+    const accumulated=d.PuntosValidados==null?0:num(d.PuntosValidados);
+    const previousEvaluator=String(d.Evaluador||'').trim();
+    const previousFeedback=String(d.Retroalimentacion||'').trim();
     return `<article class="delivery ${status.toLowerCase()}">
       <div class="delivery-head">
         <div><div class="eyebrow">${d.ActividadID} · ${esc(m.name)}</div><h3>${esc(team.NombreIniciativa||d.EquipoID)}</h3><div class="meta">${esc(d.EquipoID)} · ${fmtDate(d.FechaHoraEntrega)}</div></div>
@@ -459,15 +467,20 @@ function renderDeliveries(){
       <div class="rubric">
         <b>CRITERIOS DE REFERENCIA</b><br>
         ${m.criteria.map(x=>'• '+esc(x)).join('<br>')}
-        <div class="score-instruction">Evalúa la entrega de forma integral con estos criterios y asigna <b>un único puntaje total entre 0 y ${m.max} puntos</b>.</div>
-        <span class="mini"><b>Escala orientadora para esta misión (${m.max} puntos):</b> ${scoringGuide(m.max)}.</span>
+        <div class="score-instruction">Cada mentor asigna <b>su propia calificación entre 0 y ${m.max} puntos</b>. Esta calificación se <b>SUMA</b> al acumulado de la iniciativa y no reemplaza evaluaciones anteriores.</div>
+        <span class="mini"><b>Escala orientadora para esta misión (${m.max} puntos por mentor):</b> ${scoringGuide(m.max)}.</span>
       </div>
+      ${(previousEvaluator||previousFeedback||accumulated>0)?`<div class="rubric evaluation-history">
+        <b>EVALUACIONES REGISTRADAS</b><br>
+        <span class="mini"><b>Puntaje acumulado de mentores:</b> ${accumulated.toFixed(1)} puntos</span>
+        ${previousEvaluator?`<br><span class="mini"><b>Mentor(es):</b> ${esc(previousEvaluator)}</span>`:''}
+        ${previousFeedback?`<br><span class="mini"><b>Historial / retroalimentación:</b><br>${esc(previousFeedback).replace(/\n/g,'<br>')}</span>`:''}
+      </div>`:''}
       <div class="eval">
-        <div><label>Puntaje máximo de la misión</label><input value="${m.max}" readonly></div>
-        <div><label>Puntaje a asignar · 0 a ${m.max}</label><input id="score_${i}" type="number" min="0" max="${m.max}" step=".5" value="${current}"><div class="mini">Ingresa el puntaje total de esta misión, no un puntaje por cada criterio.</div></div>
-        <div class="full"><label>Retroalimentación</label><textarea id="feed_${i}">${esc(d.Retroalimentacion||'')}</textarea></div>
-        <div class="full ${needsReason?'':'hidden'}" id="reasonWrap_${i}"><label>Motivo del cambio ${needsReason?'(requerido si modificas una evaluación validada)':''}</label><textarea id="reason_${i}">${esc(d.MotivoCambio||'')}</textarea></div>
-        <div class="full actions"><button class="btn" onclick="saveEvaluation(${i})" type="button">${status==='Validada'?'ACTUALIZAR EVALUACIÓN':'VALIDAR EVALUACIÓN'} →</button></div>
+        <div><label>Puntaje máximo por mentor</label><input value="${m.max}" readonly></div>
+        <div><label>Tu calificación · 0 a ${m.max}</label><input id="score_${i}" type="number" min="0" max="${m.max}" step=".5" value="" placeholder="Ej. ${m.max}"><div class="mini">Este valor se sumará al puntaje acumulado existente (${accumulated.toFixed(1)}).</div></div>
+        <div class="full"><label>Tu retroalimentación</label><textarea id="feed_${i}" placeholder="Escribe tu retroalimentación como mentor..."></textarea></div>
+        <div class="full actions"><button class="btn" onclick="saveEvaluation(${i})" type="button">SUMAR MI EVALUACIÓN →</button></div>
         <div class="full toast" id="toast_${i}"></div>
       </div>
     </article>`;
@@ -476,17 +489,40 @@ function renderDeliveries(){
 }
 async function saveEvaluation(i){
   const d=window.filteredRows[i]; if(!d)return;
-  const m=MISSIONS[d.ActividadID]; const score=num($('#score_'+i).value); const feed=$('#feed_'+i).value.trim(); const reason=$('#reason_'+i)?.value.trim()||'';
+  const m=MISSIONS[d.ActividadID];
+  const scoreEl=$('#score_'+i);
+  const raw=String(scoreEl.value||'').trim();
+  const score=Number(raw);
+  const feed=$('#feed_'+i).value.trim();
   const toast=$('#toast_'+i);
-  if(score<0||score>m.max){toast.textContent=`El puntaje debe estar entre 0 y ${m.max}.`;return}
-  const old=d.PuntosValidados==null?null:num(d.PuntosValidados);
-  if(d.EstadoEvaluacion==='Validada' && old!==score && !reason){toast.textContent='Escribe el motivo del cambio de puntaje.';return}
-  toast.textContent='Guardando evaluación…';
+
+  if(raw==='' || !Number.isFinite(score)){
+    toast.textContent='Ingresa tu calificación antes de guardar.';
+    scoreEl.focus();
+    return;
+  }
+  if(score<0||score>m.max){
+    toast.textContent=`Tu calificación debe estar entre 0 y ${m.max}.`;
+    return;
+  }
+
+  toast.textContent='Sumando evaluación…';
   try{
-    await post({Accion:'guardar_evaluacion',ClaveAcceso:mentorKey,EquipoID:d.EquipoID,ActividadID:d.ActividadID,PuntosValidados:score,Evaluador:mentorName,Retroalimentacion:feed,MotivoCambio:reason});
-    toast.textContent='✅ Evaluación guardada.';
+    await post({
+      Accion:'guardar_evaluacion',
+      ClaveAcceso:mentorKey,
+      EquipoID:d.EquipoID,
+      ActividadID:d.ActividadID,
+      PuntosValidados:score,
+      Evaluador:mentorName,
+      Retroalimentacion:feed,
+      MotivoCambio:''
+    });
+    toast.textContent='✅ Tu evaluación fue sumada al acumulado.';
     await loadData();
-  }catch(e){toast.textContent=e.message}
+  }catch(e){
+    toast.textContent=e.message;
+  }
 }
 function bonusVal(t,key){return num(t?.[key] ?? (key==='BonusProspecto'?t?.['BonusProspecto\n']:0))}
 function renderBonusTeams(){
