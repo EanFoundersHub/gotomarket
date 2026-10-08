@@ -127,6 +127,17 @@ textarea{min-height:120px;resize:vertical}
   border-left:5px solid var(--cyan);
   background:linear-gradient(135deg,rgba(89,220,225,.07),#0f0c0a 58%)
 }
+.mission-card.re-eval{
+  border-left:5px solid var(--gold);
+  background:linear-gradient(135deg,rgba(255,201,74,.09),#0f0c0a 58%)
+}
+.re-eval .status{color:var(--gold)}
+.previous-evals{
+  margin:9px 0 11px;padding:8px 10px;border:1px solid rgba(255,201,74,.22);
+  background:rgba(255,201,74,.045);font-size:10px;line-height:1.55;color:var(--muted)
+}
+.previous-evals b{color:var(--gold)}
+
 .mission-card.waiting{
   border-left:5px solid #655a51;
   background:linear-gradient(135deg,rgba(255,255,255,.02),#0f0c0a 58%);
@@ -217,7 +228,11 @@ textarea{min-height:120px;resize:vertical}
       <div class="sub">Impacta · Universidad EAN</div>
     </div>
   </div>
-  <div class="pill">MENTOR VIEW</div>
+  <div class="actions" style="align-items:center;justify-content:flex-end">
+    <div class="pill">MENTOR VIEW</div>
+    <div class="pill hidden" id="activeMentorChip"></div>
+    <button class="btn alt hidden" id="changeMentorBtn" type="button" style="padding:7px 10px;font-size:10px">CAMBIAR MENTOR</button>
+  </div>
 </header>
 
 <section id="login" class="card login">
@@ -361,6 +376,30 @@ function mentorAlreadyEvaluated(d){
   const names=String(d?.Evaluador||'').split(/\s*(?:\||;|\n)\s*/).map(x=>x.trim().toLowerCase()).filter(Boolean);
   return names.includes(mentorName.trim().toLowerCase());
 }
+function evaluatorNames(d){
+  const raw=String(d?.Evaluador||'').trim();
+  if(!raw)return [];
+  const names=raw.split(/\s*(?:\||;|\n)\s*/).map(x=>x.trim()).filter(Boolean);
+  const seen=new Set();
+  return names.filter(name=>{
+    const key=name.toLowerCase();
+    if(seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
+}
+function evaluationCount(d){
+  const explicit=Number(d?.NumeroEvaluaciones ?? d?.CantidadEvaluaciones ?? d?.NroEvaluaciones ?? d?.Evaluaciones);
+  if(Number.isFinite(explicit)&&explicit>0)return explicit;
+  return evaluatorNames(d).length;
+}
+function nextEvaluationLabel(count){
+  const next=count+1;
+  if(next===2)return 'LISTA PARA 2ª EVALUACIÓN';
+  if(next===3)return 'LISTA PARA 3ª EVALUACIÓN';
+  return `LISTA PARA ${next}ª EVALUACIÓN`;
+}
+
 function fmtDate(v){
   if(!v)return 'Sin hora registrada';
   const d=new Date(v); if(Number.isNaN(d.getTime()))return String(v);
@@ -397,6 +436,7 @@ function teamById(id){return teams.find(t=>t.EquipoID===id)||{EquipoID:id,Nombre
 function openTeam(id){
   const t=teamById(id);
   selectedTeamId=t.EquipoID;
+  try{sessionStorage.setItem('idealab_mentor_team',selectedTeamId)}catch{}
   $('#initiativeName').textContent=t.NombreIniciativa||t.EquipoID;
   $('#initiativeMeta').textContent=t.EquipoID;
   renderMissions();
@@ -407,11 +447,45 @@ function missionCard(id,d){
   if(!d){
     return `<article class="mission-card waiting"><div class="mission-top"><div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div><div class="status">○ ESPERANDO ENTREGA</div></div><div class="time">El equipo aún no ha cargado evidencia.</div></article>`;
   }
+
   const mine=mentorAlreadyEvaluated(d);
+  const evaluators=evaluatorNames(d);
+  const count=evaluationCount(d);
+
   if(mine){
-    return `<article class="mission-card done"><div class="mission-top"><div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div><div class="status">✅ EVALUADA POR TI</div></div><div class="time">Evidencia: ${esc(fmtDate(d.FechaHoraEntrega))}</div></article>`;
+    return `<article class="mission-card done">
+      <div class="mission-top">
+        <div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div>
+        <div class="status">✅ EVALUADA POR TI</div>
+      </div>
+      <div class="time">Evidencia: ${esc(fmtDate(d.FechaHoraEntrega))}</div>
+      ${count?`<div class="previous-evals"><b>${count} evaluación${count===1?'':'es'} registrada${count===1?'':'s'}</b>${evaluators.length?` · ${esc(evaluators.join(' · '))}`:''}</div>`:''}
+    </article>`;
   }
-  return `<article class="mission-card ready"><div class="mission-top"><div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div><div class="status">🟢 LISTA PARA EVALUAR</div></div><div class="time">Evidencia: ${esc(fmtDate(d.FechaHoraEntrega))}</div><button class="btn" type="button" onclick="openEvaluation('${id}')">EVALUAR →</button></article>`;
+
+  if(count>0){
+    return `<article class="mission-card re-eval">
+      <div class="mission-top">
+        <div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div>
+        <div class="status">🟡 ${nextEvaluationLabel(count)}</div>
+      </div>
+      <div class="previous-evals">
+        <b>YA RECIBIÓ ${count} EVALUACIÓN${count===1?'':'ES'}</b>
+        ${evaluators.length?`<br>Evaluador${evaluators.length===1?'':'es'} previo${evaluators.length===1?'':'s'}: ${esc(evaluators.join(' · '))}`:''}
+      </div>
+      <div class="time">Evidencia: ${esc(fmtDate(d.FechaHoraEntrega))}</div>
+      <button class="btn" type="button" onclick="openEvaluation('${id}')">${count===1?'REGISTRAR 2ª EVALUACIÓN':'REGISTRAR OTRA EVALUACIÓN'} →</button>
+    </article>`;
+  }
+
+  return `<article class="mission-card ready">
+    <div class="mission-top">
+      <div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div>
+      <div class="status">🟢 LISTA PARA 1ª EVALUACIÓN</div>
+    </div>
+    <div class="time">Evidencia: ${esc(fmtDate(d.FechaHoraEntrega))}</div>
+    <button class="btn" type="button" onclick="openEvaluation('${id}')">EVALUAR →</button>
+  </article>`;
 }
 function renderMissions(){
   const ds=deliveries.filter(d=>d.EquipoID===selectedTeamId);
@@ -614,11 +688,72 @@ function stopScanner(){
   $('#scannerPanel').classList.add('hidden');
 }
 
+
+function setActiveMentor(name){
+  mentorName=String(name||'').trim();
+  if(!mentorName)return;
+  try{sessionStorage.setItem('idealab_mentor_name',mentorName)}catch{}
+  $('#mentorName').value=mentorName;
+  $('#mentorLabel').textContent=mentorName;
+  const chip=$('#activeMentorChip');
+  const change=$('#changeMentorBtn');
+  if(chip){
+    chip.textContent='MENTOR · '+mentorName;
+    chip.classList.remove('hidden');
+  }
+  change?.classList.remove('hidden');
+}
+function clearActiveMentor(){
+  try{
+    sessionStorage.removeItem('idealab_mentor_name');
+    sessionStorage.removeItem('idealab_mentor_team');
+  }catch{}
+  mentorName='';
+  selectedTeamId='';
+  selectedDelivery=null;
+  stopScanner();
+  $('#mentorName').value='';
+  $('#activeMentorChip')?.classList.add('hidden');
+  $('#changeMentorBtn')?.classList.add('hidden');
+  $('#loginToast').textContent='';
+  show('login');
+  setTimeout(()=>$('#mentorName')?.focus(),50);
+}
+async function restoreMentorSession(){
+  let saved='';
+  try{saved=sessionStorage.getItem('idealab_mentor_name')||''}catch{}
+  saved=String(saved).trim();
+  if(!saved)return false;
+
+  setActiveMentor(saved);
+  $('#loginToast').textContent='Recuperando tu sesión…';
+  try{
+    await loadBase();
+    show('home');
+    $('#loginToast').textContent='';
+    return true;
+  }catch(e){
+    // Conservamos el nombre visible para que el mentor pueda reintentar.
+    show('login');
+    $('#loginToast').textContent='No pude recuperar la sesión automáticamente: '+(e?.message||'error desconocido');
+    return false;
+  }
+}
+
 async function login(){
-  mentorName=$('#mentorName').value.trim(); const toast=$('#loginToast');
-  if(!mentorName){toast.textContent='Escribe tu nombre para continuar.';return}
+  const name=$('#mentorName').value.trim(),toast=$('#loginToast');
+  if(!name){toast.textContent='Escribe tu nombre para continuar.';return}
   $('#loginBtn').disabled=true;toast.textContent='Cargando…';
-  try{await loadBase();sessionStorage.setItem('idealab_mentor_name',mentorName);$('#mentorLabel').textContent=mentorName;show('home')}catch(e){toast.textContent=e.message}finally{$('#loginBtn').disabled=false}
+  try{
+    setActiveMentor(name);
+    await loadBase();
+    show('home');
+    toast.textContent='';
+  }catch(e){
+    toast.textContent=e.message;
+  }finally{
+    $('#loginBtn').disabled=false;
+  }
 }
 $('#loginBtn').onclick=login;$('#mentorName').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 $('#scanBtn').onclick=startScanner;$('#stopScanBtn').onclick=stopScanner;
@@ -627,11 +762,28 @@ $('#teamSearch').addEventListener('input',renderTeamSelector);
 $('#selectTeamBtn').onclick=()=>{const id=$('#teamSelect').value;if(!id){$('#homeToast').textContent='Selecciona una iniciativa.';return}openTeam(id)};
 $('#teamSelect').addEventListener('dblclick',()=>{if($('#teamSelect').value)openTeam($('#teamSelect').value)});
 $('#manualQrBtn').onclick=()=>resolveQr($('#manualQr').value);
-$('#backHome').onclick=()=>{selectedTeamId='';show('home')};
+$('#backHome').onclick=()=>{
+  selectedTeamId='';
+  try{sessionStorage.removeItem('idealab_mentor_team')}catch{}
+  show('home');
+};
 $('#backInitiative').onclick=()=>show('initiativeView');
 $('#refreshInitiative').onclick=async()=>{await loadBase();renderMissions()};
 $('#saveEvalBtn').onclick=saveEvaluation;
-$('#mentorName').value=sessionStorage.getItem('idealab_mentor_name')||'';
+$('#changeMentorBtn')?.addEventListener('click',clearActiveMentor);
+
+// Una recarga conserva automáticamente la identidad del mentor.
+// La trazabilidad real sigue guardada en SharePoint mediante el campo Evaluador.
+(async()=>{
+  const restored=await restoreMentorSession();
+  if(restored){
+    let teamId='';
+    try{teamId=sessionStorage.getItem('idealab_mentor_team')||''}catch{}
+    if(teamId && teams.some(t=>String(t.EquipoID)===String(teamId))){
+      openTeam(teamId);
+    }
+  }
+})();
 </script>
 </body>
 </html>
