@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IdeaLab · Centro de Evaluación</title>
+<title>Aceleratón Go-To-Market · Centro de Evaluación</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,12 +29,25 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,s
 .bonus-layout{display:grid;grid-template-columns:280px 1fr;gap:16px} .bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .bonus-total{font:34px "Black Ops One";color:var(--gold)}
 .mini{font-size:11px;color:var(--muted)} .empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line)}
 @media(max-width:800px){.top,.delivery-head{flex-direction:column}.grid{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.eval,.bonus-layout,.bonus-grid{grid-template-columns:1fr}}
+
+.team-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.team-card{border:1px solid var(--line);background:#110d0a;padding:16px;min-width:0}
+.team-card h3{margin:4px 0 5px;font-size:18px}
+.team-card .team-meta{font-size:11px;color:var(--muted);word-break:break-word}
+.team-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}
+.team-stat{border:1px solid #34271e;background:#0c0907;padding:10px}
+.team-stat b{display:block;color:var(--gold);font-size:18px}
+.team-stat span{font-size:9px;color:var(--muted)}
+.team-prototype{margin-top:12px;padding:11px;border:1px solid #34271e;background:#0c0907;word-break:break-word}
+.team-card .actions{margin-top:12px}
+@media(max-width:800px){.team-list{grid-template-columns:1fr}.team-stats{grid-template-columns:repeat(3,1fr)}}
+
 </style>
 </head>
 <body>
 <div class="shell">
 <header class="top">
-  <div class="brand"><img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky"><div><div class="eyebrow">IDEALAB · GO-TO-MARKET</div><h1>CENTRO DE EVALUACIÓN</h1></div></div>
+  <div class="brand"><img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky"><div><div class="eyebrow">ACELERATÓN GO-TO-MARKET</div><h1>CENTRO DE EVALUACIÓN</h1></div></div>
   <a class="btn alt" href="index.html">← PARTICIPANTE</a>
 </header>
 
@@ -66,12 +79,17 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,s
       <button class="btn alt" id="refreshBtn" type="button">ACTUALIZAR</button>
     </div>
     <div class="tabs">
-      <button class="tab active" data-view="deliveries">EVALUACIONES</button>
+      <button class="tab active" data-view="teams">EQUIPOS</button>
+      <button class="tab" data-view="deliveries">EVALUACIONES</button>
       <button class="tab" data-view="bonus">PUNTOS ADICIONALES</button>
     </div>
   </article>
 
-  <section id="deliveriesView">
+  <section id="teamsView">
+    <div id="teamList" class="team-list"></div>
+  </section>
+
+  <section id="deliveriesView" class="hidden">
     <div id="deliveryList" class="list"></div>
   </section>
 
@@ -116,7 +134,7 @@ M06:{name:'Radar de misión',max:10,criteria:['Indicadores y metas','Relación e
 M07:{name:'Código de transmisión',max:10,criteria:['Problema, cliente y propuesta de valor claros','CTA comercial']},
 M08:{name:'Operación primer cliente',max:15,criteria:['Ejecución y evidencia','Resultado / tracción','Relación implementación-resultados']}
 };
-let mentorName='',mentorKey='',deliveries=[],teams=[],view='deliveries';
+let mentorName='',mentorKey='',deliveries=[],teams=[],view='teams';
 
 const $=s=>document.querySelector(s);
 function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
@@ -145,6 +163,50 @@ function renderKpis(){
   $('#kValidated').textContent=rows.filter(x=>x.EstadoEvaluacion==='Validada').length;
   $('#kTeams').textContent=teams.length;
 }
+
+function renderTeams(){
+  const q=$('#search').value.trim().toLowerCase();
+  const rows=teams.filter(t=>{
+    const haystack=`${t.NombreIniciativa||''} ${t.EquipoID||''} ${t.Categoria||''} ${t.Sector||''}`.toLowerCase();
+    return !q||haystack.includes(q);
+  });
+  $('#teamList').innerHTML=rows.length?rows.map(t=>{
+    const ds=deliveries.filter(d=>validDelivery(d)&&d.EquipoID===t.EquipoID);
+    const validated=ds.filter(d=>d.EstadoEvaluacion==='Validada').length;
+    const pending=ds.filter(d=>d.EstadoEvaluacion!=='Validada').length;
+    const prototypeName=t.PrototipoNombre||'';
+    const prototypeURL=t.PrototipoURL||'';
+    const prototype=prototypeURL
+      ? `<a href="${esc(prototypeURL)}" target="_blank" rel="noopener">ABRIR PROTOTIPO ↗</a>${prototypeName?' · '+esc(prototypeName):''}`
+      : (prototypeName?esc(prototypeName):'<span class="mini">Sin prototipo visible en la respuesta del backend.</span>');
+    return `<article class="team-card">
+      <div class="eyebrow">${esc(t.EquipoID||'EQUIPO')}</div>
+      <h3>${esc(t.NombreIniciativa||t.EquipoID||'Iniciativa')}</h3>
+      <div class="team-meta">${esc(t.Categoria||'Sin categoría')} · ${esc(t.Sector||'Sin sector')}</div>
+      <div class="team-stats">
+        <div class="team-stat"><b>${ds.length}</b><span>ENTREGAS</span></div>
+        <div class="team-stat"><b>${pending}</b><span>PENDIENTES</span></div>
+        <div class="team-stat"><b>${validated}</b><span>VALIDADAS</span></div>
+      </div>
+      <div class="team-prototype"><b>Prototipo</b><br>${prototype}</div>
+      <div class="actions">
+        <button class="btn alt" type="button" data-open-team="${esc(t.EquipoID||'')}">VER EVALUACIONES →</button>
+      </div>
+    </article>`;
+  }).join(''):'<div class="empty" style="grid-column:1/-1">No se encontraron equipos.</div>';
+
+  document.querySelectorAll('[data-open-team]').forEach(btn=>btn.addEventListener('click',()=>{
+    $('#search').value=btn.dataset.openTeam||'';
+    view='deliveries';
+    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.view==='deliveries'));
+    $('#teamsView').classList.add('hidden');
+    $('#deliveriesView').classList.remove('hidden');
+    $('#bonusView').classList.add('hidden');
+    renderDeliveries();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }));
+}
+
 function renderDeliveries(){
   const status=$('#statusFilter').value,mission=$('#missionFilter').value,q=$('#search').value.trim().toLowerCase();
   const rows=deliveries.filter(validDelivery).filter(d=>{
@@ -233,7 +295,7 @@ async function loadData(){
   ]);
   deliveries=Array.isArray(a.Entregas)?a.Entregas:[];
   teams=Array.isArray(b.Equipos)?b.Equipos:[];
-  renderKpis(); renderDeliveries(); renderBonusTeams();
+  renderKpis(); renderTeams(); renderDeliveries(); renderBonusTeams();
 }
 async function login(){
   mentorName=$('#mentorName').value.trim(); mentorKey=$('#mentorKey').value.trim(); const toast=$('#loginToast');
@@ -248,12 +310,17 @@ async function login(){
 }
 $('#loginBtn').addEventListener('click',login);
 $('#refreshBtn').addEventListener('click',()=>loadData().catch(e=>alert(e.message)));
-$('#statusFilter').addEventListener('change',renderDeliveries); $('#missionFilter').addEventListener('change',renderDeliveries); $('#search').addEventListener('input',renderDeliveries);
+$('#statusFilter').addEventListener('change',renderDeliveries); $('#missionFilter').addEventListener('change',renderDeliveries); $('#search').addEventListener('input',()=>{renderTeams();renderDeliveries()});
 $('#bonusTeam').addEventListener('change',fillBonus); $('#saveBonus').addEventListener('click',saveBonus);
 ['#bProspecto','#bConversacion','#bReunion','#bVenta','#bTempranas','#bFeedback'].forEach(id=>$(id).addEventListener('input',updateBonusPreview));
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
-  view=btn.dataset.view; $('#deliveriesView').classList.toggle('hidden',view!=='deliveries'); $('#bonusView').classList.toggle('hidden',view!=='bonus');
+  view=btn.dataset.view;
+  $('#teamsView').classList.toggle('hidden',view!=='teams');
+  $('#deliveriesView').classList.toggle('hidden',view!=='deliveries');
+  $('#bonusView').classList.toggle('hidden',view!=='bonus');
+  if(view==='teams')renderTeams();
+  if(view==='deliveries')renderDeliveries();
 }));
 window.saveEvaluation=saveEvaluation;
 $('#mentorName').value=sessionStorage.getItem('idealab_mentor_name')||'';
