@@ -187,13 +187,26 @@ async function post(payload){
 function validDelivery(d){return /^M0[1-8]$/.test(String(d.ActividadID||'')) && String(d.EquipoID||'').startsWith('IDEALAB-')}
 function teamById(id){return teams.find(t=>t.EquipoID===id)||{EquipoID:id,NombreIniciativa:id}}
 function fmtDate(v){if(!v)return 'Sin fecha';try{return new Intl.DateTimeFormat('es-CO',{dateStyle:'short',timeStyle:'short'}).format(new Date(v))}catch{return v}}
+function fallbackEvidenceURL(d){
+  const equipo=String(d?.EquipoID||'').trim();
+  const nombre=String(d?.NombreArchivo||'').trim();
+  if(!equipo||!nombre)return '';
+  return 'https://universidadeaneduco.sharepoint.com/sites/ComunidadTngara/IDEALAB_Evidencias/'
+    + encodeURIComponent(equipo) + '/' + encodeURIComponent(nombre);
+}
 function evidenceHTML(d){
   const bits=[];
   if(d.Respuesta)bits.push(`<p><b>Texto:</b> ${esc(d.Respuesta)}</p>`);
   if(d.Enlace)bits.push(`<p>🔗 <a href="${esc(d.Enlace)}" target="_blank" rel="noopener">ABRIR ENLACE</a></p>`);
-  if(d.EvidenciaURL)bits.push(`<p>📎 <a href="${esc(d.EvidenciaURL)}" target="_blank" rel="noopener">ABRIR EVIDENCIA</a>${d.NombreArchivo?' · '+esc(d.NombreArchivo):''}</p>`);
-  else if(d.NombreArchivo)bits.push(`<p>📎 <b>${esc(d.NombreArchivo)}</b> <span class="mini">(sin vínculo directo disponible)</span></p>`);
-  return bits.join('')||'<p class="mini">La entrega está registrada, pero no tiene evidencia visible en el vínculo recibido.</p>';
+  const evidenceURL=String(d.EvidenciaURL||'').trim() || fallbackEvidenceURL(d);
+  if(evidenceURL && d.NombreArchivo){
+    bits.push(`<p>📎 <a href="${esc(evidenceURL)}" target="_blank" rel="noopener">ABRIR EVIDENCIA</a> · ${esc(d.NombreArchivo)}</p>`);
+  }else if(evidenceURL){
+    bits.push(`<p>📎 <a href="${esc(evidenceURL)}" target="_blank" rel="noopener">ABRIR EVIDENCIA</a></p>`);
+  }else if(d.NombreArchivo){
+    bits.push(`<p>📎 <b>${esc(d.NombreArchivo)}</b> <span class="mini">(archivo registrado)</span></p>`);
+  }
+  return bits.join('')||'<p class="mini">La entrega está registrada, pero no tiene evidencia visible.</p>';
 }
 function renderKpis(){
   const rows=deliveries.filter(validDelivery);
