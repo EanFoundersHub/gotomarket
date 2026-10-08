@@ -1357,6 +1357,7 @@ function connectionUrlForParticipant(p){
   u.search='';
   u.hash='';
   u.searchParams.set('connect',code);
+  if(team?.EquipoID)u.searchParams.set('team',String(team.EquipoID));
   return u.href;
 }
 
