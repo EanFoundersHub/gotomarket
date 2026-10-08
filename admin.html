@@ -19,7 +19,7 @@ a{color:var(--cyan)} button,input,select,textarea{font:inherit} button{cursor:po
 .card{background:rgba(21,17,14,.94);border:1px solid var(--line);padding:18px;margin-top:18px} .hidden{display:none!important}
 .login{max-width:620px;margin:8vh auto} .login h2,.title{font-family:"Black Ops One";color:var(--gold);margin:4px 0 14px}
 label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,select,textarea{width:100%;background:#0c0907;color:var(--text);border:1px solid #60462f;padding:10px;border-radius:3px}
-.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px} .kpi{background:#0f0c0a;border:1px solid var(--line);padding:14px} .kpi b{display:block;font:28px "Black Ops One";color:var(--gold)} .kpi span{font-size:10px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px} .kpi{background:#0f0c0a;border:1px solid var(--line);padding:14px} .kpi b{display:block;font:28px "Black Ops One";color:var(--gold)} .kpi span{font-size:10px;color:var(--muted)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap} .tab{padding:8px 11px;border:1px solid var(--line);background:#0f0c0a;color:var(--muted)} .tab.active{border-color:var(--gold);color:var(--gold)}
 .toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
 .table-wrap{overflow:auto;border:1px solid var(--line);margin-top:14px} table{width:100%;border-collapse:collapse;min-width:950px} th,td{padding:10px;border-bottom:1px solid #2f241d;text-align:left;font-size:12px} th{position:sticky;top:0;background:#18110d;color:var(--gold);z-index:1} tr:hover td{background:#15100d}
@@ -30,7 +30,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
 
 /* Vista operativa tipo Excel */
 .excel-wrap{overflow:auto;border:1px solid var(--line);margin-top:14px;max-height:68vh;background:#0c0907}
-.excel-table{border-collapse:separate;border-spacing:0;min-width:1840px;width:100%}
+.excel-table{border-collapse:separate;border-spacing:0;min-width:2480px;width:100%}
 .excel-table th,.excel-table td{border-right:1px solid #2f241d;border-bottom:1px solid #2f241d;padding:8px 9px;vertical-align:top;background:#0f0c0a}
 .excel-table th{position:sticky;top:0;z-index:4;background:#1a120d;color:var(--gold);white-space:nowrap}
 .excel-table th:first-child{left:0;z-index:6}
@@ -45,12 +45,33 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
 .cell-time{font-size:10px;color:var(--cyan);margin-top:5px;white-space:nowrap}
 .cell-meta{font-size:10px;color:var(--muted);margin-top:3px}
 .weighted-total{font:19px "Black Ops One";color:var(--gold);white-space:nowrap}
+
+.bonus-cell{min-width:96px;text-align:center}
+.bonus-cell input{
+  width:64px;min-width:64px;padding:6px 7px;text-align:center;
+  background:#090706;border:1px solid #4a382c;color:var(--text)
+}
+.bonus-save-cell{min-width:115px}
+.bonus-save-cell .btn{padding:7px 9px;font-size:9px;white-space:nowrap}
+
 .early-editor{display:flex;gap:6px;align-items:center;min-width:138px}
 .early-editor input{width:58px;padding:6px 7px;text-align:center}
 .early-editor button{padding:6px 8px;font-size:10px}
 .excel-note{border-left:3px solid var(--cyan);padding:10px 12px;background:rgba(89,220,225,.05);font-size:11px;color:var(--muted);margin-top:12px}
 .excel-note b{color:var(--text)}
 .eval-warning{color:var(--bad);font-size:9px;margin-top:3px}
+
+
+.mentor-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.mentor-summary .kpi b{font-size:24px}
+.mentor-toolbar{display:grid;grid-template-columns:minmax(240px,480px) auto;gap:10px;align-items:end;margin-top:12px}
+.mentor-name{font-weight:800;color:var(--text)}
+.mentor-missions{display:flex;gap:5px;flex-wrap:wrap}
+.mentor-mission-chip{display:inline-block;border:1px solid #4a382c;padding:4px 6px;font-size:9px;color:var(--muted);border-radius:999px;white-space:nowrap}
+.mentor-mission-chip b{color:var(--cyan)}
+.mentor-initiative-list{max-width:430px;line-height:1.55}
+.mentor-last{white-space:nowrap;color:var(--cyan)}
+@media(max-width:900px){.mentor-summary{grid-template-columns:1fr}.mentor-toolbar{grid-template-columns:1fr}}
 
 @media(max-width:900px){.top,.team-head{flex-direction:column}.kpis{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}}
 </style>
@@ -81,6 +102,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
     <div class="kpi"><b id="kPending">0</b><span>PENDIENTES DE EVALUAR</span></div>
     <div class="kpi"><b id="kValidated">0</b><span>VALIDADAS</span></div>
     <div class="kpi"><b id="kAvg">0</b><span>PROMEDIO TOTAL</span></div>
+    <div class="kpi"><b id="kMentors">0</b><span>MENTORES QUE EVALUARON</span></div>
   </div>
 
   <article class="card">
@@ -88,6 +110,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
       <button class="tab active" data-view="ranking">RANKING</button>
       <button class="tab" data-view="matrix">VISTA EXCEL</button>
       <button class="tab" data-view="pending">PENDIENTES</button>
+      <button class="tab" data-view="mentors">MENTORES</button>
     </div>
     <div class="toolbar" style="margin-top:12px">
       <div><label>Buscar equipo</label><input id="search" placeholder="Nombre o EquipoID"></div>
@@ -100,7 +123,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
     <article class="card">
       <div class="eyebrow">CLASIFICACIÓN EN VIVO</div>
       <h2 class="title">RANKING PONDERADO /120</h2>
-      <p class="mini">Base ponderada = promedio de las evaluaciones recibidas por cada misión, respetando su máximo, y suma M01–M08 sobre 100. Extra = PuntosAdicionales sobre 20.</p>
+      <p class="mini">Base ponderada = promedio de las evaluaciones recibidas por cada misión y suma sobre 100. Los 20 puntos extra se componen de prospecto, conversación, reunión, venta, entregas tempranas y feedback.</p>
       <div class="table-wrap"><table><thead><tr><th>#</th><th>Equipo</th><th>Progreso</th><th>Ponderada /100</th><th>Extra /20</th><th>Total /120</th><th>Pendientes</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
     </article>
   </section>
@@ -110,15 +133,24 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
       <div class="eyebrow">SEGUIMIENTO OPERATIVO</div>
       <h2 class="title">MATRIZ TIPO EXCEL · EQUIPOS × MISIONES</h2>
       <div class="matrix-legend"><span>✅ Evaluada</span><span>🟡 Entregada / pendiente de evaluación</span><span>○ Pendiente de entrega</span></div>
-      <div class="excel-note"><b>Calificación ponderada:</b> cuando una misión recibe varias evaluaciones, esta vista toma el puntaje acumulado y lo divide entre el número de evaluaciones registradas. Así cada misión conserva su peso real dentro de los 100 puntos base. La hora mostrada corresponde al momento en que el equipo transmitió la evidencia, en hora Colombia.</div>
+      <div class="excel-note"><b>Calificación ponderada:</b> cuando una misión recibe varias evaluaciones, esta vista toma el puntaje acumulado y lo divide entre el número de evaluaciones registradas. Así cada misión conserva su peso real dentro de los 100 puntos base. La hora corresponde al momento en que el equipo transmitió la evidencia. Los puntos adicionales se muestran separados por categoría y suman máximo 20.</div>
       <div class="excel-wrap">
         <table class="excel-table">
           <thead>
             <tr>
               <th>Equipo</th>
-              <th>M01 · /10</th><th>M02 · /15</th><th>M03 · /10</th><th>M04 · /15</th>
-              <th>M05 · /15</th><th>M06 · /10</th><th>M07 · /10</th><th>M08 · /15</th>
-              <th>Ponderada /100</th><th>Eval.</th><th>Tempranas /4</th><th>Extra /20</th><th>Total /120</th>
+              <th>Misión 1 · /10</th><th>Misión 2 · /15</th><th>Misión 3 · /10</th><th>Misión 4 · /15</th>
+              <th>Misión 5 · /15</th><th>Misión 6 · /10</th><th>Misión 7 · /10</th><th>Misión 8 · /15</th>
+              <th>Ponderada /100</th><th>Eval.</th>
+              <th>Prospecto /2</th>
+              <th>Conversación /2</th>
+              <th>Reunión /4</th>
+              <th>Venta /6</th>
+              <th>Tempranas /4</th>
+              <th>Feedback /2</th>
+              <th>Extra /20</th>
+              <th>Guardar</th>
+              <th>Total /120</th>
             </tr>
           </thead>
           <tbody id="matrixBody"></tbody>
@@ -131,6 +163,43 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
     <article class="card">
       <div class="eyebrow">BANDEJA DE TRANSMISIONES</div><h2 class="title">PENDIENTES DE EVALUACIÓN</h2>
       <div id="pendingList"></div>
+    </article>
+  </section>
+
+  <section id="mentorsView" class="hidden">
+    <article class="card">
+      <div class="eyebrow">TRAZABILIDAD DE EVALUACIÓN</div>
+      <h2 class="title">MENTORES QUE YA REGISTRARON CALIFICACIÓN</h2>
+      <p class="mini">La lista se construye automáticamente a partir del campo Evaluador de las entregas. Un mentor cuenta una vez por cada misión en la que su nombre quedó registrado.</p>
+
+      <div class="mentor-summary">
+        <div class="kpi"><b id="mentorUniqueCount">0</b><span>MENTORES ACTIVOS</span></div>
+        <div class="kpi"><b id="mentorEvaluationCount">0</b><span>CALIFICACIONES REGISTRADAS</span></div>
+        <div class="kpi"><b id="mentorInitiativeCount">0</b><span>INICIATIVAS EVALUADAS</span></div>
+      </div>
+
+      <div class="mentor-toolbar">
+        <div>
+          <label>Buscar mentor</label>
+          <input id="mentorSearch" placeholder="Nombre del mentor">
+        </div>
+        <button id="mentorRefreshBtn" class="btn alt" type="button">ACTUALIZAR</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mentor</th>
+              <th>Calificaciones</th>
+              <th>Iniciativas</th>
+              <th>Misiones evaluadas</th>
+              <th>Última evaluación</th>
+            </tr>
+          </thead>
+          <tbody id="mentorBody"></tbody>
+        </table>
+      </div>
     </article>
   </section>
 </section>
@@ -151,6 +220,10 @@ async function post(payload){
 }
 function validDelivery(d){return /^M0[1-8]$/.test(String(d.ActividadID||''))&&String(d.EquipoID||'').startsWith('IDEALAB-')}
 function normalizeTeam(t){
+  const hasBonusBreakdown=[
+    'BonusProspecto','BonusProspecto\n','BonusConversacion','BonusReunion',
+    'BonusVenta','BonusTempranas','BonusFeedback'
+  ].some(k=>Object.prototype.hasOwnProperty.call(t,k));
   return {
     ...t,
     NombreIniciativa:t.NombreIniciativa||t.EquipoID,
@@ -160,7 +233,8 @@ function normalizeTeam(t){
     BonusVenta:num(t.BonusVenta),
     BonusTempranas:num(t.BonusTempranas),
     BonusFeedback:num(t.BonusFeedback),
-    PuntosAdicionales:num(t.PuntosAdicionales)
+    PuntosAdicionales:num(t.PuntosAdicionales),
+    _hasBonusBreakdown:hasBonusBreakdown
   }
 }
 const MISSION_MAX={M01:10,M02:15,M03:10,M04:15,M05:15,M06:10,M07:10,M08:15};
@@ -204,6 +278,17 @@ function formatSubmission(v){
     return dt.toLocaleString('es-CO');
   }
 }
+function bonusComponentsTotal(t){
+  const sum=
+    num(t.BonusProspecto)+
+    num(t.BonusConversacion)+
+    num(t.BonusReunion)+
+    num(t.BonusVenta)+
+    num(t.BonusTempranas)+
+    num(t.BonusFeedback);
+  return t._hasBonusBreakdown ? sum : num(t.PuntosAdicionales);
+}
+
 function stats(t){
   const rows=rowsFor(t.EquipoID);
   const delivered=new Set(rows.map(d=>d.ActividadID));
@@ -213,7 +298,7 @@ function stats(t){
   },0);
   const rawAccumulated=rows.reduce((s,d)=>s+num(d.PuntosValidados),0);
   const evaluations=rows.reduce((s,d)=>s+evaluationCount(d),0);
-  const extra=num(t.PuntosAdicionales);
+  const extra=bonusComponentsTotal(t);
   const pending=rows.filter(d=>d.PuntosValidados==null || evaluationCount(d)===0).length;
   return {base:weightedBase,raw:rawAccumulated,evaluations,extra,total:weightedBase+extra,progress:delivered.size,pending,rows};
 }
@@ -221,6 +306,111 @@ function filteredTeams(){
   const q=$('#search').value.trim().toLowerCase();
   return teams.filter(t=>!q||(`${t.NombreIniciativa} ${t.EquipoID}`).toLowerCase().includes(q));
 }
+
+function mentorNamesFromDelivery(d){
+  const raw=String(d?.Evaluador||'').trim();
+  if(!raw)return [];
+  const names=raw.split(/\s*(?:\||;|\n)\s*/).map(x=>x.trim()).filter(Boolean);
+  const seen=new Set();
+  return names.filter(n=>{
+    const k=n.toLowerCase();
+    if(seen.has(k))return false;
+    seen.add(k);
+    return true;
+  });
+}
+function evaluationDateValue(d){
+  const raw=d?.FechaEvaluacion || d?.Modified || d?.FechaHoraEntrega || '';
+  if(!raw)return null;
+  const dt=new Date(raw);
+  return Number.isNaN(dt.getTime())?null:dt;
+}
+function formatEvaluationDate(d){
+  const raw=d?.FechaEvaluacion || '';
+  const dt=evaluationDateValue(d);
+  if(!dt)return raw||'Sin fecha';
+
+  // Cuando SharePoint solo devuelve AAAA-MM-DD, no fingimos una hora.
+  const hasTime=String(raw).includes('T') || /\d{1,2}:\d{2}/.test(String(raw));
+  try{
+    return new Intl.DateTimeFormat('es-CO',{
+      timeZone:'America/Bogota',
+      day:'2-digit',month:'short',year:'numeric',
+      ...(hasTime?{hour:'numeric',minute:'2-digit',hour12:true}:{})
+    }).format(dt);
+  }catch{
+    return dt.toLocaleString('es-CO');
+  }
+}
+function mentorRecords(){
+  const map=new Map();
+
+  deliveries.filter(validDelivery).forEach(d=>{
+    if(d.PuntosValidados==null)return;
+    const names=mentorNamesFromDelivery(d);
+    if(!names.length)return;
+
+    names.forEach(name=>{
+      const keyName=name.toLowerCase();
+      if(!map.has(keyName)){
+        map.set(keyName,{
+          name,
+          evaluations:0,
+          teams:new Map(),
+          missions:{},
+          latest:null,
+          latestDelivery:null
+        });
+      }
+      const r=map.get(keyName);
+      r.evaluations+=1;
+
+      const team=teams.find(t=>t.EquipoID===d.EquipoID);
+      r.teams.set(d.EquipoID,team?.NombreIniciativa||d.EquipoID);
+
+      const mission=d.ActividadID;
+      r.missions[mission]=(r.missions[mission]||0)+1;
+
+      const dt=evaluationDateValue(d);
+      if(dt && (!r.latest || dt>r.latest)){
+        r.latest=dt;
+        r.latestDelivery=d;
+      }
+    });
+  });
+
+  return [...map.values()].sort((a,b)=>b.evaluations-a.evaluations || a.name.localeCompare(b.name,'es',{sensitivity:'base'}));
+}
+function renderMentors(){
+  const all=mentorRecords();
+  const q=($('#mentorSearch')?.value||'').trim().toLowerCase();
+  const rows=all.filter(r=>!q||r.name.toLowerCase().includes(q));
+
+  const uniqueInitiatives=new Set();
+  all.forEach(r=>r.teams.forEach((_,id)=>uniqueInitiatives.add(id)));
+
+  $('#mentorUniqueCount').textContent=all.length;
+  $('#mentorEvaluationCount').textContent=all.reduce((s,r)=>s+r.evaluations,0);
+  $('#mentorInitiativeCount').textContent=uniqueInitiatives.size;
+
+  $('#mentorBody').innerHTML=rows.map(r=>{
+    const initiatives=[...r.teams.values()].sort((a,b)=>a.localeCompare(b,'es',{sensitivity:'base'}));
+    const missions=MISSION_IDS
+      .filter(id=>r.missions[id])
+      .map(id=>`<span class="mentor-mission-chip"><b>${id.replace('M0','Misión ')}</b> · ${r.missions[id]}</span>`)
+      .join('');
+
+    const latest=r.latestDelivery?formatEvaluationDate(r.latestDelivery):'Sin fecha';
+    return `<tr>
+      <td><div class="mentor-name">${esc(r.name)}</div></td>
+      <td><b>${r.evaluations}</b></td>
+      <td><div class="mentor-initiative-list">${initiatives.map(esc).join(' · ')||'—'}</div></td>
+      <td><div class="mentor-missions">${missions||'—'}</div></td>
+      <td class="mentor-last">${esc(latest)}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" class="mini">No hay mentores que coincidan con la búsqueda.</td></tr>';
+}
+
 function renderKpis(){
   const vd=deliveries.filter(validDelivery);
   const totals=teams.map(t=>stats(t).total);
@@ -229,6 +419,7 @@ function renderKpis(){
   $('#kPending').textContent=vd.filter(d=>d.PuntosValidados==null || evaluationCount(d)===0).length;
   $('#kValidated').textContent=vd.filter(d=>d.PuntosValidados!=null && evaluationCount(d)>0).length;
   $('#kAvg').textContent=teams.length?(totals.reduce((a,b)=>a+b,0)/teams.length).toFixed(1):'0';
+  $('#kMentors').textContent=mentorRecords().length;
 }
 function renderRanking(){
   const arr=filteredTeams().map(t=>({t,s:stats(t)})).sort((a,b)=>b.s.total-a.s.total||b.s.base-a.s.base);
@@ -252,38 +443,61 @@ function missionCell(t,id){
     ? `<div class="eval-warning">Revisar número de evaluaciones</div>` : '';
   return `<td class="mission-cell">${status}<div class="cell-meta">${evalText}</div><div class="cell-time">🕐 ${esc(formatSubmission(d.FechaHoraEntrega))}</div>${warning}</td>`;
 }
-function earlyEditor(t){
-  const id=esc(t.EquipoID);
-  return `<div class="early-editor"><input id="early_${id}" type="number" min="0" max="4" step=".5" value="${num(t.BonusTempranas).toFixed(1)}" aria-label="Puntos por entregas tempranas"><button class="btn alt" type="button" onclick="saveEarlyBonus('${id}',this)">GUARDAR</button></div>`;
+const BONUS_CONFIG={
+  BonusProspecto:{label:'Prospecto',max:2,step:2},
+  BonusConversacion:{label:'Conversación',max:2,step:2},
+  BonusReunion:{label:'Reunión',max:4,step:4},
+  BonusVenta:{label:'Venta',max:6,step:6},
+  BonusTempranas:{label:'Tempranas',max:4,step:.5},
+  BonusFeedback:{label:'Feedback',max:2,step:2}
+};
+const BONUS_KEYS=Object.keys(BONUS_CONFIG);
+
+function bonusInput(t,key){
+  const c=BONUS_CONFIG[key], id=`bonus_${key}_${t.EquipoID}`;
+  return `<td class="bonus-cell"><input id="${esc(id)}" type="number" min="0" max="${c.max}" step="${c.step}" value="${num(t[key]).toFixed(key==='BonusTempranas'?1:0)}" aria-label="${esc(c.label)}"></td>`;
 }
-async function saveEarlyBonus(teamId,btn){
+function bonusValueFromRow(teamId,key){
+  const el=document.getElementById(`bonus_${key}_${teamId}`);
+  return Number(el?.value);
+}
+async function saveBonusRow(teamId,btn){
   const t=teams.find(x=>x.EquipoID===teamId);
   if(!t)return;
-  const input=document.getElementById('early_'+teamId);
-  const val=Number(input?.value);
-  if(!Number.isFinite(val)||val<0||val>4){
-    alert('Los puntos por entregas tempranas deben estar entre 0 y 4.');
+
+  const values={};
+  for(const key of BONUS_KEYS){
+    const cfg=BONUS_CONFIG[key];
+    const value=bonusValueFromRow(teamId,key);
+    if(!Number.isFinite(value)||value<0||value>cfg.max){
+      alert(`${cfg.label} debe estar entre 0 y ${cfg.max}.`);
+      return;
+    }
+    values[key]=value;
+  }
+
+  const total=BONUS_KEYS.reduce((s,k)=>s+values[k],0);
+  if(total>20){
+    alert(`Los puntos adicionales suman ${total.toFixed(1)} y no pueden superar 20.`);
     return;
   }
+
   const payload={
     Accion:'guardar_bonus',ClaveAcceso:key,EquipoID:t.EquipoID,
-    BonusProspecto:num(t.BonusProspecto),
-    BonusConversacion:num(t.BonusConversacion),
-    BonusReunion:num(t.BonusReunion),
-    BonusVenta:num(t.BonusVenta),
-    BonusTempranas:val,
-    BonusFeedback:num(t.BonusFeedback)
+    BonusProspecto:values.BonusProspecto,
+    BonusConversacion:values.BonusConversacion,
+    BonusReunion:values.BonusReunion,
+    BonusVenta:values.BonusVenta,
+    BonusTempranas:values.BonusTempranas,
+    BonusFeedback:values.BonusFeedback
   };
-  const total=payload.BonusProspecto+payload.BonusConversacion+payload.BonusReunion+payload.BonusVenta+payload.BonusTempranas+payload.BonusFeedback;
-  if(total>20){
-    alert(`El total de puntos adicionales quedaría en ${total.toFixed(1)} y no puede superar 20.`);
-    return;
-  }
-  const old=btn.textContent; btn.disabled=true; btn.textContent='…';
+
+  const old=btn.textContent;
+  btn.disabled=true;btn.textContent='…';
   try{
     await post(payload);
     await load();
-    btn.textContent='✓';
+    btn.textContent='✓ GUARDADO';
   }catch(e){
     alert(e.message);
     btn.textContent=old;
@@ -292,7 +506,7 @@ async function saveEarlyBonus(teamId,btn){
     setTimeout(()=>{if(btn.isConnected)btn.textContent='GUARDAR'},900);
   }
 }
-window.saveEarlyBonus=saveEarlyBonus;
+window.saveBonusRow=saveBonusRow;
 
 function renderMatrix(){
   const arr=filteredTeams().map(t=>({t,s:stats(t)})).sort((a,b)=>b.s.total-a.s.total);
@@ -301,8 +515,9 @@ function renderMatrix(){
     ${MISSION_IDS.map(m=>missionCell(x.t,m)).join('')}
     <td><div class="weighted-total">${x.s.base.toFixed(1)}</div><div class="cell-meta">de 100</div></td>
     <td class="center"><b>${x.s.evaluations}</b></td>
-    <td>${earlyEditor(x.t)}</td>
+    ${BONUS_KEYS.map(k=>bonusInput(x.t,k)).join('')}
     <td><b>${x.s.extra.toFixed(1)}</b></td>
+    <td class="bonus-save-cell"><button class="btn alt" type="button" onclick="saveBonusRow('${esc(x.t.EquipoID)}',this)">GUARDAR</button></td>
     <td><div class="weighted-total">${x.s.total.toFixed(1)}</div><div class="cell-meta">de 120</div></td>
   </tr>`).join('');
 }
@@ -320,7 +535,7 @@ function renderPending(){
     .map(d=>{const t=teams.find(x=>x.EquipoID===d.EquipoID);return `<div class="team-card"><div class="team-head"><div><div class="eyebrow">${esc(d.ActividadID)}</div><h3>${esc(t?.NombreIniciativa||d.EquipoID)}</h3><div class="mini">${esc(d.EquipoID)}</div><div class="cell-time">🕐 Evidencia: ${esc(formatSubmission(d.FechaHoraEntrega))}</div></div><div>${evidence(d)}</div></div></div>`}).join('');
   $('#pendingList').innerHTML=out||'<div class="team-card mini">No hay pendientes con estos filtros.</div>';
 }
-function renderAll(){renderKpis();renderRanking();renderMatrix();renderPending()}
+function renderAll(){renderKpis();renderRanking();renderMatrix();renderPending();renderMentors()}
 async function load(){
   const [e,t]=await Promise.all([post({Accion:'listar_entregas',ClaveAcceso:key}),post({Accion:'listar_equipos',ClaveAcceso:key})]);
   deliveries=Array.isArray(e.Entregas)?e.Entregas:[];
@@ -346,10 +561,16 @@ async function login(){
 }
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
-  view=btn.dataset.view;$('#rankingView').classList.toggle('hidden',view!=='ranking');$('#matrixView').classList.toggle('hidden',view!=='matrix');$('#pendingView').classList.toggle('hidden',view!=='pending');
+  view=btn.dataset.view;
+  $('#rankingView').classList.toggle('hidden',view!=='ranking');
+  $('#matrixView').classList.toggle('hidden',view!=='matrix');
+  $('#pendingView').classList.toggle('hidden',view!=='pending');
+  $('#mentorsView').classList.toggle('hidden',view!=='mentors');
 }));
 $('#loginBtn').addEventListener('click',login);
 $('#refreshBtn').addEventListener('click',()=>load().catch(e=>alert(e.message)));
+$('#mentorSearch')?.addEventListener('input',renderMentors);
+$('#mentorRefreshBtn')?.addEventListener('click',()=>load().catch(e=>alert(e.message)));
 $('#search').addEventListener('input',renderAll);
 $('#missionFilter').addEventListener('change',renderPending);
 $('#adminName').value=sessionStorage.getItem('idealab_admin_name')||'';
