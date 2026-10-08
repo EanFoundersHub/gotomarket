@@ -134,6 +134,45 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 }
 
 
+/* ===== V7 · QR en header + resultados de mentor ===== */
+.header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.header-qr-btn{margin:0!important;white-space:nowrap}
+.qr-modal{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.82);display:grid;place-items:center;padding:18px}
+.qr-modal.hidden{display:none!important}
+.qr-modal-card{
+  width:min(94vw,520px);max-height:92vh;overflow:auto;position:relative;
+  border:1px solid var(--gold);background:linear-gradient(145deg,#18110c,#0d0a08);
+  padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.58)
+}
+.qr-modal-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.qr-modal-head h2{font-family:'Black Ops One';margin:4px 0 0;color:var(--gold);font-weight:400}
+.qr-modal-close{margin:0!important;padding:8px 11px!important}
+.qr-modal-box{margin:18px auto 8px;background:#fff;padding:13px;width:min(100%,300px);color:#111;text-align:center}
+.qr-modal-box img{display:block;width:100%;height:auto;object-fit:contain}
+.qr-modal-owner{font-weight:700;margin-top:10px}
+.qr-modal-meta{font-size:11px;color:#4e4e4e;margin-top:3px;word-break:break-word}
+
+.mission-eval-summary{
+  margin-top:7px;padding:8px 10px;border-left:3px solid var(--cyan);
+  background:rgba(89,220,225,.045);font-size:11px;line-height:1.5
+}
+.mission-eval-summary b{color:var(--cyan)}
+.mission-eval-comment{color:#d8ccc1;margin-top:3px}
+.result-cell b{color:var(--ok)}
+.result-comment{display:block;color:var(--muted);font-size:10px;line-height:1.4;margin-top:3px;max-width:270px}
+.result-evaluator{display:block;color:var(--cyan);font-size:9px;margin-top:3px}
+.results-refresh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.results-refresh .btn{margin:0;padding:7px 9px;font-size:10px}
+
+@media(max-width:760px){
+  .header-actions{width:100%;display:grid;grid-template-columns:1fr;justify-items:stretch}
+  .header-actions .chip{text-align:center}
+  .header-qr-btn{width:100%}
+  .qr-modal{padding:10px}
+  .qr-modal-card{padding:17px}
+  .result-comment{max-width:none}
+}
+
 .logo{line-height:.92;max-width:520px}
 @media(max-width:760px){.logo{font-size:clamp(26px,9vw,42px)}}
 
@@ -143,8 +182,33 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 <main class="shell">
 <header class="top">
   <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">ACELERATÓN<br>GO-TO-MARKET</div><div class="sub">Más de 15 horas para llevar una idea al mercado</div></div>
-  <div class="chip">MICROSOFT 365 READY</div>
-</header><div class="demo-banner">MODO CONECTADO · Registro, prototipo, entregas, recuperación, archivos grandes y conexiones QR sincronizados con Microsoft 365.</div>
+  <div class="header-actions">
+    <button class="btn alt header-qr-btn hidden" id="headerQrBtn" type="button">▦ MOSTRAR MI CÓDIGO QR</button>
+    <div class="chip">MICROSOFT 365 READY</div>
+  </div>
+</header>
+
+<div id="headerQrModal" class="qr-modal hidden" role="dialog" aria-modal="true" aria-labelledby="headerQrTitle">
+  <div class="qr-modal-card">
+    <div class="qr-modal-head">
+      <div>
+        <div class="eyebrow">PASAPORTE DE CONEXIÓN</div>
+        <h2 id="headerQrTitle">MI CÓDIGO QR</h2>
+        <p class="hint">Muéstralo a mentores, aliados u otros participantes para identificar tu iniciativa y registrar conexiones.</p>
+      </div>
+      <button class="btn alt qr-modal-close" id="headerQrClose" type="button">CERRAR</button>
+    </div>
+    <label for="headerQrParticipant">Mostrar QR de</label>
+    <select id="headerQrParticipant"></select>
+    <div class="qr-modal-box">
+      <img id="headerQrImage" alt="Código QR del participante">
+      <div class="qr-modal-owner" id="headerQrOwner">QR PERSONAL</div>
+      <div class="qr-modal-meta" id="headerQrMeta"></div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-banner">MODO CONECTADO · Registro, prototipo, entregas, recuperación, archivos grandes y conexiones QR sincronizados con Microsoft 365.</div>
 
 <section id="welcome" class="screen active">
   <div class="hero">
@@ -287,7 +351,13 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
     </div>
     <aside>
       <article class="card"><h2 class="title">TELEMETRÍA</h2><div class="stats"><div class="stat"><b id="completed">0/8</b><span>MISIONES</span></div><div class="stat"><b id="pendingValidation">0</b><span>POR VALIDAR</span></div><div class="stat"><b id="connectionCount">0</b><span>CONEXIONES</span></div><div class="stat"><b id="nextMission">M01</b><span>SIGUIENTE</span></div></div></article>
-      <article class="card"><h2 class="title">ESTADO DE MISIÓN</h2><p class="hint">Tus calificaciones permanecerán ocultas durante la Aceleratón Go-To-Market. Aquí solo verás el estado de cada entrega.</p><table class="admin-table"><thead><tr><th>Misión</th><th>Estado</th></tr></thead><tbody id="scoreTable"></tbody></table></article>
+      <article class="card">
+        <div class="results-refresh">
+          <div><h2 class="title" style="margin-bottom:4px">RESULTADOS DE MISIÓN</h2><p class="hint" style="margin:0">Aquí verás la calificación y retroalimentación que ya hayan registrado los mentores.</p></div>
+          <button class="btn alt" id="refreshResultsBtn" type="button">ACTUALIZAR</button>
+        </div>
+        <table class="admin-table"><thead><tr><th>Misión</th><th>Resultado</th></tr></thead><tbody id="scoreTable"></tbody></table>
+      </article>
     </aside>
   </div>
 </section>
@@ -728,6 +798,51 @@ function deliveryActivityId(e){
 function findDeliveryForActivity(entregas,activityId){
   return (Array.isArray(entregas)?entregas:[]).find(e=>deliveryActivityId(e)===activityId)||null;
 }
+
+function deliveryEvaluatorNames(e){
+  const raw=String(e?.Evaluador||'').trim();
+  if(!raw)return [];
+  return [...new Set(raw.split(/\s*(?:\||;|\n)\s*/).map(x=>x.trim()).filter(Boolean).map(x=>x.toLowerCase()))]
+    .map(k=>raw.split(/\s*(?:\||;|\n)\s*/).map(x=>x.trim()).find(x=>x.toLowerCase()===k))
+    .filter(Boolean);
+}
+function participantWeightedScore(e,activity){
+  if(!e || e.PuntosValidados==null)return null;
+  const names=deliveryEvaluatorNames(e);
+  const explicit=Number(e.NumeroEvaluaciones ?? e.CantidadEvaluaciones ?? e.NroEvaluaciones ?? e.Evaluaciones);
+  const count=Number.isFinite(explicit)&&explicit>0?explicit:(names.length||1);
+  const raw=Number(e.PuntosValidados);
+  if(!Number.isFinite(raw))return null;
+  return Math.min(activity?.points||raw,raw/count);
+}
+function missionDisplayLabel(activity){
+  const i=activities.indexOf(activity);
+  return `Misión ${i>=0?i+1:String(activity?.id||'').replace(/\D/g,'')}`;
+}
+function missionEvaluationHtml(activity,delivery){
+  const score=participantWeightedScore(delivery,activity);
+  if(score==null)return '';
+  const comment=String(delivery?.Retroalimentacion||'').trim();
+  const evaluators=deliveryEvaluatorNames(delivery);
+  return `<div class="mission-eval-summary"><b>Calificación: ${score.toFixed(1)} / ${activity.points}</b>${comment?`<div class="mission-eval-comment">“${escHtml(comment)}”</div>`:''}${evaluators.length?`<div class="result-evaluator">Mentor${evaluators.length>1?'es':''}: ${escHtml(evaluators.join(' · '))}</div>`:''}</div>`;
+}
+function escHtml(v=''){
+  return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+async function refreshParticipantResults(){
+  const btn=document.querySelector('#refreshResultsBtn');
+  const old=btn?.textContent;
+  if(btn){btn.disabled=true;btn.textContent='ACTUALIZANDO…'}
+  try{
+    await fetchLatestDeliveries();
+    renderMissions();
+  }catch(e){
+    console.warn('refreshParticipantResults:',e);
+    renderMissions();
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=old||'ACTUALIZAR'}
+  }
+}
 function evidenceInfo(e){
   if(!e)return {url:'',name:'Evidencia registrada'};
   const url=String(
@@ -957,7 +1072,7 @@ document.querySelector('#prototypeFile')?.addEventListener('change',e=>{
 document.querySelector('#confirmPrototypeLarge')?.addEventListener('click',()=>{
   team.PrototipoPendiente=false;localStorage.setItem('idealab_team',JSON.stringify(team));localStorage.removeItem('idealab_prototype_large_pending');finalizeRegistrationBoarding();
 });
-document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();renderMissions();show('passport')});
+document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();renderMissions();show('passport');refreshParticipantResults()});
 
 const activities=[
 {id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Completen el Diagnóstico Go-To-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",points:10,state:"open"},
@@ -969,7 +1084,20 @@ const activities=[
 {id:"M07",name:"Código de transmisión",rocky:"rocky_06_comunicacion.png",instruction:"Construyan un pitch comercial breve y claro. Debe explicar el valor de su iniciativa y cerrar con un llamado a la acción concreto.",points:10,state:"locked"},
 {id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",points:15,state:"locked"}
 ];
-function hydrateTeam(){if(!team.EquipoID){try{team=JSON.parse(localStorage.getItem('idealab_team')||'{}')}catch{}}if(team.EquipoID){document.querySelector('#dashInitiative').textContent=team.NombreIniciativa;document.querySelector('#dashCode').textContent=team.EquipoID;document.querySelector('#team').value=team.EquipoID}}
+function hydrateTeam(){
+  if(!team.EquipoID){
+    try{team=JSON.parse(localStorage.getItem('idealab_team')||'{}')}catch{}
+  }
+  const qrBtn=document.querySelector('#headerQrBtn');
+  if(team.EquipoID){
+    document.querySelector('#dashInitiative').textContent=team.NombreIniciativa;
+    document.querySelector('#dashCode').textContent=team.EquipoID;
+    document.querySelector('#team').value=team.EquipoID;
+    qrBtn?.classList.remove('hidden');
+  }else{
+    qrBtn?.classList.add('hidden');
+  }
+}
 
 function populateMission(id){
   const a=activities.find(x=>x.id===id);
@@ -1022,12 +1150,31 @@ function openMission(id){
 }
 function renderMissions(){
   const wrap=document.querySelector('#missions');
+  const cached=loadDeliveryCache().filter(e=>String(e?.EquipoID||team?.EquipoID||'')===String(team?.EquipoID||'') || !e?.EquipoID);
   wrap.innerHTML='';
   activities.forEach((a,i)=>{
+    const delivery=findDeliveryForActivity(cached,a.id);
+    const score=participantWeightedScore(delivery,a);
+    const evaluated=score!=null;
     const row=document.createElement('div');
     row.className='mission '+(a.id===selectedMission?'selected':'');
     row.setAttribute('data-activity',a.id);
-    row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div><h4>${a.name}</h4><p>${a.state==='done'?'Pendiente de validación':a.state==='open'?'Lista para trabajar':'Completa la misión anterior'}</p></div><span class="status ${a.state}">${a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA'}</span>`;
+
+    let statusText=a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA';
+    let description=a.state==='done'?'Entregada · pendiente de evaluación':a.state==='open'?'Lista para trabajar':'Completa la misión anterior';
+    if(a.state==='done' && evaluated){
+      statusText='EVALUADA';
+      description=`Calificación ${score.toFixed(1)} / ${a.points}`;
+    }
+
+    row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div>
+      <div>
+        <h4>${a.name}</h4>
+        <p>${description}</p>
+        ${a.state==='done'?missionEvaluationHtml(a,delivery):''}
+      </div>
+      <span class="status ${a.state}">${statusText}</span>`;
+
     if(a.state!=='locked'){
       row.setAttribute('role','button');
       row.setAttribute('tabindex','0');
@@ -1036,14 +1183,33 @@ function renderMissions(){
     }
     wrap.appendChild(row);
   });
+
   const done=activities.filter(x=>x.state==='done');
   const pct=Math.round(done.length/activities.length*100);
   const next=activities.find(x=>x.state==='open');
   document.querySelector('#pct').textContent=pct+'%';
   document.querySelector('#bar').style.width=pct+'%';
   document.querySelector('#completed').textContent=`${done.length}/${activities.length}`;
-    document.querySelector('#nextMission').textContent=next?next.id:'COMPLETA';
-  document.querySelector('#scoreTable').innerHTML=activities.map(a=>`<tr><td>${a.id}</td><td>${a.state==='done'?'Pendiente de validación':a.state==='open'?'Disponible':'Bloqueada'}</td></tr>`).join('');
+  document.querySelector('#nextMission').textContent=next?missionDisplayLabel(next):'COMPLETA';
+
+  document.querySelector('#scoreTable').innerHTML=activities.map(a=>{
+    const d=findDeliveryForActivity(cached,a.id);
+    const score=participantWeightedScore(d,a);
+    const comment=String(d?.Retroalimentacion||'').trim();
+    const evaluators=deliveryEvaluatorNames(d);
+
+    let result='';
+    if(score!=null){
+      result=`<span class="result-cell"><b>${score.toFixed(1)} / ${a.points}</b>${comment?`<span class="result-comment">${escHtml(comment)}</span>`:''}${evaluators.length?`<span class="result-evaluator">${escHtml(evaluators.join(' · '))}</span>`:''}</span>`;
+    }else if(a.state==='done'){
+      result='Entregada · pendiente de evaluación';
+    }else if(a.state==='open'){
+      result='Disponible';
+    }else{
+      result='Bloqueada';
+    }
+    return `<tr><td>${missionDisplayLabel(a)}</td><td>${result}</td></tr>`;
+  }).join('');
 }
 try{
   const p=JSON.parse(localStorage.getItem('idealab_progress')||'[]');
@@ -1385,6 +1551,49 @@ function refreshParticipantQR(){
   document.querySelector('#qrOwnerMeta').textContent=url?team.NombreIniciativa+' · '+p.CodigoQR:'Código QR pendiente de sincronización';
 }
 
+
+function refreshHeaderQR(){
+  hydrateTeam();
+  const sel=document.querySelector('#headerQrParticipant');
+  const img=document.querySelector('#headerQrImage');
+  if(!sel||!img||!team?.Participantes?.length)return;
+
+  const current=sel.value;
+  sel.innerHTML=team.Participantes.map((p,i)=>`<option value="${i}">${escHtml(p.Nombre||('Integrante '+(i+1)))}</option>`).join('');
+  if(current!=='' && team.Participantes[Number(current)])sel.value=current;
+
+  const p=team.Participantes[Number(sel.value)||0];
+  if(!p)return;
+  const url=connectionUrlForParticipant(p);
+  if(url){
+    img.src='https://api.qrserver.com/v1/create-qr-code/?size=420x420&data='+encodeURIComponent(url);
+  }else{
+    img.removeAttribute('src');
+  }
+  document.querySelector('#headerQrOwner').textContent=p.Nombre||'QR PERSONAL';
+  document.querySelector('#headerQrMeta').textContent=url?(team.NombreIniciativa+' · '+(p.CodigoQR||team.EquipoID)):'Código QR pendiente de sincronización';
+}
+function openHeaderQR(){
+  hydrateTeam();
+  if(!team?.EquipoID || !team?.Participantes?.length){
+    alert('Primero debes abrir o recuperar tu pasaporte de misión.');
+    return;
+  }
+  refreshHeaderQR();
+  document.querySelector('#headerQrModal')?.classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+function closeHeaderQR(){
+  document.querySelector('#headerQrModal')?.classList.add('hidden');
+  document.body.style.overflow='';
+}
+document.querySelector('#headerQrBtn')?.addEventListener('click',openHeaderQR);
+document.querySelector('#headerQrClose')?.addEventListener('click',closeHeaderQR);
+document.querySelector('#headerQrParticipant')?.addEventListener('change',refreshHeaderQR);
+document.querySelector('#headerQrModal')?.addEventListener('click',e=>{if(e.target?.id==='headerQrModal')closeHeaderQR()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHeaderQR()});
+document.querySelector('#refreshResultsBtn')?.addEventListener('click',refreshParticipantResults);
+
 function participantConnectionCount(){
   try{
     const arr=JSON.parse(localStorage.getItem(CONNECTION_KEY)||'[]');
@@ -1580,6 +1789,13 @@ function processConnectionRoute(){
 }
 
 processConnectionRoute();
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible' && document.querySelector('#passport')?.classList.contains('active')){
+    refreshParticipantResults();
+  }
+});
+
 </script>
 
 </body>
