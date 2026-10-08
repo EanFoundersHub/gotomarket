@@ -93,6 +93,20 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 .qrbox img{object-fit:contain}
 #qrParticipant{margin-top:6px}
 .validation-note{border-left:3px solid var(--cyan);padding:10px 12px;background:rgba(89,220,225,.05)}
+
+.connection-detected{display:grid;grid-template-columns:110px 1fr;gap:18px;align-items:center;margin:18px 0;padding:18px;border:1px solid var(--cyan);background:rgba(89,220,225,.06)}
+.connection-detected .signal{width:96px;height:96px;border:1px solid var(--cyan);display:grid;place-items:center;font-family:'Black Ops One';font-size:34px;color:var(--cyan);background:#0d0a08}
+.connection-detected h3{margin:0 0 6px}
+.connection-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.connection-form-grid .full{grid-column:1/-1}
+.connection-success{border:1px solid var(--cyan);padding:22px;background:rgba(89,220,225,.07);margin-top:18px}
+.connection-success h2{margin:6px 0}
+.connection-login-note{border:1px solid var(--gold);background:rgba(255,201,74,.06);padding:14px;margin:16px 0}
+.connection-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.connection-choice{border:1px solid rgba(255,255,255,.18);padding:10px;cursor:pointer;background:#130f0c}
+.connection-choice input{width:auto;margin-right:6px}
+@media(max-width:760px){.connection-detected{grid-template-columns:1fr}.connection-form-grid,.connection-options{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -100,7 +114,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 <header class="top">
   <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">IDEALAB</div><div class="sub">Aceleratón Go-To-Market · 48 horas para llevar una idea al mercado</div></div>
   <div class="chip">MICROSOFT 365 READY</div>
-</header><div class="demo-banner">MODO CONECTADO · Registro, entregas, recuperación y carga grande automática sincronizados con Microsoft 365.</div>
+</header><div class="demo-banner">MODO CONECTADO · Registro, entregas, recuperación, archivos grandes y conexiones QR sincronizados con Microsoft 365.</div>
 
 <section id="welcome" class="screen active">
   <div class="hero">
@@ -199,26 +213,17 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <h2 class="title">AMPLÍA TU RED</h2>
         <div class="connection-card">
           <div>
-            <p>Cada integrante tiene un QR personal. Compártelo para registrar conexiones con clientes, mentores, aliados y otros emprendedores.</p>
-            <label for="qrParticipant">QR de</label>
+            <p>Cada integrante tiene un QR personal. Cuando otra persona lo escanee, IdeaLab abrirá el registro de conexión de forma automática.</p>
+            <p class="hint">Las conexiones pueden clasificarse como potencial cliente, mentor, emprendedor, aliado, experto u otro. También puedes registrar si quedó un próximo encuentro.</p>
+            <label for="qrParticipant">Mostrar QR de</label>
             <select id="qrParticipant"></select>
-            <a class="btn alt" id="openConnectionPage" href="#" target="_blank" style="display:inline-block;margin-top:10px">ABRIR FICHA DE CONEXIÓN</a>
+            <a class="btn alt" id="openConnectionPage" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px">PROBAR MI QR ↗</a>
           </div>
           <div class="qrbox">
             <img id="participantQR" alt="QR personal de conexión" style="width:190px;height:190px;background:#fff;padding:8px">
             <div><b id="qrOwner">QR PERSONAL</b><br><small id="qrOwnerMeta">Conexiones IdeaLab</small></div>
           </div>
         </div>
-        <form id="connectionForm" class="hidden" style="margin-top:18px">
-          <div class="formgrid">
-            <div><label>Nombre</label><input id="connName" required></div>
-            <div><label>Correo</label><input id="connEmail" type="email"></div>
-            <div><label>Tipo de conexión</label><select id="connType"><option>Cliente</option><option>Mentor</option><option>Emprendedor</option><option>Aliado</option><option>Otro</option></select></div>
-            <div><label>¿Agendaron seguimiento?</label><select id="connFollow"><option>No</option><option>Sí</option></select></div>
-            <div class="full"><label>¿Cómo puede aportar?</label><textarea id="connNote" placeholder="Ej. Me sirve como mentor en estrategia comercial..."></textarea></div>
-          </div>
-          <button class="btn" type="submit">GUARDAR CONEXIÓN</button><div class="toast" id="connToast"></div>
-        </form>
       </article>
     </div>
     <aside>
@@ -334,6 +339,90 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
   </article>
 </section>
 
+
+<section id="connectionScreen" class="screen">
+  <article class="card">
+    <div class="eyebrow">PROTOCOLO DE CONEXIONES · IDEALAB</div>
+    <h2 class="title">CONEXIÓN DETECTADA</h2>
+
+    <div id="connectionLoading" class="connection-detected">
+      <div class="signal">···</div>
+      <div>
+        <h3>LEYENDO SEÑAL</h3>
+        <p class="hint">IdeaLab está verificando el código QR.</p>
+      </div>
+    </div>
+
+    <div id="connectionTarget" class="connection-detected hidden">
+      <div class="signal">QR</div>
+      <div>
+        <div class="eyebrow">HAS CONECTADO CON</div>
+        <h3 id="connectionTargetName">Participante</h3>
+        <div class="hint" id="connectionTargetMeta"></div>
+      </div>
+    </div>
+
+    <div id="connectionError" class="connection-login-note hidden"></div>
+
+    <div id="connectionNeedPassport" class="connection-login-note hidden">
+      <b>IDENTIFICA TU TRIPULACIÓN</b>
+      <p>Para registrar quién realizó esta conexión, abre o recupera tu pasaporte en este dispositivo. El QR detectado quedará guardado mientras vuelves.</p>
+      <button class="btn" type="button" id="connectionRecoverBtn">RECUPERAR MI PASAPORTE →</button>
+    </div>
+
+    <form id="qrConnectionForm" class="hidden">
+      <div class="connection-form-grid">
+        <div class="full">
+          <label for="connectionOriginParticipant">¿Quién de tu equipo realizó la conexión?</label>
+          <select id="connectionOriginParticipant" required></select>
+        </div>
+
+        <div class="full">
+          <label>Tipo de conexión</label>
+          <div class="connection-options">
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Potencial cliente" required> Potencial cliente</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Mentor"> Mentor</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Emprendedor"> Emprendedor</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Aliado"> Aliado</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Experto"> Experto</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Otro"> Otro</label>
+          </div>
+        </div>
+
+        <div>
+          <label for="connectionFollowUp">¿Quedó un próximo encuentro?</label>
+          <select id="connectionFollowUp" required>
+            <option value="No">No</option>
+            <option value="Sí">Sí</option>
+          </select>
+        </div>
+
+        <div id="connectionMeetingTypeWrap" class="hidden">
+          <label for="connectionMeetingType">Tipo de encuentro</label>
+          <select id="connectionMeetingType">
+            <option value="">Selecciona</option>
+            <option>Reunión con potencial cliente</option>
+            <option>Mentoría / asesoría</option>
+            <option>Reunión con aliado</option>
+            <option>Demostración / prueba</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn" id="registerQrConnection" type="submit" style="margin-top:18px">REGISTRAR CONEXIÓN →</button>
+      <div class="toast" id="qrConnectionToast" aria-live="polite"></div>
+    </form>
+
+    <div id="connectionSuccess" class="connection-success hidden">
+      <div class="eyebrow">SEÑAL REGISTRADA</div>
+      <h2>✅ CONEXIÓN REGISTRADA</h2>
+      <p id="connectionSuccessText">La conexión quedó registrada correctamente.</p>
+      <button class="btn" type="button" id="connectionBackPassport">VOLVER A MI PASAPORTE →</button>
+    </div>
+  </article>
+</section>
+
 <section id="continueScreen" class="screen">
   <article class="card admin-login"><div class="eyebrow">RECUPERACIÓN DE PASAPORTE</div><h2 class="title">CONTINUAR MI MISIÓN</h2>
   <div class="rocky-dialog"><img src="assets/rocky/rocky_03_silencio.png" alt="Rocky"><div><h3>ROCKY TE AYUDA</h3><p>Si registraste tu equipo en este mismo navegador, puedes volver directamente a tu pasaporte. También puedes recuperar tu equipo por correo desde otro navegador.</p></div></div>
@@ -359,7 +448,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 </main>
 
 <script>
-const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"",admin:"",recuperarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/00b46863cb3d4c7c9fc6601082f978fe/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CJwLvUjbgS5XTsOf4_Mx9kyNw1ZPfuSbzPNNy_EBj1o",buscarEvidencias:"",asociarEvidencia:"",requestFilesUrl:"https://universidadeaneduco-my.sharepoint.com/:f:/g/personal/tangara_ir_universidadean_edu_co/IgCxirjKtT72T4koarYvwg4cAYTTXY6W1sMJDw6aKswIaJ4",prepararCargaGrande:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/20814ead877640ea879231c99aa97d7d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kGAl68UY6pZxJsqqKUwNUE4X-dp85x3fkcwB2BJt5Ms"};
+const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/06/workflows/e039ed1fd1754251aa20252902037c76/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uhqQMDypaKxhqIn92poihKyWOZy1eencYwHiFmujpsQ",admin:"",recuperarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/00b46863cb3d4c7c9fc6601082f978fe/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CJwLvUjbgS5XTsOf4_Mx9kyNw1ZPfuSbzPNNy_EBj1o",buscarEvidencias:"",asociarEvidencia:"",requestFilesUrl:"https://universidadeaneduco-my.sharepoint.com/:f:/g/personal/tangara_ir_universidadean_edu_co/IgCxirjKtT72T4koarYvwg4cAYTTXY6W1sMJDw6aKswIaJ4",prepararCargaGrande:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/20814ead877640ea879231c99aa97d7d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kGAl68UY6pZxJsqqKUwNUE4X-dp85x3fkcwB2BJt5Ms"};
 const API={...API_DEFAULT};
 function apiReady(){return Boolean(API.registrarEquipo&&API.guardarEntrega)}
 
@@ -840,8 +929,6 @@ document.querySelector('#viewEvidenceBtn')?.addEventListener('click',e=>{
 document.querySelector('#backToPassportTop').addEventListener('click',()=>{renderMissions();show('passport')});
 document.querySelector('#backToPassportSuccess').addEventListener('click',()=>{renderMissions();show('passport')});
 
-document.querySelector('#showConnectionForm')?.addEventListener('click',()=>document.querySelector('#connectionForm')?.classList.toggle('hidden'));
-document.querySelector('#connectionForm').addEventListener('submit',async e=>{e.preventDefault();hydrateTeam();const payload={EquipoID:team.EquipoID,Nombre:document.querySelector('#connName').value.trim(),Correo:document.querySelector('#connEmail').value.trim(),TipoConexion:document.querySelector('#connType').value,Seguimiento:document.querySelector('#connFollow').value,Observacion:document.querySelector('#connNote').value.trim(),Fecha:new Date().toISOString()};try{await postJSON(API.registrarConexion,payload);document.querySelector('#connToast').textContent=API.registrarConexion?'Conexión registrada.':'Modo demo: conexión preparada para SharePoint.';e.target.reset()}catch(err){document.querySelector('#connToast').textContent=err.message}});
 function normalizeRecoveredTeam(result){
   const e=result?.Equipo||{};
   const participantsRaw=Array.isArray(result?.Participantes)?result.Participantes:[];
@@ -932,6 +1019,7 @@ function openLocalPassport(){
   try{ refreshParticipantTelemetry(); }catch(e){ console.warn('refreshParticipantTelemetry:',e); }
 
   if(toast)toast.textContent='';
+  resumePendingConnectionIfAny();
 }
 window.openLocalPassport=openLocalPassport;
 
@@ -974,9 +1062,9 @@ async function recoverByEmail(event){
     try{refreshParticipantQR()}catch(e){console.warn('refreshParticipantQR:',e)}
     try{refreshParticipantTelemetry()}catch(e){console.warn('refreshParticipantTelemetry:',e)}
 
-    if(toast)toast.textContent='Pasaporte recuperado. Abriendo misión…';
+    if(toast)toast.textContent='Pasaporte recuperado.';
     refreshSavedPassportBox();
-    show('passport');
+    if(!(await resumePendingConnectionIfAny())) show('passport');
   }catch(err){
     console.error('IdeaLab recuperación:',err);
     if(toast)toast.textContent=err?.message||'No fue posible recuperar el equipo.';
@@ -1066,12 +1154,20 @@ document.querySelector('#initiative').addEventListener('input',checkExistingProj
 document.querySelector('#initiative').addEventListener('change',checkExistingProject);
 
 
-const CONNECTION_KEY='idealab_connections_v1';
+const CONNECTION_KEY='idealab_connections_v2';
+let activeConnectionCode='';
+let activeConnectionTarget=null;
+
 function connectionUrlForParticipant(p){
-  const code=p?.CodigoQR||'';
+  const code=String(p?.CodigoQR||'').trim();
   if(!code)return '';
-  return new URL('conectar.html?c='+encodeURIComponent(code),location.href).href;
+  const u=new URL(location.href);
+  u.search='';
+  u.hash='';
+  u.searchParams.set('connect',code);
+  return u.href;
 }
+
 function refreshParticipantQR(){
   const sel=document.querySelector('#qrParticipant');
   if(!sel||!team.Participantes)return;
@@ -1083,25 +1179,214 @@ function refreshParticipantQR(){
   const url=connectionUrlForParticipant(p);
   const img=document.querySelector('#participantQR');
   const open=document.querySelector('#openConnectionPage');
-  if(url){img.src='https://api.qrserver.com/v1/create-qr-code/?size=240x240&data='+encodeURIComponent(url);open.href=url;open.classList.remove('hidden')}
-  else{img.removeAttribute('src');open.removeAttribute('href');open.classList.add('hidden')}
+  if(url){
+    img.src='https://api.qrserver.com/v1/create-qr-code/?size=240x240&data='+encodeURIComponent(url);
+    open.href=url;
+    open.classList.remove('hidden');
+  }else{
+    img.removeAttribute('src');
+    open.removeAttribute('href');
+    open.classList.add('hidden');
+  }
   document.querySelector('#qrOwner').textContent=p.Nombre;
-  document.querySelector('#qrOwnerMeta').textContent=url?team.NombreIniciativa+' · QR personal':'Código QR pendiente de sincronización';
+  document.querySelector('#qrOwnerMeta').textContent=url?team.NombreIniciativa+' · '+p.CodigoQR:'Código QR pendiente de sincronización';
 }
+
 function participantConnectionCount(){
   try{
     const arr=JSON.parse(localStorage.getItem(CONNECTION_KEY)||'[]');
-    return arr.filter(x=>x.EquipoID===team.EquipoID).length;
+    return arr.filter(x=>x.EquipoOrigen===team.EquipoID).length;
   }catch{return 0}
 }
+
 function refreshParticipantTelemetry(){
   const done=activities.filter(x=>x.state==='done').length;
   const pending=demoDeliveries.filter(d=>d.EquipoID===team.EquipoID && d.EstadoEvaluacion==='Pendiente').length;
   const p=document.querySelector('#pendingValidation'); if(p)p.textContent=pending;
   const c=document.querySelector('#connectionCount'); if(c)c.textContent=participantConnectionCount();
 }
+
+function rememberConnectionLocal(item){
+  try{
+    const arr=JSON.parse(localStorage.getItem(CONNECTION_KEY)||'[]');
+    arr.push(item);
+    localStorage.setItem(CONNECTION_KEY,JSON.stringify(arr.slice(-100)));
+  }catch{}
+}
+
+function hydrateConnectionTeam(){
+  if(team?.EquipoID)return true;
+  try{
+    const saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
+    if(saved?.EquipoID){team=saved;return true}
+  }catch{}
+  return false;
+}
+
+function renderConnectionOriginSelector(){
+  const select=document.querySelector('#connectionOriginParticipant');
+  if(!select)return;
+  const members=Array.isArray(team?.Participantes)?team.Participantes:[];
+  select.innerHTML=members.map((p,i)=>`<option value="${i}">${p.Nombre}</option>`).join('');
+}
+
+async function openConnectionExperience(code){
+  activeConnectionCode=String(code||'').trim();
+  activeConnectionTarget=null;
+
+  show('connectionScreen');
+  document.querySelector('#connectionLoading')?.classList.remove('hidden');
+  document.querySelector('#connectionTarget')?.classList.add('hidden');
+  document.querySelector('#connectionError')?.classList.add('hidden');
+  document.querySelector('#connectionNeedPassport')?.classList.add('hidden');
+  document.querySelector('#qrConnectionForm')?.classList.add('hidden');
+  document.querySelector('#connectionSuccess')?.classList.add('hidden');
+
+  if(!activeConnectionCode){
+    document.querySelector('#connectionLoading')?.classList.add('hidden');
+    const box=document.querySelector('#connectionError');
+    box.textContent='No encontramos un código QR válido en este enlace.';
+    box.classList.remove('hidden');
+    return;
+  }
+
+  if(!API.registrarConexion){
+    document.querySelector('#connectionLoading')?.classList.add('hidden');
+    const box=document.querySelector('#connectionError');
+    box.textContent='El protocolo de conexiones no está configurado.';
+    box.classList.remove('hidden');
+    return;
+  }
+
+  try{
+    const result=await postJSON(API.registrarConexion,{
+      Accion:'consultar',
+      CodigoQRDestino:activeConnectionCode
+    });
+    if(!result?.ok)throw new Error(result?.error||'Código QR no encontrado.');
+
+    activeConnectionTarget=result;
+    document.querySelector('#connectionLoading')?.classList.add('hidden');
+    document.querySelector('#connectionTarget')?.classList.remove('hidden');
+    document.querySelector('#connectionTargetName').textContent=result.NombreDestino||'Participante IdeaLab';
+    document.querySelector('#connectionTargetMeta').textContent=(result.EquipoDestino||'')+' · '+activeConnectionCode;
+
+    if(hydrateConnectionTeam()){
+      renderConnectionOriginSelector();
+      document.querySelector('#qrConnectionForm')?.classList.remove('hidden');
+    }else{
+      document.querySelector('#connectionNeedPassport')?.classList.remove('hidden');
+    }
+  }catch(err){
+    document.querySelector('#connectionLoading')?.classList.add('hidden');
+    const box=document.querySelector('#connectionError');
+    box.textContent='No fue posible validar este QR: '+(err?.message||'error desconocido');
+    box.classList.remove('hidden');
+  }
+}
+
+document.querySelector('#connectionFollowUp')?.addEventListener('change',e=>{
+  const yes=e.target.value==='Sí';
+  document.querySelector('#connectionMeetingTypeWrap')?.classList.toggle('hidden',!yes);
+  const mt=document.querySelector('#connectionMeetingType');
+  if(mt){mt.required=yes;if(!yes)mt.value=''}
+});
+
+document.querySelector('#connectionRecoverBtn')?.addEventListener('click',()=>{
+  try{sessionStorage.setItem('idealab_pending_connection',activeConnectionCode)}catch{}
+  show('continueScreen');
+  refreshSavedPassportBox();
+});
+
+document.querySelector('#qrConnectionForm')?.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!activeConnectionTarget)return;
+
+  hydrateConnectionTeam();
+  const members=Array.isArray(team?.Participantes)?team.Participantes:[];
+  const idx=Number(document.querySelector('#connectionOriginParticipant')?.value||0);
+  const origin=members[idx];
+  const type=document.querySelector('input[name="connectionType"]:checked')?.value||'';
+  const follow=document.querySelector('#connectionFollowUp')?.value||'No';
+  const meeting=follow==='Sí'?(document.querySelector('#connectionMeetingType')?.value||''):'';
+  const toast=document.querySelector('#qrConnectionToast');
+  const btn=document.querySelector('#registerQrConnection');
+
+  if(!origin?.ParticipanteID){toast.textContent='Selecciona quién de tu equipo realizó la conexión.';return}
+  if(origin.CodigoQR && origin.CodigoQR===activeConnectionCode){toast.textContent='No puedes registrar una conexión contigo mismo.';return}
+  if(!type){toast.textContent='Selecciona el tipo de conexión.';return}
+  if(follow==='Sí'&&!meeting){toast.textContent='Selecciona el tipo de próximo encuentro.';return}
+
+  const old=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='REGISTRANDO…';
+  toast.textContent='Enviando señal…';
+
+  try{
+    const result=await postJSON(API.registrarConexion,{
+      Accion:'registrar',
+      CodigoQRDestino:activeConnectionCode,
+      ParticipanteOrigen:origin.ParticipanteID,
+      EquipoOrigen:team.EquipoID,
+      TipoConexion:type,
+      ProximoEncuentro:follow,
+      TipoEncuentro:meeting
+    });
+    if(!result?.ok)throw new Error(result?.error||'No fue posible registrar la conexión.');
+
+    rememberConnectionLocal({
+      ConexionID:result.ConexionID||'',
+      EquipoOrigen:team.EquipoID,
+      ParticipanteOrigen:origin.ParticipanteID,
+      CodigoQRDestino:activeConnectionCode,
+      TipoConexion:type,
+      ProximoEncuentro:follow,
+      Fecha:new Date().toISOString()
+    });
+    refreshParticipantTelemetry();
+
+    document.querySelector('#qrConnectionForm')?.classList.add('hidden');
+    document.querySelector('#connectionSuccess')?.classList.remove('hidden');
+    document.querySelector('#connectionSuccessText').textContent=`${origin.Nombre} registró una conexión con ${activeConnectionTarget.NombreDestino||'el participante'}.`;
+    toast.textContent='';
+  }catch(err){
+    toast.textContent='No fue posible registrar la conexión: '+(err?.message||'error desconocido');
+  }finally{
+    btn.disabled=false;
+    btn.textContent=old;
+  }
+});
+
+document.querySelector('#connectionBackPassport')?.addEventListener('click',()=>{
+  history.replaceState({},'',location.pathname);
+  hydrateTeam();
+  renderMissions();
+  refreshParticipantQR();
+  refreshParticipantTelemetry();
+  show('passport');
+});
+
 document.querySelector('#qrParticipant')?.addEventListener('change',refreshParticipantQR);
 
+async function resumePendingConnectionIfAny(){
+  let code='';
+  try{code=sessionStorage.getItem('idealab_pending_connection')||''}catch{}
+  if(!code)return false;
+  try{sessionStorage.removeItem('idealab_pending_connection')}catch{}
+  await openConnectionExperience(code);
+  return true;
+}
+
+function processConnectionRoute(){
+  const code=new URLSearchParams(location.search).get('connect');
+  if(code){
+    openConnectionExperience(code);
+    return true;
+  }
+  return false;
+}
+
+processConnectionRoute();
 </script>
 
 </body>
