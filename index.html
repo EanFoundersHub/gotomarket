@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IdeaLab | Aceleratón Go-To-Market</title>
+<title>Aceleratón Go-To-Market</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Poppins:wght@400;500;600;700&display=swap');
 :root{--bg:#080706;--panel:#15110e;--panel2:#21170f;--line:#5c432d;--gold:#FFC94A;--cyan:#59dce1;--text:#f8f3eb;--muted:#baa999;--ok:#7bd7a1;--danger:#ff786f}
@@ -107,28 +107,58 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 .connection-choice input{width:auto;margin-right:6px}
 @media(max-width:760px){.connection-detected{grid-template-columns:1fr}.connection-form-grid,.connection-options{grid-template-columns:1fr}}
 
+
+/* ===== IdeaLab V2 · jerarquía y responsive ===== */
+.shell{max-width:1180px;padding-left:clamp(16px,3vw,30px);padding-right:clamp(16px,3vw,30px)}
+#register .card{max-width:980px;margin:28px auto}
+#register h3{margin:4px 0 16px}.formgrid>div{min-width:0}
+.member{padding:18px;border:1px solid rgba(255,201,74,.15);background:rgba(255,255,255,.018);margin-top:14px}.member-head{margin-bottom:12px}
+.prototype-panel{margin-top:8px;padding:20px;border:1px solid rgba(89,220,225,.42);background:linear-gradient(135deg,rgba(89,220,225,.055),rgba(255,201,74,.035))}
+.prototype-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px}.prototype-head h3{margin:4px 0 0}
+.required-pill{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border:1px solid var(--gold);color:var(--gold);font-size:10px;font-weight:700;letter-spacing:.08em}
+.prototype-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.prototype-meta span{font-size:10px;color:var(--muted);border:1px solid rgba(255,255,255,.12);padding:6px 8px}
+.prototype-large{margin-top:16px;padding:16px;border:1px solid var(--gold);background:rgba(255,201,74,.055)}.prototype-large h4{margin:5px 0 7px}
+.prototype-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.prototype-actions .btn{margin-top:8px}
+.boarding-warning{margin:14px 0;padding:12px;border:1px solid rgba(255,201,74,.55);background:rgba(255,201,74,.06);color:#f6d98c;font-size:12px;line-height:1.5}
+.error-toast{color:var(--danger)!important;white-space:pre-line}
+#missionWorkspace{max-width:980px;margin-left:auto;margin-right:auto}
+.mission-screen-head{max-width:980px;margin:22px auto 0;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.delivery-options>div{min-width:0}.mission-submit-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.actions{align-items:center}.actions #nextBtn{margin-left:auto}input[type="file"]{padding:10px;min-height:46px}
+@media(max-width:760px){
+  input,select,textarea{font-size:16px}#register .card{padding:17px;margin-top:14px}.prototype-panel{padding:15px}.prototype-head{display:grid}
+  .prototype-actions{display:grid;grid-template-columns:1fr}.prototype-actions .btn{width:100%;text-align:center}
+  .actions{display:grid;grid-template-columns:1fr}.actions .btn{width:100%;margin:0}.actions #nextBtn{margin:0}
+  .mission-screen-head{align-items:stretch}.mission-screen-head .btn{width:100%}.mission-screen-progress{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .boarding-grid{gap:13px}.boarding{padding:20px}
+}
+
+
+.logo{line-height:.92;max-width:520px}
+@media(max-width:760px){.logo{font-size:clamp(26px,9vw,42px)}}
+
 </style>
 </head>
 <body>
 <main class="shell">
 <header class="top">
-  <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">IDEALAB</div><div class="sub">Aceleratón Go-To-Market · 48 horas para llevar una idea al mercado</div></div>
+  <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">ACELERATÓN<br>GO-TO-MARKET</div><div class="sub">Más de 15 horas para llevar una idea al mercado</div></div>
   <div class="chip">MICROSOFT 365 READY</div>
-</header><div class="demo-banner">MODO CONECTADO · Registro, entregas, recuperación, archivos grandes y conexiones QR sincronizados con Microsoft 365.</div>
+</header><div class="demo-banner">MODO CONECTADO · Registro, prototipo, entregas, recuperación, archivos grandes y conexiones QR sincronizados con Microsoft 365.</div>
 
 <section id="welcome" class="screen active">
   <div class="hero">
     <div>
       <div class="eyebrow">ACELERATÓN GO-TO-MARKET</div>
       <h2>¿ESTÁN LISTOS<br>PARA LA <span>MISIÓN?</span></h2>
-      <p>Registra tu tripulación, crea el pasaporte de tu iniciativa y completa las misiones de IdeaLab. Cada avance quedará preparado para sistematizarse en Microsoft 365.</p>
+      <p>Registra tu tripulación, crea el pasaporte de tu iniciativa y completa las misiones de la Aceleratón Go-To-Market. Cada avance quedará preparado para sistematizarse en Microsoft 365.</p>
       <button class="btn" id="startBtn">INICIAR MISIÓN →</button>
       <div class="navtools">
         <button class="btn alt" id="continueBtn" type="button">CONTINUAR MI MISIÓN</button>
         
       </div>
     </div>
-    <div><div class="rockyWrap"><img class="rocky" src="assets/rocky/rocky_01_cool.png" alt="Rocky, guía de la misión IdeaLab"></div><div class="hud"><div class="label">SU MISIÓN</div><strong>48 HORAS</strong><p>Validar la idea · tomar decisiones · construir estrategia · conseguir ventas.</p><div class="hint">PROTOCOLO IDEALAB // GTM-2026</div></div></div>
+    <div><div class="rockyWrap"><img class="rocky" src="assets/rocky/rocky_01_cool.png" alt="Rocky, guía de la misión Aceleratón Go-To-Market"></div><div class="hud"><div class="label">SU MISIÓN</div><strong>MÁS DE 15 HORAS</strong><p>Validar la idea · tomar decisiones · construir estrategia · conseguir ventas.</p><div class="hint">PROTOCOLO ACELERATÓN // GTM-2026</div></div></div>
   </div>
 </section>
 
@@ -165,10 +195,37 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
   <datalist id="demoProjects"><option value="Super Floral"><option value="NovaLab"><option value="EcoLoop"><option value="BioRuta"></datalist>
 </div>
 <div id="projectMatchBox" class="full"></div>
-          <div><label for="origin">Proceso del que viene</label><select id="origin" required><option value="">Selecciona</option><option>Programa Conecta – Bridge for Billions</option><option>Founders Hub</option><option>Programa de incubación</option><option>Sandbox para emprendedores</option><option>Minor</option><option>Otro</option></select></div>
+          <div><label for="origin">Programa del que viene</label><select id="origin" required><option value="">Selecciona</option><option>Ninguno</option><option>Programa Conecta – Bridge for Billions</option><option>Founders Hub</option><option>Programa de incubación</option><option>Sandbox para emprendedores</option><option>Minor</option><option>Otro</option></select></div>
           <div class="full"><label for="description">Descripción de la iniciativa</label><textarea id="description" required placeholder="La iniciativa consiste en... Busca solucionar... Está dirigida a... Su propuesta de valor consiste en... y su principal objetivo es..."></textarea></div>
           <div><label for="category">Categoría</label><select id="category" required><option value="">Selecciona</option><option>Tradicional</option><option>Digital</option><option>Tech</option><option>Innovación</option></select></div>
           <div><label for="sector">Sector</label><select id="sector" required><option value="">Selecciona</option><option>Agropecuario y agroindustria</option><option>Alimentos y bebidas</option><option>Educación</option><option>Tecnología y software</option><option>Comercio y retail</option><option>Servicios profesionales</option><option>Industrias creativas y culturales</option><option>Turismo</option><option>Manufactura / industria</option><option>Otro</option></select></div>
+
+          <div class="full prototype-panel">
+            <div class="prototype-head">
+              <div>
+                <div class="eyebrow">PROTOCOLO DE ALISTAMIENTO</div>
+                <h3>04 · Prototipo actual</h3>
+              </div>
+              <span class="required-pill">OBLIGATORIO</span>
+            </div>
+            <p class="hint">Carga el prototipo que tu equipo tiene hoy. Puede ser una presentación, documento, imagen, video, ZIP u otro archivo que represente su estado actual.</p>
+            <label for="prototypeFile">Archivo del prototipo</label>
+            <input id="prototypeFile" type="file" required>
+            <div class="prototype-meta">
+              <span>Hasta 50 MB: carga directa</span>
+              <span>Más de 50 MB: carga segura de Microsoft</span>
+            </div>
+            <div id="prototypeLargeBox" class="prototype-large hidden">
+              <div class="eyebrow">CARGA EXTERNA PREPARADA</div>
+              <h4>Tu archivo supera 50 MB</h4>
+              <p id="prototypeLargeMessage" class="hint">La Aceleratón preparó una sesión segura para subir el prototipo.</p>
+              <div class="prototype-actions">
+                <a class="btn" id="prototypeExternalLink" href="#" target="_blank" rel="noopener">SUBIR PROTOTIPO EN MICROSOFT ↗</a>
+                <button class="btn alt" id="confirmPrototypeLarge" type="button">YA TERMINÉ LA CARGA · CONTINUAR →</button>
+              </div>
+              <div id="prototypeLargeStatus" class="toast" aria-live="polite"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -191,8 +248,10 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
       <div><div class="label">TRIPULACIÓN</div><div class="value" id="bpMembers"></div></div>
       <div><div class="label">CATEGORÍA</div><div class="value" id="bpCategory"></div></div>
       <div><div class="label">SECTOR</div><div class="value" id="bpSector"></div></div>
+      <div class="full"><div class="label">PROTOTIPO REGISTRADO</div><div class="value" id="bpPrototype">Archivo cargado</div></div>
     </div>
-    <p class="hint">PASAPORTE VALIDADO · Acceso autorizado al Centro de Misión IdeaLab.</p>
+    <div id="bpWarnings" class="boarding-warning hidden"></div>
+    <p class="hint">PASAPORTE VALIDADO · Acceso autorizado al Centro de Misión de la Aceleratón.</p>
     <button class="btn" id="enterPassport">INICIAR MISIÓN →</button>
   </div>
 </section>
@@ -213,7 +272,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <h2 class="title">AMPLÍA TU RED</h2>
         <div class="connection-card">
           <div>
-            <p>Cada integrante tiene un QR personal. Cuando otra persona lo escanee, IdeaLab abrirá el registro de conexión de forma automática.</p>
+            <p>Cada integrante tiene un QR personal. Cuando otra persona lo escanee, la plataforma abrirá el registro de conexión de forma automática.</p>
             <p class="hint">Las conexiones pueden clasificarse como potencial cliente, mentor, emprendedor, aliado, experto u otro. También puedes registrar si quedó un próximo encuentro.</p>
             <label for="qrParticipant">Mostrar QR de</label>
             <select id="qrParticipant"></select>
@@ -221,14 +280,14 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
           </div>
           <div class="qrbox">
             <img id="participantQR" alt="QR personal de conexión" style="width:190px;height:190px;background:#fff;padding:8px">
-            <div><b id="qrOwner">QR PERSONAL</b><br><small id="qrOwnerMeta">Conexiones IdeaLab</small></div>
+            <div><b id="qrOwner">QR PERSONAL</b><br><small id="qrOwnerMeta">Conexiones Aceleratón</small></div>
           </div>
         </div>
       </article>
     </div>
     <aside>
       <article class="card"><h2 class="title">TELEMETRÍA</h2><div class="stats"><div class="stat"><b id="completed">0/8</b><span>MISIONES</span></div><div class="stat"><b id="pendingValidation">0</b><span>POR VALIDAR</span></div><div class="stat"><b id="connectionCount">0</b><span>CONEXIONES</span></div><div class="stat"><b id="nextMission">M01</b><span>SIGUIENTE</span></div></div></article>
-      <article class="card"><h2 class="title">ESTADO DE MISIÓN</h2><p class="hint">Tus calificaciones permanecerán ocultas durante la Aceleratón. Aquí solo verás el estado de cada entrega.</p><table class="admin-table"><thead><tr><th>Misión</th><th>Estado</th></tr></thead><tbody id="scoreTable"></tbody></table></article>
+      <article class="card"><h2 class="title">ESTADO DE MISIÓN</h2><p class="hint">Tus calificaciones permanecerán ocultas durante la Aceleratón Go-To-Market. Aquí solo verás el estado de cada entrega.</p><table class="admin-table"><thead><tr><th>Misión</th><th>Estado</th></tr></thead><tbody id="scoreTable"></tbody></table></article>
     </aside>
   </div>
 </section>
@@ -258,27 +317,27 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <b>REEMPLAZAR ENTREGA</b><br>
         La nueva evidencia sustituirá la evidencia vigente de esta misión y volverá a quedar pendiente de validación.
       </div>
-      <p class="hint">Para completar la misión debes adjuntar un archivo o incluir un enlace. Con uno de los dos es suficiente.</p>
+      <p class="hint" id="deliveryFormatHint">Para completar la misión debes adjuntar un archivo o incluir un enlace. Con uno de los dos es suficiente.</p>
       <div class="delivery-requirement">✓ ENTREGA VÁLIDA: adjunta un archivo <b>o</b> pega un enlace. No necesitas completar ambos.</div><div class="delivery-options">
         <div class="full">
           <label for="answer">Observaciones <span class="hint">(opcional)</span></label>
           <textarea id="answer" placeholder="Puedes agregar una nota breve sobre la entrega..."></textarea>
         </div>
         <div>
-          <label for="deliveryUrl">Enlace al resultado <span class="hint">(opción 1)</span></label>
+          <label for="deliveryUrl">Enlace al resultado <span class="hint">(opción habilitada)</span></label>
           <input id="deliveryUrl" type="url" placeholder="https://...">
         </div>
         <div>
-          <label for="deliveryFile">Archivo <span class="hint">(opción 2)</span></label>
+          <label for="deliveryFile" id="deliveryFileLabel">Archivo <span class="hint">(opción de carga)</span></label>
           <input id="deliveryFile" type="file">
-          <span class="file-limit-note">Carga directa hasta 50 MB. Si pesa más, IdeaLab prepara automáticamente una carga externa segura.</span>
+          <span class="file-limit-note">Carga directa hasta 50 MB. Si pesa más, la plataforma prepara automáticamente una carga externa segura.</span>
         </div>
       </div>
 
       <div id="largeFileBox" class="large-file-box hidden">
         <h4>⚠ ARCHIVO DE GRAN TAMAÑO</h4>
         <p id="largeFileMessage">Este archivo supera el límite de carga directa de 50 MB.</p>
-        <p class="hint">IdeaLab preparará automáticamente la carga para tu equipo y esta misión. No necesitas renombrar el archivo.</p>
+        <p class="hint">la plataforma preparará automáticamente la carga para tu equipo y esta misión. No necesitas renombrar el archivo.</p>
 
         <div class="large-upload-name">
           <span class="hint">ARCHIVO SELECCIONADO</span>
@@ -287,9 +346,9 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 
         <ol class="large-upload-steps">
           <li>Pulsa <b>CARGAR ARCHIVO GRANDE</b>.</li>
-          <li>IdeaLab registrará automáticamente el equipo, la misión, el nombre y el tamaño.</li>
+          <li>la plataforma registrará automáticamente el equipo, la misión, el nombre y el tamaño.</li>
           <li>Se abrirá la carga segura de Microsoft. Sube <b>el mismo archivo con su nombre normal</b>.</li>
-          <li>Cuando termine, vuelve a IdeaLab y pulsa <b>VERIFICAR MI CARGA</b>.</li>
+          <li>Cuando termine, vuelve a la plataforma y pulsa <b>VERIFICAR MI CARGA</b>.</li>
         </ol>
 
         <div class="large-file-actions">
@@ -342,14 +401,14 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 
 <section id="connectionScreen" class="screen">
   <article class="card">
-    <div class="eyebrow">PROTOCOLO DE CONEXIONES · IDEALAB</div>
+    <div class="eyebrow">PROTOCOLO DE CONEXIONES · ACELERATÓN GO-TO-MARKET</div>
     <h2 class="title">CONEXIÓN DETECTADA</h2>
 
     <div id="connectionLoading" class="connection-detected">
       <div class="signal">···</div>
       <div>
         <h3>LEYENDO SEÑAL</h3>
-        <p class="hint">IdeaLab está verificando el código QR.</p>
+        <p class="hint">La plataforma está verificando el código QR.</p>
       </div>
     </div>
 
@@ -435,7 +494,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 
   <div style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)">
     <div class="eyebrow">RECUPERACIÓN POR CORREO</div>
-    <p class="hint">Ingresa el correo con el que te registraste. IdeaLab consultará SharePoint y reconstruirá tu pasaporte y progreso.</p>
+    <p class="hint">Ingresa el correo con el que te registraste. La plataforma consultará SharePoint y reconstruirá tu pasaporte y progreso.</p>
     <label>Correo registrado</label>
     <input id="recoverEmail" type="email" placeholder="correo@ejemplo.com">
     <button class="btn alt" id="recoverSearch" type="button" onclick="recoverByEmail(event)">BUSCAR MI EQUIPO →</button>
@@ -448,7 +507,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 </main>
 
 <script>
-const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/06/workflows/e039ed1fd1754251aa20252902037c76/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uhqQMDypaKxhqIn92poihKyWOZy1eencYwHiFmujpsQ",admin:"",recuperarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/00b46863cb3d4c7c9fc6601082f978fe/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CJwLvUjbgS5XTsOf4_Mx9kyNw1ZPfuSbzPNNy_EBj1o",buscarEvidencias:"",asociarEvidencia:"",requestFilesUrl:"https://universidadeaneduco-my.sharepoint.com/:f:/g/personal/tangara_ir_universidadean_edu_co/IgCxirjKtT72T4koarYvwg4cAYTTXY6W1sMJDw6aKswIaJ4",prepararCargaGrande:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/20814ead877640ea879231c99aa97d7d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kGAl68UY6pZxJsqqKUwNUE4X-dp85x3fkcwB2BJt5Ms"};
+const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aMO",guardarPrototipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/29/workflows/5fc52a568ec64eceb78ab2b6f7cbc9b0/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fA5-7Z2QlvnQrF7QFfMWG_SXcXyA7tuhwARdZw9yu_s",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/06/workflows/e039ed1fd1754251aa20252902037c76/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uhqQMDypaKxhqIn92poihKyWOZy1eencYwHiFmujpsQ",admin:"",recuperarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/00b46863cb3d4c7c9fc6601082f978fe/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CJwLvUjbgS5XTsOf4_Mx9kyNw1ZPfuSbzPNNy_EBj1o",buscarEvidencias:"",asociarEvidencia:"",requestFilesUrl:"https://universidadeaneduco-my.sharepoint.com/:f:/g/personal/tangara_ir_universidadean_edu_co/IgCxirjKtT72T4koarYvwg4cAYTTXY6W1sMJDw6aKswIaJ4",prepararCargaGrande:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/20814ead877640ea879231c99aa97d7d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kGAl68UY6pZxJsqqKUwNUE4X-dp85x3fkcwB2BJt5Ms"};
 const API={...API_DEFAULT};
 function apiReady(){return Boolean(API.registrarEquipo&&API.guardarEntrega)}
 
@@ -463,7 +522,7 @@ document.querySelector('#continueBtn').addEventListener('click',()=>{
 let step=1,memberN=0,team={},selectedMission="M01";
 const stepEls=[...document.querySelectorAll('.step')];
 function memberTemplate(i){return `<div class="member" data-member="${i}"><div class="member-head"><b>TRIPULANTE ${i}</b></div><div class="formgrid">
-<div><label>Nombre completo</label><input name="nombre" required></div><div><label>Rol en la universidad</label><select name="rol" class="role" required><option value="">Selecciona</option><option>Estudiante</option><option>Graduado</option><option>Docente</option><option>Colaborador</option></select></div>
+<div><label>Nombre completo</label><input name="nombre" required></div><div><label>Rol en la universidad</label><select name="rol" class="role" required><option value="">Selecciona</option><option>Estudiante</option><option>Graduado</option><option>Docente</option><option>Colaborador</option><option>Externo, integrante de equipo eanista</option></select></div>
 <div><label>Tipo de documento</label><select name="tipoDocumento" required><option>Cédula de ciudadanía</option><option>Tarjeta de identidad</option><option>Pasaporte</option><option>Otro</option></select></div><div><label>Número de documento</label><input name="documento" required></div>
 <div><label>Correo electrónico</label><input name="correo" type="email" required></div><div><label>Número de teléfono</label><input name="telefono" type="tel" required></div>
 <div class="conditional academic"><label>Programa / carrera</label><input name="programa"></div><div class="conditional academic"><label>Modalidad</label><select name="modalidad"><option value="">Selecciona</option><option>Presencial</option><option>Virtual</option></select></div>
@@ -479,19 +538,24 @@ document.querySelector('#nextBtn').addEventListener('click',()=>{if(!validateVis
 document.querySelector('#backBtn').addEventListener('click',()=>setStep(Math.max(1,step-1)));
 function collectMembers(){return [...document.querySelectorAll('.member')].map(b=>{const q=n=>b.querySelector(`[name="${n}"]`)?.value||'';return {ParticipanteID:"",Nombre:q('nombre'),Rol:q('rol'),TipoDocumento:q('tipoDocumento'),Documento:q('documento'),Correo:q('correo'),Telefono:q('telefono'),Programa:q('programa'),Modalidad:q('modalidad'),Semestre:q('semestre'),AnoGraduacion:q('graduacion')}})}
 async function postJSON(url,payload){
-  if(!url)throw new Error('La conexión con IdeaLab aún no está configurada en este navegador.');
+  if(!url)throw new Error('La conexión con la plataforma aún no está configurada en este navegador.');
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),45000);
+  const timer=setTimeout(()=>controller.abort(),120000);
   try{
     const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
     const text=await r.text();
     let data={};
     try{data=text?JSON.parse(text):{}}catch{data={raw:text}}
-    if(!r.ok)throw new Error(data?.error?.message||data?.message||data?.mensaje||('IdeaLab respondió '+r.status));
+    if(!r.ok){
+      const err=new Error(data?.error?.message||data?.Mensaje||data?.message||data?.mensaje||('La plataforma respondió '+r.status));
+      err.status=r.status;
+      err.data=data;
+      throw err;
+    }
     return data;
   }catch(err){
     if(err.name==='AbortError')throw new Error('La transmisión tardó demasiado. Intenta nuevamente.');
-    if(err instanceof TypeError)throw new Error('El navegador no pudo conectarse con IdeaLab. Puede ser un bloqueo CORS o de red.');
+    if(err instanceof TypeError)throw new Error('El navegador no pudo conectarse con la plataforma. Puede ser un bloqueo CORS o de red.');
     throw err;
   }finally{clearTimeout(timer)}
 }
@@ -522,7 +586,7 @@ async function prepareAndOpenLargeUpload(){
 
   if(!a){status.textContent='No se encontró la misión actual.';return}
   if(!file){status.textContent='Selecciona primero el archivo.';return}
-  if(file.size<=DIRECT_FILE_LIMIT){status.textContent='Este archivo puede enviarse directamente desde IdeaLab.';return}
+  if(file.size<=DIRECT_FILE_LIMIT){status.textContent='Este archivo puede enviarse directamente desde la plataforma.';return}
   if(!API.prepararCargaGrande){status.textContent='Falta configurar IDEALAB - Preparar Carga Grande.';return}
   if(!API.requestFilesUrl){status.textContent='Falta configurar el enlace seguro Request Files.';return}
 
@@ -734,60 +798,118 @@ function markMissionCompleted(a){
 }
 
 
+function renderRegistrationDuplicateError(err){
+  const toast=document.querySelector('#regToast');
+  const data=err?.data||{};
+  if(data?.Codigo==='PARTICIPANTE_OTRO_EQUIPO'){
+    const duplicates=Array.isArray(data.Duplicados)?data.Duplicados:[];
+    const details=duplicates.map(d=>{
+      const who=d.NombreExistente||d.NombreIngresado||'Un integrante';
+      const equipo=d.EquipoExistente?` (${d.EquipoExistente})`:'';
+      return `${who} ya está registrado en otro equipo${equipo}.`;
+    }).join(' ');
+    toast.textContent=`No podemos completar este registro. ${details} Cada persona puede participar en un solo equipo durante la Aceleratón Go-To-Market.`;
+    toast.classList.add('error-toast');
+    return true;
+  }
+  return false;
+}
+function showBoardingWarnings(){
+  const box=document.querySelector('#bpWarnings');
+  const warnings=Array.isArray(team?.CoincidenciasNombre)?team.CoincidenciasNombre:[];
+  if(!box)return;
+  if(!warnings.length){box.classList.add('hidden');box.textContent='';return}
+  const items=warnings.map(w=>`${w.NombreIngresado||'Integrante'} se parece a ${w.NombreExistente||'un registro existente'}`).join(' · ');
+  box.textContent='Revisión recomendada: '+items+'. La inscripción fue permitida porque documento y correo no coinciden.';
+  box.classList.remove('hidden');
+}
+function finalizeRegistrationBoarding(){
+  localStorage.setItem('idealab_team',JSON.stringify(team));
+  localStorage.removeItem('idealab_progress');
+  localStorage.removeItem(DELIVERY_CACHE_KEY);
+  activities.forEach((a,i)=>a.state=i===0?'open':'locked');
+  document.querySelector('#bpCode').textContent=team.EquipoID;
+  document.querySelector('#bpInitiative').textContent=team.NombreIniciativa||'';
+  const members=Array.isArray(team.Participantes)?team.Participantes:[];
+  document.querySelector('#bpMembers').textContent=`${members.length} tripulante${members.length===1?'':'s'}${team.ProyectoExistente?' · añadido a proyecto existente':''}`;
+  document.querySelector('#bpCategory').textContent=team.Categoria||'';
+  document.querySelector('#bpSector').textContent=team.Sector||'';
+  document.querySelector('#bpPrototype').textContent=team.PrototipoNombre||'Prototipo registrado';
+  showBoardingWarnings();
+  document.querySelector('#regToast').textContent='';
+  document.querySelector('#regToast').classList.remove('error-toast');
+  hydrateTeam();refreshParticipantQR();renderMissions();show('boardingScreen');
+}
+async function uploadPrototypeDirect(file){
+  if(!API.guardarPrototipo)throw new Error('La carga de prototipo aún no está configurada.');
+  document.querySelector('#regToast').textContent='Cargando prototipo…';
+  const ContenidoArchivo=await fileToBase64(file);
+  const result=await postJSON(API.guardarPrototipo,{EquipoID:team.EquipoID,NombreArchivo:file.name,ContenidoArchivo});
+  if(result?.ok===false)throw new Error(result?.Mensaje||result?.mensaje||'No fue posible guardar el prototipo.');
+  team.PrototipoNombre=file.name;
+  team.PrototipoPendiente=false;
+}
+async function preparePrototypeLarge(file){
+  if(!API.prepararCargaGrande)throw new Error('La carga de archivos grandes aún no está configurada.');
+  if(!API.requestFilesUrl)throw new Error('Falta el enlace seguro de Microsoft.');
+  document.querySelector('#regToast').textContent='Preparando carga segura para el prototipo…';
+  const result=await postJSON(API.prepararCargaGrande,{EquipoID:team.EquipoID,ActividadID:'PROTOTIPO',NombreArchivo:file.name,TamanoBytes:file.size,TipoCarga:'PROTOTIPO'});
+  if(result?.ok===false)throw new Error(result?.Mensaje||result?.mensaje||result?.error||'No fue posible preparar la carga.');
+  team.PrototipoNombre=file.name;team.PrototipoPendiente=true;team.PrototipoUploadID=result?.UploadID||'';
+  localStorage.setItem('idealab_team',JSON.stringify(team));
+  localStorage.setItem('idealab_prototype_large_pending',JSON.stringify({UploadID:result?.UploadID||'',EquipoID:team.EquipoID,NombreArchivo:file.name,TamanoBytes:file.size,createdAt:new Date().toISOString()}));
+  const box=document.querySelector('#prototypeLargeBox');
+  const message=document.querySelector('#prototypeLargeMessage');
+  const link=document.querySelector('#prototypeExternalLink');
+  const status=document.querySelector('#prototypeLargeStatus');
+  if(message)message.textContent=`${file.name} supera 50 MB. La sesión ${result?.UploadID||''} está lista.`;
+  if(link)link.href=API.requestFilesUrl;
+  if(status)status.textContent='Abre Microsoft, sube exactamente este archivo y, cuando finalice, vuelve a esta pestaña.';
+  if(box)box.classList.remove('hidden');
+  document.querySelector('#nextBtn').style.display='none';
+  box?.scrollIntoView({behavior:'smooth',block:'center'});
+}
 async function finishRegistration(){
   const initiative=document.querySelector('#initiative').value.trim();
+  const prototype=document.querySelector('#prototypeFile')?.files?.[0];
+  if(!prototype){document.querySelector('#prototypeFile')?.reportValidity();return}
   const newMembers=collectMembers();
-  const payload={
-    EquipoID:"",
-    NombreIniciativa:initiative,
-    Descripcion:document.querySelector('#description').value.trim(),
-    Categoria:document.querySelector('#category').value,
-    Sector:document.querySelector('#sector').value,
-    ProcesoOrigen:document.querySelector('#origin').value,
-    Estado:'Activo',
-    Participantes:newMembers
-  };
-  const btn=document.querySelector('#nextBtn');
-  const oldText=btn.textContent;
-  btn.disabled=true;btn.textContent='GENERANDO BOARDING PASS…';
-  document.querySelector('#regToast').textContent='Registrando tripulación en IdeaLab…';
+  const payload={EquipoID:"",NombreIniciativa:initiative,Descripcion:document.querySelector('#description').value.trim(),Categoria:document.querySelector('#category').value,Sector:document.querySelector('#sector').value,ProcesoOrigen:document.querySelector('#origin').value,Estado:'Activo',Participantes:newMembers};
+  const btn=document.querySelector('#nextBtn'),oldText=btn.textContent,toast=document.querySelector('#regToast');
+  btn.disabled=true;btn.textContent='VALIDANDO TRIPULACIÓN…';toast.classList.remove('error-toast');toast.textContent='Validando integrantes y registrando el equipo…';
   try{
     const result=await postJSON(API.registrarEquipo,payload);
     const returnedParticipants=Array.isArray(result.Participantes)?result.Participantes:[];
     const mergedMembers=newMembers.map((p,i)=>({...p,...(returnedParticipants[i]||{})}));
-    team={
-      ...payload,
-      EquipoID:result.EquipoID||payload.EquipoID,
-      ProyectoExistente:Boolean(result.ProyectoExistente),
-      Participantes:mergedMembers
-    };
-    if(!team.EquipoID)throw new Error('IdeaLab no devolvió el código del equipo.');
-    localStorage.setItem('idealab_team',JSON.stringify(team));
-    localStorage.removeItem('idealab_progress');
-    localStorage.removeItem(DELIVERY_CACHE_KEY);
-    activities.forEach((a,i)=>a.state=i===0?'open':'locked');
-    document.querySelector('#bpCode').textContent=team.EquipoID;
-    document.querySelector('#bpInitiative').textContent=initiative;
-    document.querySelector('#bpMembers').textContent=`${mergedMembers.length} tripulante${mergedMembers.length===1?'':'s'}${team.ProyectoExistente?' · añadido a proyecto existente':''}`;
-    document.querySelector('#bpCategory').textContent=team.Categoria;
-    document.querySelector('#bpSector').textContent=team.Sector;
-    document.querySelector('#regToast').textContent='';
-    hydrateTeam();refreshParticipantQR();renderMissions();show('boardingScreen');
+    team={...payload,EquipoID:result.EquipoID||payload.EquipoID,ProyectoExistente:Boolean(result.ProyectoExistente),Participantes:mergedMembers,CoincidenciasNombre:Array.isArray(result.CoincidenciasNombre)?result.CoincidenciasNombre:[]};
+    if(!team.EquipoID)throw new Error('La plataforma no devolvió el código del equipo.');
+    if(prototype.size<=DIRECT_FILE_LIMIT){btn.textContent='CARGANDO PROTOTIPO…';await uploadPrototypeDirect(prototype);finalizeRegistrationBoarding();}
+    else{btn.textContent='PREPARANDO CARGA GRANDE…';await preparePrototypeLarge(prototype);}
   }catch(e){
-    document.querySelector('#regToast').textContent=e.message;
+    if(!renderRegistrationDuplicateError(e)){toast.textContent=e?.message||'No fue posible completar el registro.';toast.classList.add('error-toast');}
   }finally{btn.disabled=false;btn.textContent=oldText}
 }
+document.querySelector('#prototypeFile')?.addEventListener('change',e=>{
+  const file=e.target.files?.[0],box=document.querySelector('#prototypeLargeBox'),next=document.querySelector('#nextBtn');
+  if(box)box.classList.add('hidden');if(next)next.style.display='';if(!file)return;
+  const mb=(file.size/1024/1024).toFixed(1),toast=document.querySelector('#regToast');
+  toast.classList.remove('error-toast');
+  toast.textContent=file.size>DIRECT_FILE_LIMIT?`${file.name} · ${mb} MB. Se usará la carga segura para archivos grandes.`:`${file.name} · ${mb} MB. Se cargará directamente al registrar el equipo.`;
+});
+document.querySelector('#confirmPrototypeLarge')?.addEventListener('click',()=>{
+  team.PrototipoPendiente=false;localStorage.setItem('idealab_team',JSON.stringify(team));localStorage.removeItem('idealab_prototype_large_pending');finalizeRegistrationBoarding();
+});
 document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();renderMissions();show('passport')});
 
 const activities=[
-{id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Construyan su Canvas Go-to-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",resource:"Canvas Go-to-Market",url:"#",points:10,state:"open"},
-{id:"M02",name:"Coordenadas de lanzamiento",rocky:"rocky_01_cool.png",instruction:"Definan con precisión a quién quieren llegar y por qué esa persona debería elegirlos. Construyan el Perfil de Cliente y su Propuesta de Valor.",resource:"Perfil de Cliente + Propuesta de Valor",url:"#",points:15,state:"locked"},
-{id:"M03",name:"Ruta de entrada",rocky:"rocky_03_silencio.png",instruction:"Diseñen la ruta inicial para entrar al mercado: mercado objetivo, posicionamiento, canales y primeras acciones comerciales.",resource:"Plan Go-to-Market inicial",url:"#",points:10,state:"locked"},
-{id:"M04",name:"Sistema de comunicación",rocky:"rocky_06_comunicacion.png",instruction:"Construyan una herramienta comercial funcional que les permita presentar su propuesta y captar interés real: landing, página de ventas, catálogo o formulario de leads.",resource:"Herramienta comercial",url:"#",points:15,state:"locked"},
-{id:"M05",name:"La ruta del cliente",rocky:"rocky_02_trabajando.png",instruction:"Mapeen el recorrido de su cliente y definan los momentos clave que lo llevan desde el descubrimiento hasta la conversión.",resource:"Customer Journey + mapa de conversión",url:"#",points:15,state:"locked"},
-{id:"M06",name:"Radar de misión",rocky:"rocky_07_metricas.png",instruction:"Definan qué señales demostrarán que su estrategia funciona. Seleccionen indicadores de impacto y tracción y establezcan metas concretas.",resource:"Indicadores + metas",url:"#",points:10,state:"locked"},
-{id:"M07",name:"Código de transmisión",rocky:"rocky_06_comunicacion.png",instruction:"Construyan un pitch comercial breve y claro. Debe explicar el valor de su iniciativa y cerrar con un llamado a la acción concreto.",resource:"Pitch comercial + CTA",url:"#",points:10,state:"locked"},
-{id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",resource:"Registro de acción comercial",url:"#",points:15,state:"locked"}
+{id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Completen el Diagnóstico Go-To-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",points:10,state:"open"},
+{id:"M02",name:"Coordenadas de lanzamiento",rocky:"rocky_01_cool.png",instruction:"Definan con precisión a quién quieren llegar y por qué esa persona debería elegirlos. Construyan el Perfil de Cliente y su Propuesta de Valor.",points:15,state:"locked"},
+{id:"M03",name:"Ruta de entrada",rocky:"rocky_03_silencio.png",instruction:"Diseñen la ruta inicial para entrar al mercado: mercado objetivo, posicionamiento, canales y primeras acciones comerciales.",points:10,state:"locked"},
+{id:"M04",name:"Sistema de comunicación",rocky:"rocky_06_comunicacion.png",instruction:"Construyan una herramienta comercial funcional que les permita presentar su propuesta y captar interés real: landing, página de ventas, catálogo o formulario de leads.",points:15,state:"locked"},
+{id:"M05",name:"La ruta del cliente",rocky:"rocky_02_trabajando.png",instruction:"Mapeen el recorrido de su cliente y definan los momentos clave que lo llevan desde el descubrimiento hasta la conversión.",points:15,state:"locked"},
+{id:"M06",name:"Radar de misión",rocky:"rocky_07_metricas.png",instruction:"Definan qué señales demostrarán que su estrategia funciona. Seleccionen indicadores de impacto y tracción y establezcan metas concretas.",points:10,state:"locked"},
+{id:"M07",name:"Código de transmisión",rocky:"rocky_06_comunicacion.png",instruction:"Construyan un pitch comercial breve y claro. Debe explicar el valor de su iniciativa y cerrar con un llamado a la acción concreto.",points:10,state:"locked"},
+{id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",points:15,state:"locked"}
 ];
 function hydrateTeam(){if(!team.EquipoID){try{team=JSON.parse(localStorage.getItem('idealab_team')||'{}')}catch{}}if(team.EquipoID){document.querySelector('#dashInitiative').textContent=team.NombreIniciativa;document.querySelector('#dashCode').textContent=team.EquipoID;document.querySelector('#team').value=team.EquipoID}}
 
@@ -801,6 +923,18 @@ function populateMission(id){
   document.querySelector('#missionInstruction').textContent=a.instruction;
   document.querySelector('#activity').value=a.id;
   document.querySelector('#missionPoints').textContent='ENTREGA SUJETA A VALIDACIÓN';
+  const deliveryFile=document.querySelector('#deliveryFile');
+  const deliveryHint=document.querySelector('#deliveryFormatHint');
+  const deliveryLabel=document.querySelector('#deliveryFileLabel');
+  if(a.id==='M01'){
+    if(deliveryFile)deliveryFile.setAttribute('accept','image/*,.pdf,application/pdf');
+    if(deliveryHint)deliveryHint.textContent='Entrega el Diagnóstico Go-To-Market como imagen, PDF o enlace. Con una de las tres opciones es suficiente.';
+    if(deliveryLabel)deliveryLabel.innerHTML='Imagen o PDF <span class="hint">(opción de carga)</span>';
+  }else{
+    if(deliveryFile)deliveryFile.removeAttribute('accept');
+    if(deliveryHint)deliveryHint.textContent='Para completar la misión debes adjuntar un archivo o incluir un enlace. Con uno de los dos es suficiente.';
+    if(deliveryLabel)deliveryLabel.innerHTML='Archivo <span class="hint">(opción de carga)</span>';
+  }
   isReplacingDelivery=false;
   document.querySelector('#missionSuccess').classList.add('hidden');
   document.querySelector('#replacementNotice')?.classList.add('hidden');
@@ -984,7 +1118,7 @@ function refreshSavedPassportBox(){
   try{
     const saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
     if(saved?.EquipoID){
-      const name=saved.NombreIniciativa||'Equipo IdeaLab';
+      const name=saved.NombreIniciativa||'Equipo Aceleratón';
       text.innerHTML='<b>'+name+'</b><br><span class="hint">'+saved.EquipoID+'</span>';
       btn.disabled=false;
       return;
@@ -1052,7 +1186,7 @@ async function recoverByEmail(event){
     }
 
     team=normalizeRecoveredTeam(result);
-    if(!team.EquipoID)throw new Error('IdeaLab encontró el registro, pero no devolvió el EquipoID.');
+    if(!team.EquipoID)throw new Error('La plataforma encontró el registro, pero no devolvió el EquipoID.');
 
     localStorage.setItem('idealab_team',JSON.stringify(team));
     restoreMissionProgress(result.Entregas||[]);
@@ -1089,7 +1223,7 @@ function effectivePoints(d){return d.PuntosValidados==null?d.PuntosProvisionales
 function sclass(s){return s==='Validada'?'validated':s==='Requiere ajuste'?'adjust':'pending'}
 function syncParticipantDelivery(p,fileName){const a=activities.find(x=>x.id===p.ActividadID);const old=demoDeliveries.find(d=>d.EquipoID===p.EquipoID&&d.ActividadID===p.ActividadID);const d={id:old?.id||'D'+Date.now(),EquipoID:p.EquipoID,Equipo:team.NombreIniciativa||p.EquipoID,ActividadID:p.ActividadID,Mision:a?.name||p.ActividadID,Respuesta:p.Respuesta||'',Enlace:p.Enlace||'',Archivo:fileName||'',PuntosProvisionales:a?.points||10,PuntosValidados:old?.PuntosValidados??null,EstadoEvaluacion:old?.EstadoEvaluacion||'Pendiente',Retroalimentacion:old?.Retroalimentacion||'',Fecha:new Date().toLocaleString('es-CO')};old?Object.assign(old,d):demoDeliveries.unshift(d);saveD();renderAdmin()}
 function renderAdmin(){const list=document.querySelector('#deliveryList');if(!list)return;const f=document.querySelector('#adminFilter')?.value||'all',q=(document.querySelector('#adminSearch')?.value||'').toLowerCase();const rows=demoDeliveries.filter(d=>(f==='all'||d.EstadoEvaluacion===f)&&(!q||d.Equipo.toLowerCase().includes(q)));list.innerHTML=rows.map(d=>`<div class="delivery-card ${sclass(d.EstadoEvaluacion)}"><div class="delivery-head"><div><div class="mission-kicker">${d.ActividadID} · ${d.Mision}</div><h3>${d.Equipo}</h3><div class="delivery-meta">${d.Fecha} · ${d.EquipoID}</div></div><span class="badge ${sclass(d.EstadoEvaluacion)}">${d.EstadoEvaluacion.toUpperCase()}</span></div><div class="evidence-box"><div class="label">EVIDENCIA</div>${d.Respuesta?`<p>${d.Respuesta}</p>`:''}${d.Enlace?`<p>🔗 <a href="${d.Enlace}" target="_blank">ABRIR ENLACE</a></p>`:''}${d.Archivo?`<p>📎 <b>${d.Archivo}</b> <button class="btn alt" type="button" style="padding:6px;margin:0" onclick="alert('Vista previa demo: ${d.Archivo}\\nEn producción abrirá el archivo de SharePoint.')">VER ARCHIVO</button></p>`:''}</div><div class="grade-panel"><div><label>Puntos automáticos</label><input value="${d.PuntosProvisionales}" readonly></div><div><label>Calificación final</label><input id="g_${d.id}" type="number" min="0" max="${d.PuntosProvisionales}" value="${d.PuntosValidados??d.PuntosProvisionales}"></div><div class="full"><label>Retroalimentación</label><textarea id="f_${d.id}">${d.Retroalimentacion||''}</textarea></div><div class="full grade-actions"><button class="btn" type="button" onclick="grade('${d.id}','Validada')">CONFIRMAR EVALUACIÓN</button><button class="btn alt" type="button" onclick="grade('${d.id}','Requiere ajuste')">REQUIERE AJUSTE</button></div></div>${d.Retroalimentacion?`<div class="feedback"><b>Retroalimentación:</b> ${d.Retroalimentacion}</div>`:''}</div>`).join('')||'<p class="hint">No hay entregas.</p>';document.querySelector('#admDeliveries').textContent=demoDeliveries.length;document.querySelector('#admPending').textContent=demoDeliveries.filter(d=>d.EstadoEvaluacion==='Pendiente').length;ranking()}
-function grade(id,status){const d=demoDeliveries.find(x=>x.id===id);if(!d)return;d.PuntosValidados=Math.max(0,Math.min(d.PuntosProvisionales,Number(document.querySelector('#g_'+id).value)));d.EstadoEvaluacion=status;d.Retroalimentacion=document.querySelector('#f_'+id).value.trim();d.EvaluadoPor='Mentor IdeaLab';d.FechaEvaluacion=new Date().toLocaleString('es-CO');saveD();renderAdmin();refreshScore()}
+function grade(id,status){const d=demoDeliveries.find(x=>x.id===id);if(!d)return;d.PuntosValidados=Math.max(0,Math.min(d.PuntosProvisionales,Number(document.querySelector('#g_'+id).value)));d.EstadoEvaluacion=status;d.Retroalimentacion=document.querySelector('#f_'+id).value.trim();d.EvaluadoPor='Mentor Aceleratón';d.FechaEvaluacion=new Date().toLocaleString('es-CO');saveD();renderAdmin();refreshScore()}
 function ranking(){const b=document.querySelector('#adminRanking');if(!b)return;const r=[{n:'NovaLab',p:58,m:3},{n:'EcoLoop',p:54,m:3},{n:'BioRuta',p:40,m:2}];if(team.EquipoID){const o=demoDeliveries.filter(d=>d.EquipoID===team.EquipoID);r.push({n:team.NombreIniciativa||'Tu equipo',p:o.reduce((s,d)=>s+effectivePoints(d),0),m:o.length})}r.sort((a,b)=>b.p-a.p);b.innerHTML=r.map((x,i)=>`<tr><td>${i+1}</td><td>${x.n}</td><td>${x.p}</td><td>${x.m}/8</td></tr>`).join('')}
 function refreshScore(){refreshParticipantTelemetry();}
 document.querySelector('#adminFilter')?.addEventListener('change',renderAdmin);document.querySelector('#adminSearch')?.addEventListener('input',renderAdmin);
@@ -1268,7 +1402,7 @@ async function openConnectionExperience(code){
     activeConnectionTarget=result;
     document.querySelector('#connectionLoading')?.classList.add('hidden');
     document.querySelector('#connectionTarget')?.classList.remove('hidden');
-    document.querySelector('#connectionTargetName').textContent=result.NombreDestino||'Participante IdeaLab';
+    document.querySelector('#connectionTargetName').textContent=result.NombreDestino||'Participante Aceleratón';
     document.querySelector('#connectionTargetMeta').textContent=(result.EquipoDestino||'')+' · '+activeConnectionCode;
 
     if(hydrateConnectionTeam()){
