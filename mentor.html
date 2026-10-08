@@ -42,23 +42,42 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,s
 .team-card .actions{margin-top:12px}
 @media(max-width:800px){.team-list{grid-template-columns:1fr}.team-stats{grid-template-columns:repeat(3,1fr)}}
 
+
+/* ===== Mentor · navegación simplificada ===== */
+.mentor-control{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}
+.mentor-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end}
+.mentor-search-row .btn{min-height:44px}
+.team-filter-bar,.delivery-filter-bar{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.team-filter,.delivery-filter{
+  min-height:42px;padding:9px 14px;border:1px solid var(--line);background:#0f0c0a;color:var(--muted);
+  font-weight:700;font-size:11px;letter-spacing:.03em;cursor:pointer
+}
+.team-filter.active,.delivery-filter.active{border-color:var(--gold);background:rgba(255,201,74,.09);color:var(--gold)}
+.selected-team-head{display:grid;gap:14px}
+.selected-team-head .section-title{margin-bottom:3px}
+.team-card .actions .btn{width:100%;text-align:center}
+@media(max-width:800px){
+  .mentor-search-row{grid-template-columns:1fr}
+  .mentor-search-row .btn{width:100%}
+  .team-filter-bar,.delivery-filter-bar{display:grid;grid-template-columns:1fr}
+  .team-filter,.delivery-filter{width:100%}
+  .mentor-control{position:static}
+}
+
 </style>
 </head>
 <body>
 <div class="shell">
 <header class="top">
   <div class="brand"><img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky"><div><div class="eyebrow">ACELERATÓN GO-TO-MARKET</div><h1>CENTRO DE EVALUACIÓN</h1></div></div>
-  <a class="btn alt" href="index.html">← PARTICIPANTE</a>
 </header>
 
 <section id="login" class="card login">
   <div class="eyebrow">ACCESO MENTOR</div>
   <h2>IDENTIFÍCATE PARA CONTINUAR</h2>
-  <p class="mini">Tu nombre quedará asociado a cada evaluación y modificación de puntaje.</p>
-  <label>Nombre del mentor</label>
+  <p class="mini">Escribe tu nombre. Quedará asociado a cada evaluación y modificación de puntaje.</p>
+  <label for="mentorName">Nombre del mentor</label>
   <input id="mentorName" placeholder="Ej. Laura Cely" autocomplete="name">
-  <label>Código de acceso</label>
-  <input id="mentorKey" type="password" placeholder="Código de mentor" autocomplete="current-password">
   <button class="btn" id="loginBtn" type="button" style="margin-top:14px">INGRESAR →</button>
   <div id="loginToast" class="toast"></div>
 </section>
@@ -71,16 +90,23 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,s
     <div class="kpi"><b id="kTeams">0</b><span>EQUIPOS</span></div>
   </div>
 
-  <article class="card">
-    <div class="toolbar">
-      <div><label>Vista</label><select id="statusFilter"><option value="Pendiente">Pendientes</option><option value="Validada">Evaluadas</option><option value="all">Todas</option></select></div>
-      <div><label>Misión</label><select id="missionFilter"><option value="all">Todas</option><option>M01</option><option>M02</option><option>M03</option><option>M04</option><option>M05</option><option>M06</option><option>M07</option><option>M08</option></select></div>
-      <div><label>Buscar equipo</label><input id="search" placeholder="Nombre o EquipoID"></div>
+  <article class="card mentor-control">
+    <div class="mentor-search-row">
+      <div>
+        <label for="search">Buscar iniciativa</label>
+        <input id="search" placeholder="Escribe el nombre de la iniciativa" autocomplete="off">
+      </div>
       <button class="btn alt" id="refreshBtn" type="button">ACTUALIZAR</button>
     </div>
+
+    <div class="team-filter-bar" aria-label="Filtros de iniciativas">
+      <button class="team-filter active" type="button" data-team-filter="all">VER TODAS</button>
+      <button class="team-filter" type="button" data-team-filter="pending">PENDIENTES POR EVALUAR</button>
+      <button class="team-filter" type="button" data-team-filter="validated">EVALUADAS</button>
+    </div>
+
     <div class="tabs">
-      <button class="tab active" data-view="teams">EQUIPOS</button>
-      <button class="tab" data-view="deliveries">EVALUACIONES</button>
+      <button class="tab active" data-view="teams">INICIATIVAS</button>
       <button class="tab" data-view="bonus">PUNTOS ADICIONALES</button>
     </div>
   </article>
@@ -90,6 +116,19 @@ label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,s
   </section>
 
   <section id="deliveriesView" class="hidden">
+    <article class="card selected-team-head">
+      <button class="btn alt" id="backToTeams" type="button">← VER TODAS LAS INICIATIVAS</button>
+      <div>
+        <div class="eyebrow">EVALUACIÓN DE INICIATIVA</div>
+        <h2 class="section-title" id="selectedTeamName">Iniciativa</h2>
+        <div class="mini" id="selectedTeamMeta"></div>
+      </div>
+      <div class="delivery-filter-bar" aria-label="Filtros de evaluaciones">
+        <button class="delivery-filter active" type="button" data-delivery-filter="all">TODAS LAS ENTREGAS</button>
+        <button class="delivery-filter" type="button" data-delivery-filter="pending">PENDIENTES</button>
+        <button class="delivery-filter" type="button" data-delivery-filter="validated">EVALUADAS</button>
+      </div>
+    </article>
     <div id="deliveryList" class="list"></div>
   </section>
 
@@ -134,7 +173,7 @@ M06:{name:'Radar de misión',max:10,criteria:['Indicadores y metas','Relación e
 M07:{name:'Código de transmisión',max:10,criteria:['Problema, cliente y propuesta de valor claros','CTA comercial']},
 M08:{name:'Operación primer cliente',max:15,criteria:['Ejecución y evidencia','Resultado / tracción','Relación implementación-resultados']}
 };
-let mentorName='',mentorKey='',deliveries=[],teams=[],view='teams';
+let mentorName='',mentorKey='MENTOR-2026',deliveries=[],teams=[],view='teams',teamFilter='all',selectedTeamId='',deliveryFilter='all';
 
 const $=s=>document.querySelector(s);
 function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
@@ -166,53 +205,91 @@ function renderKpis(){
 
 function renderTeams(){
   const q=$('#search').value.trim().toLowerCase();
+
   const rows=teams.filter(t=>{
-    const haystack=`${t.NombreIniciativa||''} ${t.EquipoID||''} ${t.Categoria||''} ${t.Sector||''}`.toLowerCase();
-    return !q||haystack.includes(q);
+    const name=String(t.NombreIniciativa||'').toLowerCase();
+    if(q && !name.includes(q))return false;
+
+    const ds=deliveries.filter(d=>validDelivery(d)&&d.EquipoID===t.EquipoID);
+    const pending=ds.filter(d=>(d.EstadoEvaluacion||'Pendiente')!=='Validada').length;
+    const validated=ds.filter(d=>d.EstadoEvaluacion==='Validada').length;
+
+    if(teamFilter==='pending')return pending>0;
+    if(teamFilter==='validated')return ds.length>0 && pending===0 && validated>0;
+    return true;
   });
+
   $('#teamList').innerHTML=rows.length?rows.map(t=>{
     const ds=deliveries.filter(d=>validDelivery(d)&&d.EquipoID===t.EquipoID);
     const validated=ds.filter(d=>d.EstadoEvaluacion==='Validada').length;
-    const pending=ds.filter(d=>d.EstadoEvaluacion!=='Validada').length;
+    const pending=ds.filter(d=>(d.EstadoEvaluacion||'Pendiente')!=='Validada').length;
     const prototypeName=t.PrototipoNombre||'';
     const prototypeURL=t.PrototipoURL||'';
     const prototype=prototypeURL
       ? `<a href="${esc(prototypeURL)}" target="_blank" rel="noopener">ABRIR PROTOTIPO ↗</a>${prototypeName?' · '+esc(prototypeName):''}`
       : (prototypeName?esc(prototypeName):'<span class="mini">Sin prototipo visible en la respuesta del backend.</span>');
+
+    let statusLabel='SIN ENTREGAS';
+    if(pending>0)statusLabel=`${pending} PENDIENTE${pending===1?'':'S'}`;
+    else if(ds.length>0)statusLabel='EVALUADA';
+
     return `<article class="team-card">
-      <div class="eyebrow">${esc(t.EquipoID||'EQUIPO')}</div>
+      <div class="eyebrow">${esc(t.EquipoID||'EQUIPO')} · ${statusLabel}</div>
       <h3>${esc(t.NombreIniciativa||t.EquipoID||'Iniciativa')}</h3>
       <div class="team-meta">${esc(t.Categoria||'Sin categoría')} · ${esc(t.Sector||'Sin sector')}</div>
       <div class="team-stats">
         <div class="team-stat"><b>${ds.length}</b><span>ENTREGAS</span></div>
         <div class="team-stat"><b>${pending}</b><span>PENDIENTES</span></div>
-        <div class="team-stat"><b>${validated}</b><span>VALIDADAS</span></div>
+        <div class="team-stat"><b>${validated}</b><span>EVALUADAS</span></div>
       </div>
       <div class="team-prototype"><b>Prototipo</b><br>${prototype}</div>
       <div class="actions">
-        <button class="btn alt" type="button" data-open-team="${esc(t.EquipoID||'')}">VER EVALUACIONES →</button>
+        <button class="btn alt" type="button" data-open-team="${esc(t.EquipoID||'')}">VER Y EVALUAR →</button>
       </div>
     </article>`;
-  }).join(''):'<div class="empty" style="grid-column:1/-1">No se encontraron equipos.</div>';
+  }).join(''):'<div class="empty" style="grid-column:1/-1">No hay iniciativas para este filtro.</div>';
 
   document.querySelectorAll('[data-open-team]').forEach(btn=>btn.addEventListener('click',()=>{
-    $('#search').value=btn.dataset.openTeam||'';
-    view='deliveries';
-    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.view==='deliveries'));
-    $('#teamsView').classList.add('hidden');
-    $('#deliveriesView').classList.remove('hidden');
-    $('#bonusView').classList.add('hidden');
-    renderDeliveries();
-    window.scrollTo({top:0,behavior:'smooth'});
+    selectedTeamId=btn.dataset.openTeam||'';
+    deliveryFilter='all';
+    document.querySelectorAll('.delivery-filter').forEach(x=>x.classList.toggle('active',x.dataset.deliveryFilter==='all'));
+    openSelectedTeam();
   }));
 }
 
+function openSelectedTeam(){
+  const t=teamById(selectedTeamId);
+  view='deliveries';
+  $('#teamsView').classList.add('hidden');
+  $('#deliveriesView').classList.remove('hidden');
+  $('#bonusView').classList.add('hidden');
+
+  $('#selectedTeamName').textContent=t.NombreIniciativa||t.EquipoID||'Iniciativa';
+  $('#selectedTeamMeta').textContent=`${t.EquipoID||''}${t.Categoria?' · '+t.Categoria:''}${t.Sector?' · '+t.Sector:''}`;
+
+  renderDeliveries();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goBackToTeams(){
+  selectedTeamId='';
+  deliveryFilter='all';
+  view='teams';
+  $('#deliveriesView').classList.add('hidden');
+  $('#bonusView').classList.add('hidden');
+  $('#teamsView').classList.remove('hidden');
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.view==='teams'));
+  renderTeams();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 function renderDeliveries(){
-  const status=$('#statusFilter').value,mission=$('#missionFilter').value,q=$('#search').value.trim().toLowerCase();
   const rows=deliveries.filter(validDelivery).filter(d=>{
+    if(selectedTeamId && d.EquipoID!==selectedTeamId)return false;
     const st=d.EstadoEvaluacion||'Pendiente';
-    const team=teamById(d.EquipoID);
-    return (status==='all'||st===status)&&(mission==='all'||d.ActividadID===mission)&&(!q||(`${team.NombreIniciativa} ${d.EquipoID}`).toLowerCase().includes(q));
+    if(deliveryFilter==='pending')return st!=='Validada';
+    if(deliveryFilter==='validated')return st==='Validada';
+    return true;
   });
   $('#deliveryList').innerHTML=rows.length?rows.map((d,i)=>{
     const m=MISSIONS[d.ActividadID]||{name:d.ActividadID,max:num(d.PuntosObtenidos)||0,criteria:[]};
@@ -236,7 +313,7 @@ function renderDeliveries(){
         <div class="full toast" id="toast_${i}"></div>
       </div>
     </article>`;
-  }).join(''):'<div class="empty">No hay entregas para estos filtros.</div>';
+  }).join(''):'<div class="empty">Esta iniciativa todavía no tiene entregas para evaluar.</div>';
   window.filteredRows=rows;
 }
 async function saveEvaluation(i){
@@ -298,33 +375,47 @@ async function loadData(){
   renderKpis(); renderTeams(); renderDeliveries(); renderBonusTeams();
 }
 async function login(){
-  mentorName=$('#mentorName').value.trim(); mentorKey=$('#mentorKey').value.trim(); const toast=$('#loginToast');
-  if(!mentorName||!mentorKey){toast.textContent='Ingresa nombre y código de acceso.';return}
-  toast.textContent='Validando acceso…'; $('#loginBtn').disabled=true;
+  mentorName=$('#mentorName').value.trim(); const toast=$('#loginToast');
+  if(!mentorName){toast.textContent='Escribe tu nombre para continuar.';return}
+  toast.textContent='Cargando iniciativas…'; $('#loginBtn').disabled=true;
   try{
     await loadData();
     sessionStorage.setItem('idealab_mentor_name',mentorName);
-    sessionStorage.setItem('idealab_mentor_key',mentorKey);
     $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); toast.textContent='';
   }catch(e){toast.textContent=e.message}finally{$('#loginBtn').disabled=false}
 }
 $('#loginBtn').addEventListener('click',login);
+$('#mentorName').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 $('#refreshBtn').addEventListener('click',()=>loadData().catch(e=>alert(e.message)));
-$('#statusFilter').addEventListener('change',renderDeliveries); $('#missionFilter').addEventListener('change',renderDeliveries); $('#search').addEventListener('input',()=>{renderTeams();renderDeliveries()});
+$('#search').addEventListener('input',renderTeams);
+$('#backToTeams').addEventListener('click',goBackToTeams);
+
+document.querySelectorAll('.team-filter').forEach(btn=>btn.addEventListener('click',()=>{
+  teamFilter=btn.dataset.teamFilter||'all';
+  document.querySelectorAll('.team-filter').forEach(x=>x.classList.toggle('active',x===btn));
+  renderTeams();
+}));
+
+document.querySelectorAll('.delivery-filter').forEach(btn=>btn.addEventListener('click',()=>{
+  deliveryFilter=btn.dataset.deliveryFilter||'all';
+  document.querySelectorAll('.delivery-filter').forEach(x=>x.classList.toggle('active',x===btn));
+  renderDeliveries();
+}));
+
 $('#bonusTeam').addEventListener('change',fillBonus); $('#saveBonus').addEventListener('click',saveBonus);
 ['#bProspecto','#bConversacion','#bReunion','#bVenta','#bTempranas','#bFeedback'].forEach(id=>$(id).addEventListener('input',updateBonusPreview));
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
   view=btn.dataset.view;
+  selectedTeamId='';
   $('#teamsView').classList.toggle('hidden',view!=='teams');
-  $('#deliveriesView').classList.toggle('hidden',view!=='deliveries');
+  $('#deliveriesView').classList.add('hidden');
   $('#bonusView').classList.toggle('hidden',view!=='bonus');
   if(view==='teams')renderTeams();
-  if(view==='deliveries')renderDeliveries();
+  if(view==='bonus')renderBonusTeams();
 }));
 window.saveEvaluation=saveEvaluation;
 $('#mentorName').value=sessionStorage.getItem('idealab_mentor_name')||'';
-$('#mentorKey').value=sessionStorage.getItem('idealab_mentor_key')||'';
 </script>
 </body>
 </html>
