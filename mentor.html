@@ -151,10 +151,22 @@ textarea{min-height:120px;resize:vertical}
   margin-top:16px;border:1px solid var(--cyan);padding:16px;background:#090706;
   box-shadow:inset 0 0 24px rgba(89,220,225,.035)
 }
+.scanner-camera{position:relative;margin-top:12px;background:#000;overflow:hidden}
 #scannerVideo{
   width:100%;max-height:440px;background:#000;object-fit:cover;
-  border:1px solid #284d4f;margin-top:12px
+  border:1px solid #284d4f;display:block
 }
+.scanner-guide{
+  position:absolute;inset:16% 18%;border:3px solid var(--cyan);
+  box-shadow:0 0 0 9999px rgba(0,0,0,.20),0 0 22px rgba(89,220,225,.35);
+  pointer-events:none
+}
+.scanner-guide:before,.scanner-guide:after{
+  content:"";position:absolute;width:34px;height:34px;border-color:var(--gold)
+}
+.scanner-guide:before{left:-3px;top:-3px;border-left:4px solid var(--gold);border-top:4px solid var(--gold)}
+.scanner-guide:after{right:-3px;bottom:-3px;border-right:4px solid var(--gold);border-bottom:4px solid var(--gold)}
+#scannerCanvas{display:none}
 
 .eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .eval-grid .full{grid-column:1/-1}
@@ -192,6 +204,7 @@ textarea{min-height:120px;resize:vertical}
   .hero-actions .btn{min-height:58px}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 </head>
 <body>
 <main class="shell">
@@ -238,7 +251,11 @@ textarea{min-height:120px;resize:vertical}
         <div><b>Escanea el QR del participante</b><div class="mini">Debe ser el QR generado en su pasaporte IdeaLab.</div></div>
         <button class="btn alt" id="stopScanBtn" type="button">CERRAR</button>
       </div>
-      <video id="scannerVideo" playsinline muted></video>
+      <div class="scanner-camera">
+        <video id="scannerVideo" playsinline muted></video>
+        <div class="scanner-guide" aria-hidden="true"></div>
+      </div>
+      <canvas id="scannerCanvas"></canvas>
       <div id="scanToast" class="toast"></div>
       <div id="manualQrWrap" class="hidden">
         <label for="manualQr">Si la cámara no puede leerlo, pega aquí el código o la URL del QR</label>
@@ -473,7 +490,7 @@ async function saveEvaluation(){
 }
 async function resolveQr(raw){
   const payload=parseQrPayload(raw),toast=$('#scanToast');
-  if(!payload.teamId && !payload.code){toast.textContent='No pude leer un código QR válido.';return}
+  if(!payload.teamId && !payload.code){toast.textContent='No pude extraer la información del QR. Intenta acercar la cámara o usa la búsqueda por nombre.';return}
   toast.textContent='Buscando iniciativa…';
   try{
     await loadBase();
@@ -496,24 +513,99 @@ async function resolveQr(raw){
   }catch(e){toast.textContent=e.message}
 }
 async function startScanner(){
-  $('#selectorPanel').classList.add('hidden');$('#scannerPanel').classList.remove('hidden');$('#scanToast').textContent='';
-  $('#manualQrWrap').classList.toggle('hidden',!!window.BarcodeDetector);
-  if(!navigator.mediaDevices?.getUserMedia){$('#scanToast').textContent='Este navegador no permite usar la cámara. Usa la búsqueda por iniciativa.';$('#manualQrWrap').classList.remove('hidden');return}
+  $('#selectorPanel').classList.add('hidden');
+  $('#scannerPanel').classList.remove('hidden');
+  $('#scanToast').textContent='Apunta al QR y mantenlo dentro del recuadro.';
+  $('#manualQrWrap').classList.add('hidden');
+
+  if(!navigator.mediaDevices?.getUserMedia){
+    $('#scanToast').textContent='Este navegador no permite usar la cámara. Usa la búsqueda por iniciativa.';
+    $('#manualQrWrap').classList.remove('hidden');
+    return;
+  }
+
   try{
-    scannerStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
-    const video=$('#scannerVideo');video.srcObject=scannerStream;await video.play();
-    if(!window.BarcodeDetector){$('#scanToast').textContent='La cámara está activa, pero este navegador no puede leer QR directamente. Pega la URL/código o usa la búsqueda por nombre.';return}
-    const detector=new BarcodeDetector({formats:['qr_code']});
+    scannerStream=await navigator.mediaDevices.getUserMedia({
+      video:{
+        facingMode:{ideal:'environment'},
+        width:{ideal:1280},
+        height:{ideal:720}
+      },
+      audio:false
+    });
+
+    const video=$('#scannerVideo');
+    video.srcObject=scannerStream;
+    await video.play();
+
+    const canvas=$('#scannerCanvas');
+    const ctx=canvas.getContext('2d',{willReadFrequently:true});
+    let detector=null;
+
+    if(typeof BarcodeDetector!=='undefined'){
+      try{detector=new BarcodeDetector({formats:['qr_code']})}catch{}
+    }
+
+    let busy=false;
     const tick=async()=>{
       if(!scannerStream)return;
-      try{
-        const codes=await detector.detect(video);
-        if(codes?.length){await resolveQr(codes[0].rawValue);return}
-      }catch{}
       scannerLoop=requestAnimationFrame(tick);
+      if(busy || video.readyState<2)return;
+
+      busy=true;
+      try{
+        // iPhone/Safari: jsQR sobre un frame de canvas suele ser más fiable
+        // que depender exclusivamente de BarcodeDetector.
+        const vw=video.videoWidth||0, vh=video.videoHeight||0;
+        if(vw && vh){
+          const maxW=960;
+          const scale=Math.min(1,maxW/vw);
+          canvas.width=Math.max(1,Math.round(vw*scale));
+          canvas.height=Math.max(1,Math.round(vh*scale));
+          ctx.drawImage(video,0,0,canvas.width,canvas.height);
+
+          if(typeof jsQR==='function'){
+            const frame=ctx.getImageData(0,0,canvas.width,canvas.height);
+            const found=jsQR(frame.data,frame.width,frame.height,{
+              inversionAttempts:'attemptBoth'
+            });
+            if(found?.data){
+              $('#scanToast').textContent='QR detectado. Abriendo iniciativa…';
+              await resolveQr(found.data);
+              return;
+            }
+          }
+        }
+
+        // Fallback nativo cuando esté disponible.
+        if(detector){
+          const codes=await detector.detect(video);
+          if(codes?.length && codes[0]?.rawValue){
+            $('#scanToast').textContent='QR detectado. Abriendo iniciativa…';
+            await resolveQr(codes[0].rawValue);
+            return;
+          }
+        }
+      }catch(e){
+        // Seguimos escaneando; los errores de un frame no deben detener la cámara.
+      }finally{
+        busy=false;
+      }
     };
+
     tick();
-  }catch(e){$('#scanToast').textContent='No fue posible abrir la cámara. Puedes buscar la iniciativa por nombre.';$('#manualQrWrap').classList.remove('hidden')}
+
+    // Si después de unos segundos no logra leer, mostramos la alternativa manual.
+    setTimeout(()=>{
+      if(scannerStream && !$('#scannerPanel').classList.contains('hidden')){
+        $('#manualQrWrap').classList.remove('hidden');
+      }
+    },5000);
+
+  }catch(e){
+    $('#scanToast').textContent='No fue posible abrir la cámara. Puedes buscar la iniciativa por nombre.';
+    $('#manualQrWrap').classList.remove('hidden');
+  }
 }
 function stopScanner(){
   if(scannerLoop)cancelAnimationFrame(scannerLoop);scannerLoop=null;
