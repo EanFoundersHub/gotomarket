@@ -328,6 +328,10 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <h2 class="title" id="dashInitiative">INICIATIVA</h2>
         <div style="display:flex;justify-content:space-between;gap:12px"><span id="dashCode"></span><b id="pct">0%</b></div>
         <div class="progress"><span id="bar" style="width:0%"></span></div>
+        <div class="validation-note" style="margin:12px 0 8px">
+          <b>MODO RECUPERACIÓN ACTIVO</b><br>
+          Las Misiones 1, 2 y 3 están disponibles al mismo tiempo. Puedes completar las que tengas pendientes y seguir avanzando desde la Misión 3.
+        </div>
         <div id="missions"></div>
       </article>
 
@@ -926,8 +930,8 @@ function startReplacement(){
 
 function markMissionCompleted(a){
   a.state='done';
+  applyCatchUpUnlock();
   const next=activities[activities.indexOf(a)+1];
-  if(next)next.state='open';
   localStorage.setItem('idealab_progress',JSON.stringify(activities.map(x=>({id:x.id,state:x.state}))));
   document.querySelector('#answer').value='';
   document.querySelector('#deliveryUrl').value='';
@@ -979,7 +983,7 @@ function finalizeRegistrationBoarding(){
   localStorage.setItem('idealab_team',JSON.stringify(team));
   localStorage.removeItem('idealab_progress');
   localStorage.removeItem(DELIVERY_CACHE_KEY);
-  activities.forEach((a,i)=>a.state=i===0?'open':'locked');
+  activities.forEach(a=>a.state='locked');applyCatchUpUnlock();
   document.querySelector('#bpCode').textContent=team.EquipoID;
   document.querySelector('#bpInitiative').textContent=team.NombreIniciativa||'';
   const members=Array.isArray(team.Participantes)?team.Participantes:[];
@@ -1076,14 +1080,35 @@ document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTe
 
 const activities=[
 {id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Completen el Diagnóstico Go-To-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",points:10,state:"open"},
-{id:"M02",name:"Coordenadas de lanzamiento",rocky:"rocky_01_cool.png",instruction:"Definan con precisión a quién quieren llegar y por qué esa persona debería elegirlos. Construyan el Perfil de Cliente y su Propuesta de Valor.",points:15,state:"locked"},
-{id:"M03",name:"Ruta de entrada",rocky:"rocky_03_silencio.png",instruction:"Diseñen la ruta inicial para entrar al mercado: mercado objetivo, posicionamiento, canales y primeras acciones comerciales.",points:10,state:"locked"},
+{id:"M02",name:"Coordenadas de lanzamiento",rocky:"rocky_01_cool.png",instruction:"Definan con precisión a quién quieren llegar y por qué esa persona debería elegirlos. Construyan el Perfil de Cliente y su Propuesta de Valor.",points:15,state:"open"},
+{id:"M03",name:"Ruta de entrada",rocky:"rocky_03_silencio.png",instruction:"Diseñen la ruta inicial para entrar al mercado: mercado objetivo, posicionamiento, canales y primeras acciones comerciales.",points:10,state:"open"},
 {id:"M04",name:"Sistema de comunicación",rocky:"rocky_06_comunicacion.png",instruction:"Construyan una herramienta comercial funcional que les permita presentar su propuesta y captar interés real: landing, página de ventas, catálogo o formulario de leads.",points:15,state:"locked"},
 {id:"M05",name:"La ruta del cliente",rocky:"rocky_02_trabajando.png",instruction:"Mapeen el recorrido de su cliente y definan los momentos clave que lo llevan desde el descubrimiento hasta la conversión.",points:15,state:"locked"},
 {id:"M06",name:"Radar de misión",rocky:"rocky_07_metricas.png",instruction:"Definan qué señales demostrarán que su estrategia funciona. Seleccionen indicadores de impacto y tracción y establezcan metas concretas.",points:10,state:"locked"},
 {id:"M07",name:"Código de transmisión",rocky:"rocky_06_comunicacion.png",instruction:"Construyan un pitch comercial breve y claro. Debe explicar el valor de su iniciativa y cerrar con un llamado a la acción concreto.",points:10,state:"locked"},
 {id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",points:15,state:"locked"}
 ];
+
+const CATCH_UP_THROUGH_INDEX=2; // Misión 3
+
+function applyCatchUpUnlock(){
+  // Reconstruye el estado sin obligar a completar M1 y M2 antes de M3.
+  // M1, M2 y M3 quedan abiertas si todavía no han sido entregadas.
+  activities.forEach((a,i)=>{
+    if(a.state!=='done') a.state=i<=CATCH_UP_THROUGH_INDEX?'open':'locked';
+  });
+
+  // Una vez entregada M3, el flujo continúa normalmente:
+  // M4, luego M5, etc. Las misiones anteriores pendientes permanecen abiertas.
+  let highestDone=-1;
+  activities.forEach((a,i)=>{ if(a.state==='done') highestDone=Math.max(highestDone,i); });
+
+  if(highestDone>=CATCH_UP_THROUGH_INDEX){
+    const next=activities[highestDone+1];
+    if(next && next.state!=='done') next.state='open';
+  }
+}
+
 function hydrateTeam(){
   if(!team.EquipoID){
     try{team=JSON.parse(localStorage.getItem('idealab_team')||'{}')}catch{}
@@ -1161,7 +1186,7 @@ function renderMissions(){
     row.setAttribute('data-activity',a.id);
 
     let statusText=a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA';
-    let description=a.state==='done'?'Entregada · pendiente de evaluación':a.state==='open'?'Lista para trabajar':'Completa la misión anterior';
+    let description=a.state==='done'?'Entregada · pendiente de evaluación':a.state==='open'?'Lista para trabajar':'Se habilitará al avanzar desde la Misión 3';
     if(a.state==='done' && evaluated){
       statusText='EVALUADA';
       description=`Calificación ${score.toFixed(1)} / ${a.points}`;
@@ -1215,6 +1240,8 @@ try{
   const p=JSON.parse(localStorage.getItem('idealab_progress')||'[]');
   p.forEach(st=>{const a=activities.find(x=>x.id===st.id);if(a)a.state=st.state});
 }catch{}
+applyCatchUpUnlock();
+localStorage.setItem('idealab_progress',JSON.stringify(activities.map(a=>({id:a.id,state:a.state}))));
 renderMissions();
 
 
@@ -1326,14 +1353,13 @@ function restoreMissionProgress(entregas){
     const parts=String(e.Title||'').split('|');
     return /^M\d{2}$/i.test(parts[1]||'')?parts[1].toUpperCase():'';
   }).filter(Boolean));
-  activities.forEach(a=>a.state='locked');
-  let firstOpenSet=false;
-  for(const a of activities){
-    if(delivered.has(a.id)) a.state='done';
-    else if(!firstOpenSet){a.state='open';firstOpenSet=true;}
-  }
-  if(!firstOpenSet&&activities.length) activities.forEach(a=>a.state='done');
-  localStorage.setItem('idealab_progress',JSON.stringify(activities.map(a=>({id:a.id,state:a.state}))));
+
+  activities.forEach(a=>a.state=delivered.has(a.id)?'done':'locked');
+  applyCatchUpUnlock();
+
+  localStorage.setItem('idealab_progress',JSON.stringify(
+    activities.map(a=>({id:a.id,state:a.state}))
+  ));
 }
 
 function refreshSavedPassportBox(){
