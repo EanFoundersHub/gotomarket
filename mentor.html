@@ -3,44 +3,215 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IdeaLab · Mentor</title>
+<title>Aceleratón Go-To-Market · Centro de Evaluación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0908;--panel:#120e0b;--panel2:#17110d;--line:#3b2d22;--gold:#ffc94a;--cyan:#59dce1;--ok:#68d391;--muted:#a99c91;--text:#f6efe8;--bad:#ff7a7a}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#2a1609 0,#0b0908 34%,#070606 100%);color:var(--text);font-family:Arial,sans-serif}
-.shell{max-width:1120px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:18px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:16px}
-.logo{font-weight:900;font-size:29px;letter-spacing:.08em}.eyebrow{font-size:10px;letter-spacing:.18em;color:var(--gold);font-weight:800}.sub,.mini{color:var(--muted);font-size:12px}
-.card{border:1px solid var(--line);background:rgba(18,14,11,.93);padding:20px;margin-top:18px}.login{max-width:560px;margin:70px auto}
-h1,h2,h3,p{margin-top:0}h2{font-size:24px}label{display:block;font-size:11px;color:var(--muted);margin:0 0 6px}
-input,textarea,select{width:100%;background:#090706;border:1px solid #4a382c;color:var(--text);padding:12px;font:inherit}textarea{min-height:120px;resize:vertical}
-.btn{border:1px solid var(--gold);background:var(--gold);color:#17110d;padding:11px 14px;font-weight:900;cursor:pointer}
-.btn.alt{background:transparent;color:var(--gold)}.btn.cyan{border-color:var(--cyan);background:transparent;color:var(--cyan)}.btn:disabled{opacity:.5;cursor:not-allowed}
-.hidden{display:none!important}.actions{display:flex;gap:10px;flex-wrap:wrap}.hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.hero-actions .btn{min-height:58px}.toast{min-height:20px;margin-top:10px;color:var(--cyan);font-size:12px}
+:root{
+  --bg:#0b0907;--panel:#15110e;--panel2:#1c1510;--line:#493626;
+  --gold:#ffc94a;--cyan:#59dce1;--ok:#57d68d;--muted:#a99887;
+  --text:#f4efe9;--bad:#ff7d73
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--text);font-family:Poppins,sans-serif;
+  background:
+    radial-gradient(circle at 82% -5%,rgba(162,79,23,.34) 0,transparent 29%),
+    radial-gradient(circle at 12% 15%,rgba(89,220,225,.05) 0,transparent 22%),
+    linear-gradient(180deg,#0b0907 0,#100c09 55%,#080706 100%);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:linear-gradient(to bottom,black,transparent 80%);
+}
+a{color:var(--cyan)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.shell{max-width:1240px;margin:auto;padding:22px;position:relative;z-index:1}
+
+.top{
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+  border-bottom:1px solid var(--line);padding-bottom:18px;
+}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{
+  width:72px;height:72px;object-fit:contain;
+  filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));
+}
+.brand h1{
+  font-family:"Black Ops One";margin:0;color:var(--gold);
+  font-size:clamp(25px,4vw,43px);letter-spacing:.02em;line-height:.98;
+}
+.eyebrow{
+  font-size:11px;letter-spacing:.15em;color:var(--cyan);font-weight:700;
+  text-transform:uppercase
+}
+.sub,.mini{color:var(--muted);font-size:12px}
+.pill{
+  display:inline-block;border:1px solid var(--gold);color:var(--gold);
+  padding:6px 10px;border-radius:999px;font-size:10px;font-weight:700;
+  letter-spacing:.08em;background:rgba(255,201,74,.045)
+}
+
+.card{
+  position:relative;background:linear-gradient(145deg,rgba(24,18,14,.97),rgba(15,12,10,.96));
+  border:1px solid var(--line);padding:22px;margin-top:18px;
+  box-shadow:0 24px 50px rgba(0,0,0,.15)
+}
+.card:before{
+  content:"";position:absolute;left:-1px;top:-1px;width:24px;height:24px;
+  border-left:2px solid var(--gold);border-top:2px solid var(--gold);pointer-events:none
+}
+.login{max-width:680px;margin:7vh auto}
+.login h2,.section-title{
+  font-family:"Black Ops One";color:var(--gold);margin:6px 0 14px;
+  letter-spacing:.025em
+}
+h1,h2,h3,p{margin-top:0}
+h2{font-size:clamp(22px,3vw,31px)}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+input,textarea,select{
+  width:100%;background:#0c0907;color:var(--text);border:1px solid #60462f;
+  padding:11px;border-radius:3px;outline:none
+}
+input:focus,textarea:focus,select:focus{
+  border-color:var(--cyan);box-shadow:0 0 0 2px rgba(89,220,225,.08)
+}
+textarea{min-height:120px;resize:vertical}
+.btn{
+  border:1px solid var(--gold);background:var(--gold);color:#17100a;
+  padding:11px 16px;font-weight:800;border-radius:3px;text-decoration:none;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:.15s ease
+}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.btn.alt{background:transparent;color:var(--gold)}
+.btn.cyan{border-color:var(--cyan);background:rgba(89,220,225,.035);color:var(--cyan)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.hidden{display:none!important}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.hero-actions .btn{min-height:64px;text-align:center;line-height:1.25}
+.toast{min-height:20px;margin-top:10px;color:var(--cyan);font-size:12px}
+
+.mentor-home-head{
+  display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:22px;align-items:center
+}
+.mentor-home-head .rocky-guide{
+  width:100%;max-height:170px;object-fit:contain;
+  filter:drop-shadow(0 18px 26px rgba(0,0,0,.52))
+}
+.mentor-tag{color:var(--cyan);font-weight:800}
+
 .selected-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
-.status-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}.mission-card{border:1px solid var(--line);background:#0f0c0a;padding:16px}
-.mission-card.ready{border-left:5px solid var(--ok);background:rgba(104,211,145,.055)}.mission-card.done{border-left:5px solid var(--cyan);background:rgba(89,220,225,.045)}.mission-card.waiting{border-left:5px solid #655a51;opacity:.8}
-.mission-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.mission-name{font-weight:900;font-size:17px}.status{font-size:10px;font-weight:900;letter-spacing:.06em}
-.ready .status{color:var(--ok)}.done .status{color:var(--cyan)}.waiting .status{color:#9d9087}
-.time{font-size:11px;color:var(--muted);margin:7px 0}.section-title{margin:26px 0 8px;font-size:15px;color:var(--gold);letter-spacing:.08em}
-.selector-panel{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}#teamSelect{height:220px;margin-top:10px}
-.scanner{margin-top:14px;border:1px solid var(--cyan);padding:14px;background:#090706}#scannerVideo{width:100%;max-height:440px;background:#000;object-fit:cover}
-.eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.eval-grid .full{grid-column:1/-1}.rubric{border:1px solid #4b392d;padding:14px;background:#0c0907;margin:14px 0;font-size:12px;line-height:1.6}
-.evidence{border:1px dashed #5d4838;padding:14px;margin:14px 0;background:#0b0907}.evidence a{color:var(--cyan)}
-.pill{display:inline-block;border:1px solid var(--gold);color:var(--gold);padding:4px 7px;border-radius:999px;font-size:10px}
-.back{margin-bottom:14px}.mentor-tag{color:var(--cyan);font-weight:800}
-@media(max-width:760px){.shell{padding:14px}.top,.selected-head{flex-direction:column}.hero-actions,.status-grid,.eval-grid{grid-template-columns:1fr}.eval-grid .full{grid-column:auto}}
+.status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.mission-card{
+  position:relative;border:1px solid var(--line);background:#0f0c0a;padding:17px;
+  min-height:142px;overflow:hidden
+}
+.mission-card:after{
+  content:"";position:absolute;right:-30px;bottom:-45px;width:110px;height:110px;
+  border:1px solid rgba(255,255,255,.035);border-radius:50%
+}
+.mission-card.ready{
+  border-left:5px solid var(--ok);
+  background:linear-gradient(135deg,rgba(87,214,141,.08),#0f0c0a 58%)
+}
+.mission-card.done{
+  border-left:5px solid var(--cyan);
+  background:linear-gradient(135deg,rgba(89,220,225,.07),#0f0c0a 58%)
+}
+.mission-card.waiting{
+  border-left:5px solid #655a51;
+  background:linear-gradient(135deg,rgba(255,255,255,.02),#0f0c0a 58%);
+  opacity:.82
+}
+.mission-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.mission-name{font-family:"Black Ops One";font-size:18px;color:var(--text)}
+.status{font-size:10px;font-weight:800;letter-spacing:.07em;text-align:right}
+.ready .status{color:var(--ok)}
+.done .status{color:var(--cyan)}
+.waiting .status{color:#9d9087}
+.time{font-size:11px;color:var(--muted);margin:9px 0 11px}
+.section-title{
+  margin:27px 0 8px;font-size:16px;color:var(--gold);letter-spacing:.07em
+}
+
+.selector-panel{
+  border-top:1px solid var(--line);margin-top:18px;padding-top:18px
+}
+#teamSelect{height:220px;margin-top:10px}
+.scanner{
+  margin-top:16px;border:1px solid var(--cyan);padding:16px;background:#090706;
+  box-shadow:inset 0 0 24px rgba(89,220,225,.035)
+}
+#scannerVideo{
+  width:100%;max-height:440px;background:#000;object-fit:cover;
+  border:1px solid #284d4f;margin-top:12px
+}
+
+.eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.eval-grid .full{grid-column:1/-1}
+.rubric{
+  border:1px solid #4b392d;padding:14px;background:#0c0907;margin:14px 0;
+  font-size:12px;line-height:1.7;color:var(--muted)
+}
+.rubric b{color:var(--cyan);letter-spacing:.06em}
+.evidence{
+  border:1px dashed #5d4838;padding:14px;margin:14px 0;background:#0b0907;
+  word-break:break-word
+}
+.evidence a{color:var(--cyan)}
+.back{margin-bottom:14px}
+
+.evaluation-banner{
+  display:grid;grid-template-columns:minmax(0,1fr) 125px;gap:16px;align-items:center
+}
+.evaluation-banner img{
+  width:100%;max-height:125px;object-fit:contain;
+  filter:drop-shadow(0 16px 22px rgba(0,0,0,.5))
+}
+.techline{
+  height:1px;background:linear-gradient(90deg,var(--gold),transparent);
+  margin:14px 0
+}
+
+@media(max-width:760px){
+  .shell{padding:14px}
+  .top,.selected-head{flex-direction:column;align-items:flex-start}
+  .brand img{width:58px;height:58px}
+  .hero-actions,.status-grid,.eval-grid,.mentor-home-head,.evaluation-banner{grid-template-columns:1fr}
+  .eval-grid .full{grid-column:auto}
+  .mentor-home-head .rocky-guide,.evaluation-banner img{max-height:130px}
+  .hero-actions .btn{min-height:58px}
+}
 </style>
 </head>
 <body>
 <main class="shell">
 <header class="top">
-  <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">IDEALAB</div><div class="sub">Aceleratón Go-To-Market · Evaluación de mentores</div></div>
+  <div class="brand">
+    <img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky, guía de evaluación">
+    <div>
+      <div class="eyebrow">ACELERATÓN GO-TO-MARKET</div>
+      <h1>CENTRO DE EVALUACIÓN</h1>
+      <div class="sub">Impacta · Universidad EAN</div>
+    </div>
+  </div>
   <div class="pill">MENTOR VIEW</div>
 </header>
 
 <section id="login" class="card login">
-  <div class="eyebrow">REGISTRO DE SESIÓN</div>
-  <h2>INGRESA COMO MENTOR</h2>
+  <div class="eyebrow">ACCESO MENTOR</div>
+  <h2>IDENTIFÍCATE PARA CONTINUAR</h2>
+  <p class="mini">Tu nombre quedará asociado a cada evaluación que registres durante la Aceleratón.</p>
+  <div class="techline"></div>
   <label for="mentorName">Nombre del mentor</label>
   <input id="mentorName" placeholder="Ej. Laura Cely" autocomplete="name">
   <button class="btn" id="loginBtn" type="button" style="margin-top:14px">INGRESAR →</button>
@@ -49,9 +220,14 @@ input,textarea,select{width:100%;background:#090706;border:1px solid #4a382c;col
 
 <section id="home" class="hidden">
   <article class="card">
-    <div class="eyebrow">SESIÓN ACTIVA</div>
-    <h2>Hola, <span id="mentorLabel" class="mentor-tag"></span></h2>
-    <p class="mini">Identifica la iniciativa y te mostraremos automáticamente qué misiones están listas para evaluar.</p>
+    <div class="mentor-home-head">
+      <div>
+        <div class="eyebrow">SESIÓN ACTIVA</div>
+        <h2>Hola, <span id="mentorLabel" class="mentor-tag"></span></h2>
+        <p class="mini">Identifica la iniciativa. Rocky revisará sus transmisiones y te mostrará únicamente las misiones disponibles para evaluar.</p>
+      </div>
+      <img class="rocky-guide" src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky evaluador">
+    </div>
     <div class="hero-actions">
       <button class="btn" id="scanBtn" type="button">📷 ESCANEAR QR</button>
       <button class="btn alt" id="previousBtn" type="button">🔎 VOY A EVALUAR UNA INICIATIVA CON LA QUE HABLÉ EN OTRA MISIÓN</button>
@@ -104,9 +280,14 @@ input,textarea,select{width:100%;background:#090706;border:1px solid #4a382c;col
 <section id="evaluationView" class="hidden">
   <article class="card">
     <button class="btn alt back" id="backInitiative" type="button">← VOLVER A LA INICIATIVA</button>
-    <div class="eyebrow" id="evalMissionLabel">MISIÓN</div>
-    <h2 id="evalTeamName">Iniciativa</h2>
-    <div id="evalTime" class="mini"></div>
+    <div class="evaluation-banner">
+      <div>
+        <div class="eyebrow" id="evalMissionLabel">MISIÓN</div>
+        <h2 id="evalTeamName">Iniciativa</h2>
+        <div id="evalTime" class="mini"></div>
+      </div>
+      <img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky acompañando la evaluación">
+    </div>
     <div id="evalEvidence" class="evidence"></div>
     <div id="evalRubric" class="rubric"></div>
 
