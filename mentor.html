@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IdeaLab · Centro de Evaluación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0907;--panel:#15110e;--panel2:#1c1510;--gold:#ffc94a;--cyan:#59dce1;--text:#f4efe9;--muted:#a99887;--line:#493626;--ok:#57d68d;--danger:#ff7d73}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 80% 0,#37200f 0,transparent 26%),linear-gradient(#0b0907,#100c09);color:var(--text);font-family:Poppins,sans-serif;min-height:100vh}
+a{color:var(--cyan)} button,input,select,textarea{font:inherit} button{cursor:pointer}
+.shell{max-width:1240px;margin:auto;padding:22px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:18px}
+.brand{display:flex;align-items:center;gap:14px} .brand img{width:64px;height:64px;object-fit:contain} .brand h1{font-family:"Black Ops One";margin:0;color:var(--gold);font-size:clamp(24px,4vw,42px)} .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--cyan);font-weight:700}
+.btn{border:1px solid var(--gold);background:var(--gold);color:#17100a;padding:11px 16px;font-weight:700;border-radius:3px;text-decoration:none;display:inline-block}
+.btn.alt{background:transparent;color:var(--gold)} .btn.danger{border-color:var(--danger);color:var(--danger);background:transparent} .btn:disabled{opacity:.45;cursor:not-allowed}
+.card{background:rgba(21,17,14,.94);border:1px solid var(--line);padding:20px;margin-top:18px} .hidden{display:none!important}
+.login{max-width:620px;margin:8vh auto} .login h2,.section-title{font-family:"Black Ops One";color:var(--gold);margin:5px 0 14px}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,select,textarea{width:100%;background:#0c0907;color:var(--text);border:1px solid #60462f;padding:11px;border-radius:3px} textarea{min-height:110px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px} .kpi{border:1px solid var(--line);background:#0f0c0a;padding:14px} .kpi b{display:block;font:28px "Black Ops One";color:var(--gold)} .kpi span{font-size:10px;color:var(--muted)}
+.toolbar{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end} .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px} .tab{padding:8px 11px;border:1px solid var(--line);background:#0f0c0a;color:var(--muted)} .tab.active{border-color:var(--gold);color:var(--gold)}
+.list{display:grid;gap:12px;margin-top:14px} .delivery{border:1px solid var(--line);background:#110d0a;padding:16px} .delivery.validada{border-left:4px solid var(--ok)} .delivery.pendiente{border-left:4px solid var(--gold)}
+.delivery-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start} .delivery h3{margin:3px 0} .meta{font-size:11px;color:var(--muted)} .badge{font-size:10px;border:1px solid var(--line);padding:5px 8px;border-radius:20px;white-space:nowrap} .badge.validada{color:var(--ok);border-color:var(--ok)} .badge.pendiente{color:var(--gold);border-color:var(--gold)}
+.evidence{margin:12px 0;padding:12px;border:1px solid #34271e;background:#0c0907;word-break:break-word} .evidence p{margin:6px 0} .actions{display:flex;gap:8px;flex-wrap:wrap}
+.eval{margin-top:14px;padding-top:14px;border-top:1px solid #34271e;display:grid;grid-template-columns:180px 1fr;gap:12px} .full{grid-column:1/-1}
+.rubric{font-size:12px;color:var(--muted);background:#0d0a08;border:1px solid #34271e;padding:10px;margin-top:8px} .rubric b{color:var(--cyan)} .toast{min-height:20px;color:var(--cyan);font-size:12px;margin-top:8px}
+.bonus-layout{display:grid;grid-template-columns:280px 1fr;gap:16px} .bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .bonus-total{font:34px "Black Ops One";color:var(--gold)}
+.mini{font-size:11px;color:var(--muted)} .empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line)}
+@media(max-width:800px){.top,.delivery-head{flex-direction:column}.grid{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.eval,.bonus-layout,.bonus-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top">
+  <div class="brand"><img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky"><div><div class="eyebrow">IDEALAB · GO-TO-MARKET</div><h1>CENTRO DE EVALUACIÓN</h1></div></div>
+  <a class="btn alt" href="index.html">← PARTICIPANTE</a>
+</header>
+
+<section id="login" class="card login">
+  <div class="eyebrow">ACCESO MENTOR</div>
+  <h2>IDENTIFÍCATE PARA CONTINUAR</h2>
+  <p class="mini">Tu nombre quedará asociado a cada evaluación y modificación de puntaje.</p>
+  <label>Nombre del mentor</label>
+  <input id="mentorName" placeholder="Ej. Laura Cely" autocomplete="name">
+  <label>Código de acceso</label>
+  <input id="mentorKey" type="password" placeholder="Código de mentor" autocomplete="current-password">
+  <button class="btn" id="loginBtn" type="button" style="margin-top:14px">INGRESAR →</button>
+  <div id="loginToast" class="toast"></div>
+</section>
+
+<section id="app" class="hidden">
+  <div class="grid">
+    <div class="kpi"><b id="kDeliveries">0</b><span>ENTREGAS</span></div>
+    <div class="kpi"><b id="kPending">0</b><span>PENDIENTES</span></div>
+    <div class="kpi"><b id="kValidated">0</b><span>VALIDADAS</span></div>
+    <div class="kpi"><b id="kTeams">0</b><span>EQUIPOS</span></div>
+  </div>
+
+  <article class="card">
+    <div class="toolbar">
+      <div><label>Vista</label><select id="statusFilter"><option value="Pendiente">Pendientes</option><option value="Validada">Evaluadas</option><option value="all">Todas</option></select></div>
+      <div><label>Misión</label><select id="missionFilter"><option value="all">Todas</option><option>M01</option><option>M02</option><option>M03</option><option>M04</option><option>M05</option><option>M06</option><option>M07</option><option>M08</option></select></div>
+      <div><label>Buscar equipo</label><input id="search" placeholder="Nombre o EquipoID"></div>
+      <button class="btn alt" id="refreshBtn" type="button">ACTUALIZAR</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-view="deliveries">EVALUACIONES</button>
+      <button class="tab" data-view="bonus">PUNTOS ADICIONALES</button>
+    </div>
+  </article>
+
+  <section id="deliveriesView">
+    <div id="deliveryList" class="list"></div>
+  </section>
+
+  <section id="bonusView" class="hidden">
+    <article class="card">
+      <div class="eyebrow">TRACCIÓN Y VALIDACIÓN</div>
+      <h2 class="section-title">PUNTOS ADICIONALES · /20</h2>
+      <div class="bonus-layout">
+        <div>
+          <label>Equipo</label>
+          <select id="bonusTeam"></select>
+          <div class="card" style="margin-top:12px">
+            <div class="mini">TOTAL EXTRA</div>
+            <div id="bonusTotal" class="bonus-total">0 / 20</div>
+            <div id="teamTotal" class="mini">Puntaje total registrado: 0</div>
+          </div>
+        </div>
+        <div class="bonus-grid">
+          <div><label>Prospecto calificado · 0 o 2</label><input id="bProspecto" type="number" min="0" max="2" step="2"></div>
+          <div><label>Conversación comercial · 0 o 2</label><input id="bConversacion" type="number" min="0" max="2" step="2"></div>
+          <div><label>Reunión agendada · 0 o 4</label><input id="bReunion" type="number" min="0" max="4" step="4"></div>
+          <div><label>Cliente / venta · 0 o 6</label><input id="bVenta" type="number" min="0" max="6" step="6"></div>
+          <div><label>Entregas tempranas · 0 a 4</label><input id="bTempranas" type="number" min="0" max="4" step=".5"></div>
+          <div><label>Feedback potencial cliente · 0 o 2</label><input id="bFeedback" type="number" min="0" max="2" step="2"></div>
+          <div class="full"><button class="btn" id="saveBonus" type="button">GUARDAR PUNTOS ADICIONALES →</button><div id="bonusToast" class="toast"></div></div>
+        </div>
+      </div>
+    </article>
+  </section>
+</section>
+</div>
+
+<script>
+const API='https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/01/workflows/000307ca6ada436f90dc7c71c0eada3b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wG3_oqoLlJ60LMm0Ofr_RQAt-XEQa7RivZS2U1UG4qI';
+const MISSIONS={
+M01:{name:'Escaneo de la misión',max:10,criteria:['Diagnóstico completo y relevante','Coherencia entre diagnóstico y acciones']},
+M02:{name:'Coordenadas de lanzamiento',max:15,criteria:['Cliente y problema claramente definidos','Propuesta de valor','Coherencia cliente-problema-solución']},
+M03:{name:'Ruta de entrada',max:10,criteria:['Mercado y posicionamiento','Acciones comerciales concretas y coherentes']},
+M04:{name:'Sistema de comunicación',max:15,criteria:['Funcionalidad de la herramienta','Claridad y adaptación al cliente','Propuesta de valor y CTA']},
+M05:{name:'La ruta del cliente',max:15,criteria:['Journey y puntos de contacto','Barreras identificadas','Oportunidades de conversión']},
+M06:{name:'Radar de misión',max:10,criteria:['Indicadores y metas','Relación entre objetivos y decisiones']},
+M07:{name:'Código de transmisión',max:10,criteria:['Problema, cliente y propuesta de valor claros','CTA comercial']},
+M08:{name:'Operación primer cliente',max:15,criteria:['Ejecución y evidencia','Resultado / tracción','Relación implementación-resultados']}
+};
+let mentorName='',mentorKey='',deliveries=[],teams=[],view='deliveries';
+
+const $=s=>document.querySelector(s);
+function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
+async function post(payload){
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json;charset=utf-8'},body:JSON.stringify(payload)});
+  let data={}; try{data=await r.json()}catch{}
+  if(!r.ok||data?.ok===false)throw new Error(data?.error||data?.message||'No fue posible completar la operación.');
+  return data;
+}
+function validDelivery(d){return /^M0[1-8]$/.test(String(d.ActividadID||'')) && String(d.EquipoID||'').startsWith('IDEALAB-')}
+function teamById(id){return teams.find(t=>t.EquipoID===id)||{EquipoID:id,NombreIniciativa:id}}
+function fmtDate(v){if(!v)return 'Sin fecha';try{return new Intl.DateTimeFormat('es-CO',{dateStyle:'short',timeStyle:'short'}).format(new Date(v))}catch{return v}}
+function evidenceHTML(d){
+  const bits=[];
+  if(d.Respuesta)bits.push(`<p><b>Texto:</b> ${esc(d.Respuesta)}</p>`);
+  if(d.Enlace)bits.push(`<p>🔗 <a href="${esc(d.Enlace)}" target="_blank" rel="noopener">ABRIR ENLACE</a></p>`);
+  if(d.EvidenciaURL)bits.push(`<p>📎 <a href="${esc(d.EvidenciaURL)}" target="_blank" rel="noopener">ABRIR EVIDENCIA</a>${d.NombreArchivo?' · '+esc(d.NombreArchivo):''}</p>`);
+  else if(d.NombreArchivo)bits.push(`<p>📎 <b>${esc(d.NombreArchivo)}</b> <span class="mini">(sin vínculo directo disponible)</span></p>`);
+  return bits.join('')||'<p class="mini">La entrega está registrada, pero no tiene evidencia visible en el vínculo recibido.</p>';
+}
+function renderKpis(){
+  const rows=deliveries.filter(validDelivery);
+  $('#kDeliveries').textContent=rows.length;
+  $('#kPending').textContent=rows.filter(x=>x.EstadoEvaluacion!=='Validada').length;
+  $('#kValidated').textContent=rows.filter(x=>x.EstadoEvaluacion==='Validada').length;
+  $('#kTeams').textContent=teams.length;
+}
+function renderDeliveries(){
+  const status=$('#statusFilter').value,mission=$('#missionFilter').value,q=$('#search').value.trim().toLowerCase();
+  const rows=deliveries.filter(validDelivery).filter(d=>{
+    const st=d.EstadoEvaluacion||'Pendiente';
+    const team=teamById(d.EquipoID);
+    return (status==='all'||st===status)&&(mission==='all'||d.ActividadID===mission)&&(!q||(`${team.NombreIniciativa} ${d.EquipoID}`).toLowerCase().includes(q));
+  });
+  $('#deliveryList').innerHTML=rows.length?rows.map((d,i)=>{
+    const m=MISSIONS[d.ActividadID]||{name:d.ActividadID,max:num(d.PuntosObtenidos)||0,criteria:[]};
+    const team=teamById(d.EquipoID);
+    const status=d.EstadoEvaluacion||'Pendiente';
+    const current=d.PuntosValidados==null?'':num(d.PuntosValidados);
+    const needsReason=status==='Validada';
+    return `<article class="delivery ${status.toLowerCase()}">
+      <div class="delivery-head">
+        <div><div class="eyebrow">${d.ActividadID} · ${esc(m.name)}</div><h3>${esc(team.NombreIniciativa||d.EquipoID)}</h3><div class="meta">${esc(d.EquipoID)} · ${fmtDate(d.FechaHoraEntrega)}</div></div>
+        <span class="badge ${status.toLowerCase()}">${esc(status.toUpperCase())}</span>
+      </div>
+      <div class="evidence">${evidenceHTML(d)}</div>
+      <div class="rubric"><b>CRITERIOS DE REFERENCIA</b><br>${m.criteria.map(x=>'• '+esc(x)).join('<br>')}<br><span class="mini">Escala orientadora: 0 No cumple · 1 Incipiente · 2 En desarrollo · 3 Cumple · 4 Destacado · 5 Sobresaliente.</span></div>
+      <div class="eval">
+        <div><label>Puntaje máximo</label><input value="${m.max}" readonly></div>
+        <div><label>Puntaje validado</label><input id="score_${i}" type="number" min="0" max="${m.max}" step=".5" value="${current}"></div>
+        <div class="full"><label>Retroalimentación</label><textarea id="feed_${i}">${esc(d.Retroalimentacion||'')}</textarea></div>
+        <div class="full ${needsReason?'':'hidden'}" id="reasonWrap_${i}"><label>Motivo del cambio ${needsReason?'(requerido si modificas una evaluación validada)':''}</label><textarea id="reason_${i}">${esc(d.MotivoCambio||'')}</textarea></div>
+        <div class="full actions"><button class="btn" onclick="saveEvaluation(${i})" type="button">${status==='Validada'?'ACTUALIZAR EVALUACIÓN':'VALIDAR EVALUACIÓN'} →</button></div>
+        <div class="full toast" id="toast_${i}"></div>
+      </div>
+    </article>`;
+  }).join(''):'<div class="empty">No hay entregas para estos filtros.</div>';
+  window.filteredRows=rows;
+}
+async function saveEvaluation(i){
+  const d=window.filteredRows[i]; if(!d)return;
+  const m=MISSIONS[d.ActividadID]; const score=num($('#score_'+i).value); const feed=$('#feed_'+i).value.trim(); const reason=$('#reason_'+i)?.value.trim()||'';
+  const toast=$('#toast_'+i);
+  if(score<0||score>m.max){toast.textContent=`El puntaje debe estar entre 0 y ${m.max}.`;return}
+  const old=d.PuntosValidados==null?null:num(d.PuntosValidados);
+  if(d.EstadoEvaluacion==='Validada' && old!==score && !reason){toast.textContent='Escribe el motivo del cambio de puntaje.';return}
+  toast.textContent='Guardando evaluación…';
+  try{
+    await post({Accion:'guardar_evaluacion',ClaveAcceso:mentorKey,EquipoID:d.EquipoID,ActividadID:d.ActividadID,PuntosValidados:score,Evaluador:mentorName,Retroalimentacion:feed,MotivoCambio:reason});
+    toast.textContent='✅ Evaluación guardada.';
+    await loadData();
+  }catch(e){toast.textContent=e.message}
+}
+function bonusVal(t,key){return num(t?.[key] ?? (key==='BonusProspecto'?t?.['BonusProspecto\n']:0))}
+function renderBonusTeams(){
+  const sel=$('#bonusTeam'); const cur=sel.value;
+  sel.innerHTML=teams.map(t=>`<option value="${esc(t.EquipoID)}">${esc(t.NombreIniciativa||t.EquipoID)}</option>`).join('');
+  if(cur && teams.some(t=>t.EquipoID===cur))sel.value=cur;
+  fillBonus();
+}
+function fillBonus(){
+  const t=teamById($('#bonusTeam').value);
+  $('#bProspecto').value=bonusVal(t,'BonusProspecto');
+  $('#bConversacion').value=bonusVal(t,'BonusConversacion');
+  $('#bReunion').value=bonusVal(t,'BonusReunion');
+  $('#bVenta').value=bonusVal(t,'BonusVenta');
+  $('#bTempranas').value=bonusVal(t,'BonusTempranas');
+  $('#bFeedback').value=bonusVal(t,'BonusFeedback');
+  updateBonusPreview();
+  $('#teamTotal').textContent=`Puntaje total registrado: ${num(t.PuntosTotal).toFixed(1)}`;
+}
+function updateBonusPreview(){
+  const total=['#bProspecto','#bConversacion','#bReunion','#bVenta','#bTempranas','#bFeedback'].reduce((s,id)=>s+num($(id).value),0);
+  $('#bonusTotal').textContent=`${total.toFixed(1)} / 20`;
+}
+async function saveBonus(){
+  const t=teamById($('#bonusTeam').value); const toast=$('#bonusToast');
+  const payload={
+    Accion:'guardar_bonus',ClaveAcceso:mentorKey,EquipoID:t.EquipoID,
+    BonusProspecto:num($('#bProspecto').value),BonusConversacion:num($('#bConversacion').value),
+    BonusReunion:num($('#bReunion').value),BonusVenta:num($('#bVenta').value),
+    BonusTempranas:num($('#bTempranas').value),BonusFeedback:num($('#bFeedback').value)
+  };
+  const total=payload.BonusProspecto+payload.BonusConversacion+payload.BonusReunion+payload.BonusVenta+payload.BonusTempranas+payload.BonusFeedback;
+  if(total>20){toast.textContent='Los puntos adicionales no pueden superar 20.';return}
+  toast.textContent='Guardando…';
+  try{await post(payload);toast.textContent='✅ Puntos adicionales actualizados.';await loadData();}catch(e){toast.textContent=e.message}
+}
+async function loadData(){
+  const [a,b]=await Promise.all([
+    post({Accion:'listar_entregas',ClaveAcceso:mentorKey}),
+    post({Accion:'listar_equipos',ClaveAcceso:mentorKey})
+  ]);
+  deliveries=Array.isArray(a.Entregas)?a.Entregas:[];
+  teams=Array.isArray(b.Equipos)?b.Equipos:[];
+  renderKpis(); renderDeliveries(); renderBonusTeams();
+}
+async function login(){
+  mentorName=$('#mentorName').value.trim(); mentorKey=$('#mentorKey').value.trim(); const toast=$('#loginToast');
+  if(!mentorName||!mentorKey){toast.textContent='Ingresa nombre y código de acceso.';return}
+  toast.textContent='Validando acceso…'; $('#loginBtn').disabled=true;
+  try{
+    await loadData();
+    sessionStorage.setItem('idealab_mentor_name',mentorName);
+    sessionStorage.setItem('idealab_mentor_key',mentorKey);
+    $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); toast.textContent='';
+  }catch(e){toast.textContent=e.message}finally{$('#loginBtn').disabled=false}
+}
+$('#loginBtn').addEventListener('click',login);
+$('#refreshBtn').addEventListener('click',()=>loadData().catch(e=>alert(e.message)));
+$('#statusFilter').addEventListener('change',renderDeliveries); $('#missionFilter').addEventListener('change',renderDeliveries); $('#search').addEventListener('input',renderDeliveries);
+$('#bonusTeam').addEventListener('change',fillBonus); $('#saveBonus').addEventListener('click',saveBonus);
+['#bProspecto','#bConversacion','#bReunion','#bVenta','#bTempranas','#bFeedback'].forEach(id=>$(id).addEventListener('input',updateBonusPreview));
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
+  view=btn.dataset.view; $('#deliveriesView').classList.toggle('hidden',view!=='deliveries'); $('#bonusView').classList.toggle('hidden',view!=='bonus');
+}));
+window.saveEvaluation=saveEvaluation;
+$('#mentorName').value=sessionStorage.getItem('idealab_mentor_name')||'';
+$('#mentorKey').value=sessionStorage.getItem('idealab_mentor_key')||'';
+</script>
+</body>
+</html>
