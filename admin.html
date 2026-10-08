@@ -27,6 +27,31 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
 .rank{font-family:"Black Ops One";color:var(--gold)} .score{font-weight:700} .mini{font-size:11px;color:var(--muted)} .toast{min-height:18px;color:var(--cyan);font-size:12px;margin-top:8px}
 .team-card{border:1px solid var(--line);background:#0f0c0a;padding:14px;margin-top:10px} .team-head{display:flex;justify-content:space-between;gap:14px} .team-head h3{margin:0}
 .matrix-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--muted)}
+
+/* Vista operativa tipo Excel */
+.excel-wrap{overflow:auto;border:1px solid var(--line);margin-top:14px;max-height:68vh;background:#0c0907}
+.excel-table{border-collapse:separate;border-spacing:0;min-width:1840px;width:100%}
+.excel-table th,.excel-table td{border-right:1px solid #2f241d;border-bottom:1px solid #2f241d;padding:8px 9px;vertical-align:top;background:#0f0c0a}
+.excel-table th{position:sticky;top:0;z-index:4;background:#1a120d;color:var(--gold);white-space:nowrap}
+.excel-table th:first-child{left:0;z-index:6}
+.excel-table td:first-child{position:sticky;left:0;z-index:2;background:#120e0b;min-width:230px}
+.excel-table tr:hover td{background:#16100c}
+.excel-table tr:hover td:first-child{background:#1a120d}
+.mission-cell{min-width:142px}
+.mission-score{font-weight:700;font-size:13px;white-space:nowrap}
+.mission-score.done{color:var(--ok)}
+.mission-score.pending{color:var(--gold)}
+.mission-score.empty{color:#776b61}
+.cell-time{font-size:10px;color:var(--cyan);margin-top:5px;white-space:nowrap}
+.cell-meta{font-size:10px;color:var(--muted);margin-top:3px}
+.weighted-total{font:19px "Black Ops One";color:var(--gold);white-space:nowrap}
+.early-editor{display:flex;gap:6px;align-items:center;min-width:138px}
+.early-editor input{width:58px;padding:6px 7px;text-align:center}
+.early-editor button{padding:6px 8px;font-size:10px}
+.excel-note{border-left:3px solid var(--cyan);padding:10px 12px;background:rgba(89,220,225,.05);font-size:11px;color:var(--muted);margin-top:12px}
+.excel-note b{color:var(--text)}
+.eval-warning{color:var(--bad);font-size:9px;margin-top:3px}
+
 @media(max-width:900px){.top,.team-head{flex-direction:column}.kpis{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}}
 </style>
 </head>
@@ -43,10 +68,9 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
 <section id="login" class="card login">
   <div class="eyebrow">ACCESO INTERNO</div>
   <h2>CONTROL DE OPERACIONES</h2>
-  <p class="mini">La administración consulta información en vivo de equipos y entregas. El ranking se calcula automáticamente en esta pantalla.</p>
+  <p class="mini">Ingresa tu nombre para registrar la sesión administrativa. La información se consulta en vivo y el ranking se calcula automáticamente.</p>
   <label>Nombre</label><input id="adminName" placeholder="Ej. Felipe Caballero">
-  <label>Código de acceso</label><input id="adminKey" type="password" placeholder="Código de acceso">
-  <button id="loginBtn" class="btn" type="button" style="margin-top:14px">INGRESAR →</button>
+    <button id="loginBtn" class="btn" type="button" style="margin-top:14px">INGRESAR →</button>
   <div id="loginToast" class="toast"></div>
 </section>
 
@@ -62,7 +86,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
   <article class="card">
     <div class="tabs">
       <button class="tab active" data-view="ranking">RANKING</button>
-      <button class="tab" data-view="matrix">MATRIZ M01–M08</button>
+      <button class="tab" data-view="matrix">VISTA EXCEL</button>
       <button class="tab" data-view="pending">PENDIENTES</button>
     </div>
     <div class="toolbar" style="margin-top:12px">
@@ -75,17 +99,31 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
   <section id="rankingView">
     <article class="card">
       <div class="eyebrow">CLASIFICACIÓN EN VIVO</div>
-      <h2 class="title">RANKING /120</h2>
-      <p class="mini">Base = suma de PuntosValidados de M01–M08. Extra = PuntosAdicionales. El total se calcula aquí en tiempo real, sin depender de copiar PuntosBase manualmente.</p>
-      <div class="table-wrap"><table><thead><tr><th>#</th><th>Equipo</th><th>Progreso</th><th>Base /100</th><th>Extra /20</th><th>Total /120</th><th>Pendientes</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
+      <h2 class="title">RANKING PONDERADO /120</h2>
+      <p class="mini">Base ponderada = promedio de las evaluaciones recibidas por cada misión, respetando su máximo, y suma M01–M08 sobre 100. Extra = PuntosAdicionales sobre 20.</p>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Equipo</th><th>Progreso</th><th>Ponderada /100</th><th>Extra /20</th><th>Total /120</th><th>Pendientes</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
     </article>
   </section>
 
   <section id="matrixView" class="hidden">
     <article class="card">
-      <div class="eyebrow">SEGUIMIENTO OPERATIVO</div><h2 class="title">MATRIZ DE MISIONES</h2>
-      <div class="matrix-legend"><span>✅ Validada</span><span>🟡 Entregada / pendiente</span><span>○ Sin entrega</span></div>
-      <div class="table-wrap"><table><thead><tr><th>Equipo</th><th>M01</th><th>M02</th><th>M03</th><th>M04</th><th>M05</th><th>M06</th><th>M07</th><th>M08</th><th>Base</th><th>Extra</th><th>Total</th></tr></thead><tbody id="matrixBody"></tbody></table></div>
+      <div class="eyebrow">SEGUIMIENTO OPERATIVO</div>
+      <h2 class="title">MATRIZ TIPO EXCEL · EQUIPOS × MISIONES</h2>
+      <div class="matrix-legend"><span>✅ Evaluada</span><span>🟡 Entregada / pendiente de evaluación</span><span>○ Pendiente de entrega</span></div>
+      <div class="excel-note"><b>Calificación ponderada:</b> cuando una misión recibe varias evaluaciones, esta vista toma el puntaje acumulado y lo divide entre el número de evaluaciones registradas. Así cada misión conserva su peso real dentro de los 100 puntos base. La hora mostrada corresponde al momento en que el equipo transmitió la evidencia, en hora Colombia.</div>
+      <div class="excel-wrap">
+        <table class="excel-table">
+          <thead>
+            <tr>
+              <th>Equipo</th>
+              <th>M01 · /10</th><th>M02 · /15</th><th>M03 · /10</th><th>M04 · /15</th>
+              <th>M05 · /15</th><th>M06 · /10</th><th>M07 · /10</th><th>M08 · /15</th>
+              <th>Ponderada /100</th><th>Eval.</th><th>Tempranas /4</th><th>Extra /20</th><th>Total /120</th>
+            </tr>
+          </thead>
+          <tbody id="matrixBody"></tbody>
+        </table>
+      </div>
     </article>
   </section>
 
@@ -100,7 +138,8 @@ label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,se
 
 <script>
 const API='https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/01/workflows/000307ca6ada436f90dc7c71c0eada3b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wG3_oqoLlJ60LMm0Ofr_RQAt-XEQa7RivZS2U1UG4qI';
-let key='',teams=[],deliveries=[],view='ranking';
+const ADMIN_BACKEND_KEY='MENTOR-2026';
+let key=ADMIN_BACKEND_KEY,teams=[],deliveries=[],view='ranking';
 const $=s=>document.querySelector(s);
 function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
@@ -124,15 +163,59 @@ function normalizeTeam(t){
     PuntosAdicionales:num(t.PuntosAdicionales)
   }
 }
+const MISSION_MAX={M01:10,M02:15,M03:10,M04:15,M05:15,M06:10,M07:10,M08:15};
+const MISSION_IDS=Object.keys(MISSION_MAX);
+
 function rowsFor(id){return deliveries.filter(validDelivery).filter(d=>d.EquipoID===id)}
+
+function evaluatorNames(d){
+  const raw=String(d?.Evaluador||'').trim();
+  if(!raw)return [];
+  const parts=raw.split(/\s*(?:\||;|\n)\s*/).map(x=>x.trim()).filter(Boolean);
+  return [...new Set(parts.map(x=>x.toLowerCase()))].map(k=>parts.find(x=>x.toLowerCase()===k));
+}
+function evaluationCount(d){
+  const explicit=num(d?.NumeroEvaluaciones ?? d?.CantidadEvaluaciones ?? d?.NroEvaluaciones ?? d?.Evaluaciones);
+  if(explicit>0)return explicit;
+  const names=evaluatorNames(d);
+  if(names.length)return names.length;
+  return d?.PuntosValidados!=null ? 1 : 0;
+}
+function weightedMission(d,missionId){
+  if(!d || d.PuntosValidados==null)return 0;
+  const count=Math.max(1,evaluationCount(d));
+  const max=MISSION_MAX[missionId]||0;
+  return Math.min(max,num(d.PuntosValidados)/count);
+}
+function formatSubmission(v){
+  if(!v)return 'Sin hora';
+  const dt=new Date(v);
+  if(Number.isNaN(dt.getTime()))return String(v);
+  try{
+    const parts=new Intl.DateTimeFormat('es-CO',{
+      timeZone:'America/Bogota',
+      day:'2-digit',month:'short',
+      hour:'numeric',minute:'2-digit',second:'2-digit',
+      hour12:true
+    }).formatToParts(dt);
+    const get=t=>parts.find(p=>p.type===t)?.value||'';
+    return `${get('day')} ${get('month')} · ${get('hour')}:${get('minute')}:${get('second')} ${get('dayPeriod')}`.replace(/\s+/g,' ').trim();
+  }catch{
+    return dt.toLocaleString('es-CO');
+  }
+}
 function stats(t){
   const rows=rowsFor(t.EquipoID);
   const delivered=new Set(rows.map(d=>d.ActividadID));
-  const validated=rows.filter(d=>d.EstadoEvaluacion==='Validada'&&d.PuntosValidados!=null);
-  const base=validated.reduce((s,d)=>s+num(d.PuntosValidados),0);
+  const weightedBase=MISSION_IDS.reduce((sum,m)=>{
+    const d=rows.find(x=>x.ActividadID===m);
+    return sum+weightedMission(d,m);
+  },0);
+  const rawAccumulated=rows.reduce((s,d)=>s+num(d.PuntosValidados),0);
+  const evaluations=rows.reduce((s,d)=>s+evaluationCount(d),0);
   const extra=num(t.PuntosAdicionales);
-  const pending=rows.filter(d=>d.EstadoEvaluacion!=='Validada').length;
-  return {base,extra,total:base+extra,progress:delivered.size,pending,rows};
+  const pending=rows.filter(d=>d.PuntosValidados==null || evaluationCount(d)===0).length;
+  return {base:weightedBase,raw:rawAccumulated,evaluations,extra,total:weightedBase+extra,progress:delivered.size,pending,rows};
 }
 function filteredTeams(){
   const q=$('#search').value.trim().toLowerCase();
@@ -143,23 +226,85 @@ function renderKpis(){
   const totals=teams.map(t=>stats(t).total);
   $('#kTeams').textContent=teams.length;
   $('#kDeliveries').textContent=vd.length;
-  $('#kPending').textContent=vd.filter(d=>d.EstadoEvaluacion!=='Validada').length;
-  $('#kValidated').textContent=vd.filter(d=>d.EstadoEvaluacion==='Validada').length;
+  $('#kPending').textContent=vd.filter(d=>d.PuntosValidados==null || evaluationCount(d)===0).length;
+  $('#kValidated').textContent=vd.filter(d=>d.PuntosValidados!=null && evaluationCount(d)>0).length;
   $('#kAvg').textContent=teams.length?(totals.reduce((a,b)=>a+b,0)/teams.length).toFixed(1):'0';
 }
 function renderRanking(){
   const arr=filteredTeams().map(t=>({t,s:stats(t)})).sort((a,b)=>b.s.total-a.s.total||b.s.base-a.s.base);
   $('#rankingBody').innerHTML=arr.map((x,i)=>`<tr><td class="rank">${i+1}</td><td><b>${esc(x.t.NombreIniciativa)}</b><div class="mini">${esc(x.t.EquipoID)}</div></td><td>${x.s.progress}/8</td><td class="score">${x.s.base.toFixed(1)}</td><td>${x.s.extra.toFixed(1)}</td><td class="score">${x.s.total.toFixed(1)}</td><td>${x.s.pending}</td></tr>`).join('');
 }
-function stateFor(t,id){
+function missionCell(t,id){
   const d=rowsFor(t.EquipoID).find(x=>x.ActividadID===id);
-  if(!d)return '<span class="state empty">○</span>';
-  if(d.EstadoEvaluacion==='Validada')return '<span class="state done">✓</span>';
-  return '<span class="state pending">•</span>';
+  const max=MISSION_MAX[id];
+  if(!d){
+    return `<td class="mission-cell"><div class="mission-score empty">○ Pendiente</div><div class="cell-time">Sin evidencia</div></td>`;
+  }
+  const count=evaluationCount(d);
+  const weighted=weightedMission(d,id);
+  const raw=num(d.PuntosValidados);
+  const hasEval=d.PuntosValidados!=null && count>0;
+  const status=hasEval
+    ? `<div class="mission-score done">✓ ${weighted.toFixed(1)} / ${max}</div>`
+    : `<div class="mission-score pending">🟡 Por evaluar</div>`;
+  const evalText=hasEval ? `${count} eval. · acum. ${raw.toFixed(1)}` : '0 eval.';
+  const warning=(hasEval && count===1 && raw>max)
+    ? `<div class="eval-warning">Revisar número de evaluaciones</div>` : '';
+  return `<td class="mission-cell">${status}<div class="cell-meta">${evalText}</div><div class="cell-time">🕐 ${esc(formatSubmission(d.FechaHoraEntrega))}</div>${warning}</td>`;
 }
+function earlyEditor(t){
+  const id=esc(t.EquipoID);
+  return `<div class="early-editor"><input id="early_${id}" type="number" min="0" max="4" step=".5" value="${num(t.BonusTempranas).toFixed(1)}" aria-label="Puntos por entregas tempranas"><button class="btn alt" type="button" onclick="saveEarlyBonus('${id}',this)">GUARDAR</button></div>`;
+}
+async function saveEarlyBonus(teamId,btn){
+  const t=teams.find(x=>x.EquipoID===teamId);
+  if(!t)return;
+  const input=document.getElementById('early_'+teamId);
+  const val=Number(input?.value);
+  if(!Number.isFinite(val)||val<0||val>4){
+    alert('Los puntos por entregas tempranas deben estar entre 0 y 4.');
+    return;
+  }
+  const payload={
+    Accion:'guardar_bonus',ClaveAcceso:key,EquipoID:t.EquipoID,
+    BonusProspecto:num(t.BonusProspecto),
+    BonusConversacion:num(t.BonusConversacion),
+    BonusReunion:num(t.BonusReunion),
+    BonusVenta:num(t.BonusVenta),
+    BonusTempranas:val,
+    BonusFeedback:num(t.BonusFeedback)
+  };
+  const total=payload.BonusProspecto+payload.BonusConversacion+payload.BonusReunion+payload.BonusVenta+payload.BonusTempranas+payload.BonusFeedback;
+  if(total>20){
+    alert(`El total de puntos adicionales quedaría en ${total.toFixed(1)} y no puede superar 20.`);
+    return;
+  }
+  const old=btn.textContent; btn.disabled=true; btn.textContent='…';
+  try{
+    await post(payload);
+    await load();
+    btn.textContent='✓';
+  }catch(e){
+    alert(e.message);
+    btn.textContent=old;
+  }finally{
+    btn.disabled=false;
+    setTimeout(()=>{if(btn.isConnected)btn.textContent='GUARDAR'},900);
+  }
+}
+window.saveEarlyBonus=saveEarlyBonus;
+
 function renderMatrix(){
   const arr=filteredTeams().map(t=>({t,s:stats(t)})).sort((a,b)=>b.s.total-a.s.total);
-  $('#matrixBody').innerHTML=arr.map(x=>`<tr><td><b>${esc(x.t.NombreIniciativa)}</b><div class="mini">${esc(x.t.EquipoID)}</div></td>${['M01','M02','M03','M04','M05','M06','M07','M08'].map(m=>`<td class="center">${stateFor(x.t,m)}</td>`).join('')}<td>${x.s.base.toFixed(1)}</td><td>${x.s.extra.toFixed(1)}</td><td class="score">${x.s.total.toFixed(1)}</td></tr>`).join('');
+  $('#matrixBody').innerHTML=arr.map(x=>`<tr>
+    <td><b>${esc(x.t.NombreIniciativa)}</b><div class="mini">${esc(x.t.EquipoID)}</div></td>
+    ${MISSION_IDS.map(m=>missionCell(x.t,m)).join('')}
+    <td><div class="weighted-total">${x.s.base.toFixed(1)}</div><div class="cell-meta">de 100</div></td>
+    <td class="center"><b>${x.s.evaluations}</b></td>
+    <td>${earlyEditor(x.t)}</td>
+    <td><b>${x.s.extra.toFixed(1)}</b></td>
+    <td><div class="weighted-total">${x.s.total.toFixed(1)}</div><div class="cell-meta">de 120</div></td>
+  </tr>`).join('');
 }
 function evidence(d){
   if(d.EvidenciaURL)return `<a href="${esc(d.EvidenciaURL)}" target="_blank" rel="noopener">Abrir evidencia ↗</a>`;
@@ -172,7 +317,7 @@ function renderPending(){
   const rows=deliveries.filter(validDelivery).filter(d=>d.EstadoEvaluacion!=='Validada').filter(d=>mission==='all'||d.ActividadID===mission);
   const q=$('#search').value.trim().toLowerCase();
   const out=rows.filter(d=>{const t=teams.find(x=>x.EquipoID===d.EquipoID);return !q||(`${t?.NombreIniciativa||''} ${d.EquipoID}`).toLowerCase().includes(q)})
-    .map(d=>{const t=teams.find(x=>x.EquipoID===d.EquipoID);return `<div class="team-card"><div class="team-head"><div><div class="eyebrow">${esc(d.ActividadID)}</div><h3>${esc(t?.NombreIniciativa||d.EquipoID)}</h3><div class="mini">${esc(d.EquipoID)}</div></div><div>${evidence(d)}</div></div></div>`}).join('');
+    .map(d=>{const t=teams.find(x=>x.EquipoID===d.EquipoID);return `<div class="team-card"><div class="team-head"><div><div class="eyebrow">${esc(d.ActividadID)}</div><h3>${esc(t?.NombreIniciativa||d.EquipoID)}</h3><div class="mini">${esc(d.EquipoID)}</div><div class="cell-time">🕐 Evidencia: ${esc(formatSubmission(d.FechaHoraEntrega))}</div></div><div>${evidence(d)}</div></div></div>`}).join('');
   $('#pendingList').innerHTML=out||'<div class="team-card mini">No hay pendientes con estos filtros.</div>';
 }
 function renderAll(){renderKpis();renderRanking();renderMatrix();renderPending()}
@@ -183,11 +328,21 @@ async function load(){
   renderAll();
 }
 async function login(){
-  key=$('#adminKey').value.trim();const name=$('#adminName').value.trim(),toast=$('#loginToast');
-  if(!name||!key){toast.textContent='Ingresa nombre y código de acceso.';return}
-  toast.textContent='Validando…';$('#loginBtn').disabled=true;
-  try{await load();sessionStorage.setItem('idealab_admin_name',name);sessionStorage.setItem('idealab_admin_key',key);$('#login').classList.add('hidden');$('#app').classList.remove('hidden');toast.textContent='';}
-  catch(e){toast.textContent=e.message}finally{$('#loginBtn').disabled=false}
+  const name=$('#adminName').value.trim(),toast=$('#loginToast');
+  if(!name){toast.textContent='Ingresa tu nombre para registrar la sesión.';return}
+  key=ADMIN_BACKEND_KEY;
+  toast.textContent='Ingresando…';$('#loginBtn').disabled=true;
+  try{
+    await load();
+    sessionStorage.setItem('idealab_admin_name',name);
+    $('#login').classList.add('hidden');
+    $('#app').classList.remove('hidden');
+    toast.textContent='';
+  }catch(e){
+    toast.textContent=e.message;
+  }finally{
+    $('#loginBtn').disabled=false;
+  }
 }
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
@@ -198,7 +353,6 @@ $('#refreshBtn').addEventListener('click',()=>load().catch(e=>alert(e.message)))
 $('#search').addEventListener('input',renderAll);
 $('#missionFilter').addEventListener('change',renderPending);
 $('#adminName').value=sessionStorage.getItem('idealab_admin_name')||'';
-$('#adminKey').value=sessionStorage.getItem('idealab_admin_key')||'';
 </script>
 </body>
 </html>
