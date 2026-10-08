@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IdeaLab · Administración</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0907;--panel:#15110e;--gold:#ffc94a;--cyan:#59dce1;--text:#f4efe9;--muted:#aa9988;--line:#493626;--ok:#58d68d;--warn:#ffc94a;--bad:#ff796d}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 84% 0,#3b210f 0,transparent 26%),linear-gradient(#0b0907,#100c09);color:var(--text);font-family:Poppins,sans-serif;min-height:100vh}
+a{color:var(--cyan)} button,input,select,textarea{font:inherit} button{cursor:pointer}
+.shell{max-width:1380px;margin:auto;padding:22px}
+.top{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:18px}
+.brand{display:flex;align-items:center;gap:14px} .brand img{width:62px;height:62px;object-fit:contain} .brand h1{font-family:"Black Ops One";color:var(--gold);margin:0;font-size:clamp(24px,4vw,42px)}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:var(--cyan);font-weight:700}
+.btn{border:1px solid var(--gold);background:var(--gold);color:#17100a;padding:10px 14px;font-weight:700;border-radius:3px;text-decoration:none;display:inline-block} .btn.alt{background:transparent;color:var(--gold)}
+.card{background:rgba(21,17,14,.94);border:1px solid var(--line);padding:18px;margin-top:18px} .hidden{display:none!important}
+.login{max-width:620px;margin:8vh auto} .login h2,.title{font-family:"Black Ops One";color:var(--gold);margin:4px 0 14px}
+label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px} input,select,textarea{width:100%;background:#0c0907;color:var(--text);border:1px solid #60462f;padding:10px;border-radius:3px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px} .kpi{background:#0f0c0a;border:1px solid var(--line);padding:14px} .kpi b{display:block;font:28px "Black Ops One";color:var(--gold)} .kpi span{font-size:10px;color:var(--muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap} .tab{padding:8px 11px;border:1px solid var(--line);background:#0f0c0a;color:var(--muted)} .tab.active{border-color:var(--gold);color:var(--gold)}
+.toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+.table-wrap{overflow:auto;border:1px solid var(--line);margin-top:14px} table{width:100%;border-collapse:collapse;min-width:950px} th,td{padding:10px;border-bottom:1px solid #2f241d;text-align:left;font-size:12px} th{position:sticky;top:0;background:#18110d;color:var(--gold);z-index:1} tr:hover td{background:#15100d}
+.center{text-align:center} .state{display:inline-flex;width:22px;height:22px;border:1px solid var(--line);align-items:center;justify-content:center;border-radius:50%;font-size:11px} .state.done{color:var(--ok);border-color:var(--ok)} .state.pending{color:var(--warn);border-color:var(--warn)} .state.empty{color:#6e6258}
+.rank{font-family:"Black Ops One";color:var(--gold)} .score{font-weight:700} .mini{font-size:11px;color:var(--muted)} .toast{min-height:18px;color:var(--cyan);font-size:12px;margin-top:8px}
+.team-card{border:1px solid var(--line);background:#0f0c0a;padding:14px;margin-top:10px} .team-head{display:flex;justify-content:space-between;gap:14px} .team-head h3{margin:0}
+.matrix-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--muted)}
+@media(max-width:900px){.top,.team-head{flex-direction:column}.kpis{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top">
+  <div class="brand">
+    <img src="assets/rocky/rocky_07_metricas.png" alt="Rocky">
+    <div><div class="eyebrow">IDEALAB · GO-TO-MARKET</div><h1>CENTRO DE ADMINISTRACIÓN</h1></div>
+  </div>
+  <div><a class="btn alt" href="mentor.html">MENTOR</a> <a class="btn alt" href="index.html">PARTICIPANTE</a></div>
+</header>
+
+<section id="login" class="card login">
+  <div class="eyebrow">ACCESO INTERNO</div>
+  <h2>CONTROL DE OPERACIONES</h2>
+  <p class="mini">La administración consulta información en vivo de equipos y entregas. El ranking se calcula automáticamente en esta pantalla.</p>
+  <label>Nombre</label><input id="adminName" placeholder="Ej. Felipe Caballero">
+  <label>Código de acceso</label><input id="adminKey" type="password" placeholder="Código de acceso">
+  <button id="loginBtn" class="btn" type="button" style="margin-top:14px">INGRESAR →</button>
+  <div id="loginToast" class="toast"></div>
+</section>
+
+<section id="app" class="hidden">
+  <div class="kpis">
+    <div class="kpi"><b id="kTeams">0</b><span>EQUIPOS</span></div>
+    <div class="kpi"><b id="kDeliveries">0</b><span>ENTREGAS</span></div>
+    <div class="kpi"><b id="kPending">0</b><span>PENDIENTES DE EVALUAR</span></div>
+    <div class="kpi"><b id="kValidated">0</b><span>VALIDADAS</span></div>
+    <div class="kpi"><b id="kAvg">0</b><span>PROMEDIO TOTAL</span></div>
+  </div>
+
+  <article class="card">
+    <div class="tabs">
+      <button class="tab active" data-view="ranking">RANKING</button>
+      <button class="tab" data-view="matrix">MATRIZ M01–M08</button>
+      <button class="tab" data-view="pending">PENDIENTES</button>
+    </div>
+    <div class="toolbar" style="margin-top:12px">
+      <div><label>Buscar equipo</label><input id="search" placeholder="Nombre o EquipoID"></div>
+      <div><label>Filtrar misión</label><select id="missionFilter"><option value="all">Todas</option><option>M01</option><option>M02</option><option>M03</option><option>M04</option><option>M05</option><option>M06</option><option>M07</option><option>M08</option></select></div>
+      <button id="refreshBtn" class="btn alt" type="button">ACTUALIZAR</button>
+    </div>
+  </article>
+
+  <section id="rankingView">
+    <article class="card">
+      <div class="eyebrow">CLASIFICACIÓN EN VIVO</div>
+      <h2 class="title">RANKING /120</h2>
+      <p class="mini">Base = suma de PuntosValidados de M01–M08. Extra = PuntosAdicionales. El total se calcula aquí en tiempo real, sin depender de copiar PuntosBase manualmente.</p>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Equipo</th><th>Progreso</th><th>Base /100</th><th>Extra /20</th><th>Total /120</th><th>Pendientes</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
+    </article>
+  </section>
+
+  <section id="matrixView" class="hidden">
+    <article class="card">
+      <div class="eyebrow">SEGUIMIENTO OPERATIVO</div><h2 class="title">MATRIZ DE MISIONES</h2>
+      <div class="matrix-legend"><span>✅ Validada</span><span>🟡 Entregada / pendiente</span><span>○ Sin entrega</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Equipo</th><th>M01</th><th>M02</th><th>M03</th><th>M04</th><th>M05</th><th>M06</th><th>M07</th><th>M08</th><th>Base</th><th>Extra</th><th>Total</th></tr></thead><tbody id="matrixBody"></tbody></table></div>
+    </article>
+  </section>
+
+  <section id="pendingView" class="hidden">
+    <article class="card">
+      <div class="eyebrow">BANDEJA DE TRANSMISIONES</div><h2 class="title">PENDIENTES DE EVALUACIÓN</h2>
+      <div id="pendingList"></div>
+    </article>
+  </section>
+</section>
+</div>
+
+<script>
+const API='https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/01/workflows/000307ca6ada436f90dc7c71c0eada3b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wG3_oqoLlJ60LMm0Ofr_RQAt-XEQa7RivZS2U1UG4qI';
+let key='',teams=[],deliveries=[],view='ranking';
+const $=s=>document.querySelector(s);
+function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
+async function post(payload){
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json;charset=utf-8'},body:JSON.stringify(payload)});
+  let data={};try{data=await r.json()}catch{}
+  if(!r.ok||data?.ok===false)throw new Error(data?.error||data?.message||'No fue posible completar la operación.');
+  return data;
+}
+function validDelivery(d){return /^M0[1-8]$/.test(String(d.ActividadID||''))&&String(d.EquipoID||'').startsWith('IDEALAB-')}
+function normalizeTeam(t){
+  return {
+    ...t,
+    NombreIniciativa:t.NombreIniciativa||t.EquipoID,
+    BonusProspecto:num(t.BonusProspecto ?? t['BonusProspecto\n']),
+    BonusConversacion:num(t.BonusConversacion),
+    BonusReunion:num(t.BonusReunion),
+    BonusVenta:num(t.BonusVenta),
+    BonusTempranas:num(t.BonusTempranas),
+    BonusFeedback:num(t.BonusFeedback),
+    PuntosAdicionales:num(t.PuntosAdicionales)
+  }
+}
+function rowsFor(id){return deliveries.filter(validDelivery).filter(d=>d.EquipoID===id)}
+function stats(t){
+  const rows=rowsFor(t.EquipoID);
+  const delivered=new Set(rows.map(d=>d.ActividadID));
+  const validated=rows.filter(d=>d.EstadoEvaluacion==='Validada'&&d.PuntosValidados!=null);
+  const base=validated.reduce((s,d)=>s+num(d.PuntosValidados),0);
+  const extra=num(t.PuntosAdicionales);
+  const pending=rows.filter(d=>d.EstadoEvaluacion!=='Validada').length;
+  return {base,extra,total:base+extra,progress:delivered.size,pending,rows};
+}
+function filteredTeams(){
+  const q=$('#search').value.trim().toLowerCase();
+  return teams.filter(t=>!q||(`${t.NombreIniciativa} ${t.EquipoID}`).toLowerCase().includes(q));
+}
+function renderKpis(){
+  const vd=deliveries.filter(validDelivery);
+  const totals=teams.map(t=>stats(t).total);
+  $('#kTeams').textContent=teams.length;
+  $('#kDeliveries').textContent=vd.length;
+  $('#kPending').textContent=vd.filter(d=>d.EstadoEvaluacion!=='Validada').length;
+  $('#kValidated').textContent=vd.filter(d=>d.EstadoEvaluacion==='Validada').length;
+  $('#kAvg').textContent=teams.length?(totals.reduce((a,b)=>a+b,0)/teams.length).toFixed(1):'0';
+}
+function renderRanking(){
+  const arr=filteredTeams().map(t=>({t,s:stats(t)})).sort((a,b)=>b.s.total-a.s.total||b.s.base-a.s.base);
+  $('#rankingBody').innerHTML=arr.map((x,i)=>`<tr><td class="rank">${i+1}</td><td><b>${esc(x.t.NombreIniciativa)}</b><div class="mini">${esc(x.t.EquipoID)}</div></td><td>${x.s.progress}/8</td><td class="score">${x.s.base.toFixed(1)}</td><td>${x.s.extra.toFixed(1)}</td><td class="score">${x.s.total.toFixed(1)}</td><td>${x.s.pending}</td></tr>`).join('');
+}
+function stateFor(t,id){
+  const d=rowsFor(t.EquipoID).find(x=>x.ActividadID===id);
+  if(!d)return '<span class="state empty">○</span>';
+  if(d.EstadoEvaluacion==='Validada')return '<span class="state done">✓</span>';
+  return '<span class="state pending">•</span>';
+}
+function renderMatrix(){
+  const arr=filteredTeams().map(t=>({t,s:stats(t)})).sort((a,b)=>b.s.total-a.s.total);
+  $('#matrixBody').innerHTML=arr.map(x=>`<tr><td><b>${esc(x.t.NombreIniciativa)}</b><div class="mini">${esc(x.t.EquipoID)}</div></td>${['M01','M02','M03','M04','M05','M06','M07','M08'].map(m=>`<td class="center">${stateFor(x.t,m)}</td>`).join('')}<td>${x.s.base.toFixed(1)}</td><td>${x.s.extra.toFixed(1)}</td><td class="score">${x.s.total.toFixed(1)}</td></tr>`).join('');
+}
+function evidence(d){
+  if(d.EvidenciaURL)return `<a href="${esc(d.EvidenciaURL)}" target="_blank" rel="noopener">Abrir evidencia ↗</a>`;
+  if(d.Enlace)return `<a href="${esc(d.Enlace)}" target="_blank" rel="noopener">Abrir enlace ↗</a>`;
+  if(d.Respuesta)return esc(d.Respuesta);
+  return esc(d.NombreArchivo||'Sin vínculo visible');
+}
+function renderPending(){
+  const mission=$('#missionFilter').value;
+  const rows=deliveries.filter(validDelivery).filter(d=>d.EstadoEvaluacion!=='Validada').filter(d=>mission==='all'||d.ActividadID===mission);
+  const q=$('#search').value.trim().toLowerCase();
+  const out=rows.filter(d=>{const t=teams.find(x=>x.EquipoID===d.EquipoID);return !q||(`${t?.NombreIniciativa||''} ${d.EquipoID}`).toLowerCase().includes(q)})
+    .map(d=>{const t=teams.find(x=>x.EquipoID===d.EquipoID);return `<div class="team-card"><div class="team-head"><div><div class="eyebrow">${esc(d.ActividadID)}</div><h3>${esc(t?.NombreIniciativa||d.EquipoID)}</h3><div class="mini">${esc(d.EquipoID)}</div></div><div>${evidence(d)}</div></div></div>`}).join('');
+  $('#pendingList').innerHTML=out||'<div class="team-card mini">No hay pendientes con estos filtros.</div>';
+}
+function renderAll(){renderKpis();renderRanking();renderMatrix();renderPending()}
+async function load(){
+  const [e,t]=await Promise.all([post({Accion:'listar_entregas',ClaveAcceso:key}),post({Accion:'listar_equipos',ClaveAcceso:key})]);
+  deliveries=Array.isArray(e.Entregas)?e.Entregas:[];
+  teams=(Array.isArray(t.Equipos)?t.Equipos:[]).map(normalizeTeam);
+  renderAll();
+}
+async function login(){
+  key=$('#adminKey').value.trim();const name=$('#adminName').value.trim(),toast=$('#loginToast');
+  if(!name||!key){toast.textContent='Ingresa nombre y código de acceso.';return}
+  toast.textContent='Validando…';$('#loginBtn').disabled=true;
+  try{await load();sessionStorage.setItem('idealab_admin_name',name);sessionStorage.setItem('idealab_admin_key',key);$('#login').classList.add('hidden');$('#app').classList.remove('hidden');toast.textContent='';}
+  catch(e){toast.textContent=e.message}finally{$('#loginBtn').disabled=false}
+}
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
+  view=btn.dataset.view;$('#rankingView').classList.toggle('hidden',view!=='ranking');$('#matrixView').classList.toggle('hidden',view!=='matrix');$('#pendingView').classList.toggle('hidden',view!=='pending');
+}));
+$('#loginBtn').addEventListener('click',login);
+$('#refreshBtn').addEventListener('click',()=>load().catch(e=>alert(e.message)));
+$('#search').addEventListener('input',renderAll);
+$('#missionFilter').addEventListener('change',renderPending);
+$('#adminName').value=sessionStorage.getItem('idealab_admin_name')||'';
+$('#adminKey').value=sessionStorage.getItem('idealab_admin_key')||'';
+</script>
+</body>
+</html>
