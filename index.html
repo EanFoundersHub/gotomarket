@@ -883,6 +883,27 @@ async function finishRegistration(){
     const mergedMembers=newMembers.map((p,i)=>({...p,...(returnedParticipants[i]||{})}));
     team={...payload,EquipoID:result.EquipoID||payload.EquipoID,ProyectoExistente:Boolean(result.ProyectoExistente),Participantes:mergedMembers,CoincidenciasNombre:Array.isArray(result.CoincidenciasNombre)?result.CoincidenciasNombre:[]};
     if(!team.EquipoID)throw new Error('La plataforma no devolvió el código del equipo.');
+
+    const alreadyInSameTeam=returnedParticipants.filter(p=>
+      String(p?.Estado||'').toLowerCase().includes('ya pertenec')
+    );
+
+    if(alreadyInSameTeam.length){
+      const names=alreadyInSameTeam.map(p=>p.Nombre||p.Correo||'Integrante').join(', ');
+      team.PrototipoNombre='Prototipo previamente registrado';
+      team.PrototipoPendiente=false;
+      toast.classList.remove('error-toast');
+      toast.textContent=`✓ ${names} ya estaba registrado en esta iniciativa (${team.EquipoID}). No se creó un duplicado ni es necesario volver a cargar el prototipo.`;
+      btn.textContent='ABRIENDO EQUIPO…';
+      await new Promise(r=>setTimeout(r,700));
+      finalizeRegistrationBoarding();
+      return;
+    }
+
+    if(result.ProyectoExistente){
+      toast.textContent=`✓ Iniciativa existente identificada (${team.EquipoID}). Registrando únicamente los integrantes nuevos…`;
+    }
+
     if(prototype.size<=DIRECT_FILE_LIMIT){btn.textContent='CARGANDO PROTOTIPO…';await uploadPrototypeDirect(prototype);finalizeRegistrationBoarding();}
     else{btn.textContent='PREPARANDO CARGA GRANDE…';await preparePrototypeLarge(prototype);}
   }catch(e){
@@ -1261,14 +1282,14 @@ function checkExistingProject(){
   const query=normProject(inp.value);
   if(query.length<3){box.innerHTML='';return}
   const hit=availableProjects().find(p=>normProject(p.NombreIniciativa)===query);
-  if(!hit){box.innerHTML='<div class="hint">✓ Nombre disponible. Se creará un nuevo proyecto si continúas.</div>';return}
+  if(!hit){box.innerHTML='<div class="hint">El nombre de la iniciativa se validará con la base de IdeaLab al continuar.</div>';return}
   inp.classList.add('project-found-input');
   box.innerHTML=`<div class="project-match">
     <div class="eyebrow">PROYECTO YA REGISTRADO</div>
     <h3>${hit.NombreIniciativa}</h3>
     <p>Encontramos esta iniciativa con el código <strong>${hit.EquipoID}</strong>. No crearemos un duplicado.</p>
     <p class="hint">Tripulación actual: ${hit.miembros.length?hit.miembros.join(', '):'Equipo registrado'}</p>
-    <button class="btn" type="button" id="joinExistingBtn">AÑADIRME A ESTE PROYECTO</button>
+    <button class="btn" type="button" id="joinExistingBtn">USAR ESTA INICIATIVA</button>
   </div>`;
   document.querySelector('#joinExistingBtn').onclick=()=>joinExistingProject(hit);
 }
