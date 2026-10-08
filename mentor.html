@@ -216,22 +216,14 @@ async function post(payload){
     headers:{'Content-Type':'application/json;charset=utf-8'},
     body:JSON.stringify(payload)
   });
-
   const raw=await r.text();
   let data={};
-  try{ data=raw ? JSON.parse(raw) : {}; }
-  catch{ data={raw}; }
-
-  if(!r.ok || data?.ok===false){
-    const detail =
-      data?.error?.message ||
-      data?.error?.details?.[0]?.message ||
-      data?.message ||
-      data?.Mensaje ||
-      (typeof data?.error==='string' ? data.error : '') ||
-      raw ||
+  try{data=raw?JSON.parse(raw):{}}catch{data={raw}}
+  if(!r.ok||data?.ok===false){
+    const msg=data?.error?.message||data?.message||data?.Mensaje||
+      (typeof data?.error==='string'?data.error:'')||raw||
       'No fue posible completar la operación.';
-    throw new Error(String(detail));
+    throw new Error(String(msg));
   }
   return data;
 }
@@ -239,7 +231,22 @@ function validDelivery(d){return /^M0[1-8]$/.test(String(d.ActividadID||'')) && 
 function teamById(id){return teams.find(t=>t.EquipoID===id)||{EquipoID:id,NombreIniciativa:id}}
 function fmtDate(v){if(!v)return 'Sin fecha';try{return new Intl.DateTimeFormat('es-CO',{dateStyle:'short',timeStyle:'short'}).format(new Date(v))}catch{return v}}
 
-async function openEvidence(teamId, activityId, btn){
+function evidenceMime(fileName){
+  const n=String(fileName||'').toLowerCase();
+  if(n.endsWith('.pdf'))return 'application/pdf';
+  if(n.endsWith('.png'))return 'image/png';
+  if(n.endsWith('.jpg')||n.endsWith('.jpeg'))return 'image/jpeg';
+  if(n.endsWith('.webp'))return 'image/webp';
+  if(n.endsWith('.txt'))return 'text/plain';
+  if(n.endsWith('.mp4'))return 'video/mp4';
+  if(n.endsWith('.webm'))return 'video/webm';
+  if(n.endsWith('.docx'))return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  if(n.endsWith('.xlsx'))return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  if(n.endsWith('.pptx'))return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+  return 'application/octet-stream';
+}
+
+async function openEvidence(teamId, activityId, fileName, btn){
   const original=btn.textContent;
   btn.disabled=true;
   btn.textContent='ABRIENDO…';
@@ -253,73 +260,41 @@ async function openEvidence(teamId, activityId, btn){
   }
 
   try{
-    const data=await post({
-      Accion:'obtener_evidencia',
-      ClaveAcceso:mentorKey,
-      EquipoID:teamId,
-      ActividadID:activityId
+    const r=await fetch(API,{
+      method:'POST',
+      headers:{'Content-Type':'application/json;charset=utf-8'},
+      body:JSON.stringify({
+        Accion:'obtener_evidencia',
+        ClaveAcceso:mentorKey,
+        EquipoID:teamId,
+        ActividadID:activityId
+      })
     });
 
-    // Power Automate puede devolver el contenido como string base64
-    // o como objeto binario {$content-type, $content}.
-    let payload=data?.ContenidoBase64;
-    let contentType=data?.ContentType || 'application/octet-stream';
-
-    if(payload && typeof payload==='object'){
-      contentType =
-        payload['$content-type'] ||
-        payload.contentType ||
-        contentType;
-      payload =
-        payload['$content'] ||
-        payload.content ||
-        payload.body?.['$content'] ||
-        '';
+    if(!r.ok){
+      const raw=await r.text();
+      let msg=raw;
+      try{
+        const data=JSON.parse(raw);
+        msg=data?.error?.message||data?.message||data?.Mensaje||raw;
+      }catch{}
+      throw new Error(String(msg||('HTTP '+r.status)));
     }
 
-    // Respaldo por si el cuerpo binario vino en otra propiedad.
-    if(!payload && data?.body && typeof data.body==='object'){
-      contentType=data.body['$content-type'] || contentType;
-      payload=data.body['$content'] || '';
-    }
-    if(!payload && data?.['$content']){
-      contentType=data['$content-type'] || contentType;
-      payload=data['$content'];
-    }
+    const received=await r.blob();
+    if(!received.size)throw new Error('Power Automate respondió sin contenido de archivo.');
 
-    if(typeof payload!=='string' || !payload.trim()){
-      throw new Error(
-        'Power Automate respondió, pero no devolvió el contenido del archivo. '+
-        'Revisa la salida de Respuesta_5.'
-      );
+    const contentType=r.headers.get('content-type')||'';
+    if(contentType.includes('application/json')){
+      const raw=await received.text();
+      throw new Error('Power Automate devolvió JSON en lugar del archivo: '+raw.slice(0,300));
     }
 
-    // Aceptar también un data URL si Power Automate lo devuelve de esa forma.
-    const comma=payload.indexOf(',');
-    if(payload.startsWith('data:') && comma>-1){
-      const meta=payload.slice(5,comma);
-      if(meta.includes(';base64')){
-        contentType=meta.split(';')[0] || contentType;
-        payload=payload.slice(comma+1);
-      }
-    }
+    const mime=(contentType && !contentType.includes('application/octet-stream'))
+      ? contentType
+      : evidenceMime(fileName);
 
-    payload=payload.replace(/\s/g,'');
-
-    let raw;
-    try{
-      raw=atob(payload);
-    }catch{
-      throw new Error(
-        'El contenido recibido no está en Base64 válido. '+
-        'En Respuesta_5 usa el contenido del archivo, no el objeto completo.'
-      );
-    }
-
-    const bytes=new Uint8Array(raw.length);
-    for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
-
-    const blob=new Blob([bytes],{type:contentType});
+    const blob=new Blob([received],{type:mime});
     const url=URL.createObjectURL(blob);
 
     if(viewer){
@@ -332,10 +307,10 @@ async function openEvidence(teamId, activityId, btn){
       a.click();
     }
 
-    setTimeout(()=>URL.revokeObjectURL(url),180000);
+    setTimeout(()=>URL.revokeObjectURL(url),300000);
   }catch(e){
     if(viewer)viewer.close();
-    alert('No fue posible abrir la evidencia: '+(e?.message || String(e)));
+    alert('No fue posible abrir la evidencia: '+(e?.message||String(e)));
   }finally{
     btn.disabled=false;
     btn.textContent=original;
@@ -348,9 +323,9 @@ function evidenceHTML(d){
 
   if(d.NombreArchivo){
     bits.push(`<p>📎 <button class="evidence-open-btn" type="button"
-      onclick="openEvidence('${esc(d.EquipoID)}','${esc(d.ActividadID)}',this)">ABRIR EVIDENCIA</button>
+      onclick="openEvidence('${esc(d.EquipoID)}','${esc(d.ActividadID)}','${esc(d.NombreArchivo)}',this)">ABRIR EVIDENCIA</button>
       <span class="evidence-name">${esc(d.NombreArchivo)}</span></p>`);
-  } else if(d.EvidenciaURL){
+  }else if(d.EvidenciaURL){
     bits.push(`<p>📎 <a href="${esc(d.EvidenciaURL)}" target="_blank" rel="noopener">ABRIR EVIDENCIA</a></p>`);
   }
 
