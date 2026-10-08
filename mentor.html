@@ -3,241 +3,229 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Aceleratón Go-To-Market · Centro de Evaluación</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>IdeaLab · Mentor</title>
 <style>
-:root{--bg:#0b0907;--panel:#15110e;--panel2:#1c1510;--gold:#ffc94a;--cyan:#59dce1;--text:#f4efe9;--muted:#a99887;--line:#493626;--ok:#57d68d;--danger:#ff7d73}
-*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 80% 0,#37200f 0,transparent 26%),linear-gradient(#0b0907,#100c09);color:var(--text);font-family:Poppins,sans-serif;min-height:100vh}
-a{color:var(--cyan)} button,input,select,textarea{font:inherit} button{cursor:pointer}
-.shell{max-width:1240px;margin:auto;padding:22px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:18px}
-.brand{display:flex;align-items:center;gap:14px} .brand img{width:64px;height:64px;object-fit:contain} .brand h1{font-family:"Black Ops One";margin:0;color:var(--gold);font-size:clamp(24px,4vw,42px)} .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--cyan);font-weight:700}
-.btn{border:1px solid var(--gold);background:var(--gold);color:#17100a;padding:11px 16px;font-weight:700;border-radius:3px;text-decoration:none;display:inline-block}
-.btn.alt{background:transparent;color:var(--gold)} .btn.danger{border-color:var(--danger);color:var(--danger);background:transparent} .btn:disabled{opacity:.45;cursor:not-allowed}
-.card{background:rgba(21,17,14,.94);border:1px solid var(--line);padding:20px;margin-top:18px} .hidden{display:none!important}
-.login{max-width:620px;margin:8vh auto} .login h2,.section-title{font-family:"Black Ops One";color:var(--gold);margin:5px 0 14px}
-label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,select,textarea{width:100%;background:#0c0907;color:var(--text);border:1px solid #60462f;padding:11px;border-radius:3px} textarea{min-height:110px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px} .kpi{border:1px solid var(--line);background:#0f0c0a;padding:14px} .kpi b{display:block;font:28px "Black Ops One";color:var(--gold)} .kpi span{font-size:10px;color:var(--muted)}
-.toolbar{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end} .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px} .tab{padding:8px 11px;border:1px solid var(--line);background:#0f0c0a;color:var(--muted)} .tab.active{border-color:var(--gold);color:var(--gold)}
-.list{display:grid;gap:12px;margin-top:14px} .delivery{border:1px solid var(--line);background:#110d0a;padding:16px} .delivery.validada{border-left:4px solid var(--ok)} .delivery.pendiente{border-left:4px solid var(--gold)}
-.delivery-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start} .delivery h3{margin:3px 0} .meta{font-size:11px;color:var(--muted)} .badge{font-size:10px;border:1px solid var(--line);padding:5px 8px;border-radius:20px;white-space:nowrap} .badge.validada{color:var(--ok);border-color:var(--ok)} .badge.pendiente{color:var(--gold);border-color:var(--gold)}
-.evidence{margin:12px 0;padding:12px;border:1px solid #34271e;background:#0c0907;word-break:break-word} .evidence p{margin:6px 0} .actions{display:flex;gap:8px;flex-wrap:wrap}
-.eval{margin-top:14px;padding-top:14px;border-top:1px solid #34271e;display:grid;grid-template-columns:180px 1fr;gap:12px} .full{grid-column:1/-1}
-.rubric{font-size:12px;color:var(--muted);background:#0d0a08;border:1px solid #34271e;padding:10px;margin-top:8px} .rubric b{color:var(--cyan)} .toast{min-height:20px;color:var(--cyan);font-size:12px;margin-top:8px}
-.bonus-layout{display:grid;grid-template-columns:280px 1fr;gap:16px} .bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .bonus-total{font:34px "Black Ops One";color:var(--gold)}
-.mini{font-size:11px;color:var(--muted)} .empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line)}
-@media(max-width:800px){.top,.delivery-head{flex-direction:column}.grid{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.eval,.bonus-layout,.bonus-grid{grid-template-columns:1fr}}
-
-.team-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
-.team-card{border:1px solid var(--line);background:#110d0a;padding:16px;min-width:0}
-.team-card h3{margin:4px 0 5px;font-size:18px}
-.team-card .team-meta{font-size:11px;color:var(--muted);word-break:break-word}
-.team-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}
-.team-stat{border:1px solid #34271e;background:#0c0907;padding:10px}
-.team-stat b{display:block;color:var(--gold);font-size:18px}
-.team-stat span{font-size:9px;color:var(--muted)}
-.team-prototype{margin-top:12px;padding:11px;border:1px solid #34271e;background:#0c0907;word-break:break-word}
-.team-card .actions{margin-top:12px}
-@media(max-width:800px){.team-list{grid-template-columns:1fr}.team-stats{grid-template-columns:repeat(3,1fr)}}
-
-
-/* ===== Mentor · navegación simplificada ===== */
-.mentor-control{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}
-.mentor-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end}
-.mentor-search-row .btn{min-height:44px}
-.team-filter-bar,.delivery-filter-bar{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
-.team-filter,.delivery-filter{
-  min-height:42px;padding:9px 14px;border:1px solid var(--line);background:#0f0c0a;color:var(--muted);
-  font-weight:700;font-size:11px;letter-spacing:.03em;cursor:pointer
-}
-.team-filter.active,.delivery-filter.active{border-color:var(--gold);background:rgba(255,201,74,.09);color:var(--gold)}
-.selected-team-head{display:grid;gap:14px}
-.selected-team-head .section-title{margin-bottom:3px}
-.team-card .actions .btn{width:100%;text-align:center}
-@media(max-width:800px){
-  .mentor-search-row{grid-template-columns:1fr}
-  .mentor-search-row .btn{width:100%}
-  .team-filter-bar,.delivery-filter-bar{display:grid;grid-template-columns:1fr}
-  .team-filter,.delivery-filter{width:100%}
-  .mentor-control{position:static}
-}
-
-
-.evidence a{
-  display:inline-block;
-  margin-top:4px;
-  font-weight:800;
-  text-decoration:underline;
-  text-underline-offset:3px;
-}
-
-
-.score-instruction{
-  margin-top:12px;
-  padding:10px 12px;
-  border-left:3px solid var(--gold);
-  background:rgba(255,201,74,.06);
-  line-height:1.45;
-}
-
-
-.evidence-open-btn{
-  border:1px solid var(--gold);
-  background:rgba(255,201,74,.08);
-  color:var(--gold);
-  padding:9px 12px;
-  font:inherit;
-  font-weight:800;
-  cursor:pointer;
-  margin-right:8px;
-}
-.evidence-open-btn:disabled{opacity:.6;cursor:wait}
-.evidence-name{font-size:12px;color:var(--muted);word-break:break-word}
-
-
-.evaluation-history{
-  margin-top:12px;
-  border-color:rgba(255,201,74,.45);
-  background:rgba(255,201,74,.035);
-}
-
+:root{--bg:#0b0908;--panel:#120e0b;--panel2:#17110d;--line:#3b2d22;--gold:#ffc94a;--cyan:#59dce1;--ok:#68d391;--muted:#a99c91;--text:#f6efe8;--bad:#ff7a7a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#2a1609 0,#0b0908 34%,#070606 100%);color:var(--text);font-family:Arial,sans-serif}
+.shell{max-width:1120px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:18px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:16px}
+.logo{font-weight:900;font-size:29px;letter-spacing:.08em}.eyebrow{font-size:10px;letter-spacing:.18em;color:var(--gold);font-weight:800}.sub,.mini{color:var(--muted);font-size:12px}
+.card{border:1px solid var(--line);background:rgba(18,14,11,.93);padding:20px;margin-top:18px}.login{max-width:560px;margin:70px auto}
+h1,h2,h3,p{margin-top:0}h2{font-size:24px}label{display:block;font-size:11px;color:var(--muted);margin:0 0 6px}
+input,textarea,select{width:100%;background:#090706;border:1px solid #4a382c;color:var(--text);padding:12px;font:inherit}textarea{min-height:120px;resize:vertical}
+.btn{border:1px solid var(--gold);background:var(--gold);color:#17110d;padding:11px 14px;font-weight:900;cursor:pointer}
+.btn.alt{background:transparent;color:var(--gold)}.btn.cyan{border-color:var(--cyan);background:transparent;color:var(--cyan)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.hidden{display:none!important}.actions{display:flex;gap:10px;flex-wrap:wrap}.hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.hero-actions .btn{min-height:58px}.toast{min-height:20px;margin-top:10px;color:var(--cyan);font-size:12px}
+.selected-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.status-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}.mission-card{border:1px solid var(--line);background:#0f0c0a;padding:16px}
+.mission-card.ready{border-left:5px solid var(--ok);background:rgba(104,211,145,.055)}.mission-card.done{border-left:5px solid var(--cyan);background:rgba(89,220,225,.045)}.mission-card.waiting{border-left:5px solid #655a51;opacity:.8}
+.mission-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.mission-name{font-weight:900;font-size:17px}.status{font-size:10px;font-weight:900;letter-spacing:.06em}
+.ready .status{color:var(--ok)}.done .status{color:var(--cyan)}.waiting .status{color:#9d9087}
+.time{font-size:11px;color:var(--muted);margin:7px 0}.section-title{margin:26px 0 8px;font-size:15px;color:var(--gold);letter-spacing:.08em}
+.selector-panel{border-top:1px solid var(--line);margin-top:16px;padding-top:16px}#teamSelect{height:220px;margin-top:10px}
+.scanner{margin-top:14px;border:1px solid var(--cyan);padding:14px;background:#090706}#scannerVideo{width:100%;max-height:440px;background:#000;object-fit:cover}
+.eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.eval-grid .full{grid-column:1/-1}.rubric{border:1px solid #4b392d;padding:14px;background:#0c0907;margin:14px 0;font-size:12px;line-height:1.6}
+.evidence{border:1px dashed #5d4838;padding:14px;margin:14px 0;background:#0b0907}.evidence a{color:var(--cyan)}
+.pill{display:inline-block;border:1px solid var(--gold);color:var(--gold);padding:4px 7px;border-radius:999px;font-size:10px}
+.back{margin-bottom:14px}.mentor-tag{color:var(--cyan);font-weight:800}
+@media(max-width:760px){.shell{padding:14px}.top,.selected-head{flex-direction:column}.hero-actions,.status-grid,.eval-grid{grid-template-columns:1fr}.eval-grid .full{grid-column:auto}}
 </style>
 </head>
 <body>
-<div class="shell">
+<main class="shell">
 <header class="top">
-  <div class="brand"><img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky"><div><div class="eyebrow">ACELERATÓN GO-TO-MARKET</div><h1>CENTRO DE EVALUACIÓN</h1></div></div>
+  <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">IDEALAB</div><div class="sub">Aceleratón Go-To-Market · Evaluación de mentores</div></div>
+  <div class="pill">MENTOR VIEW</div>
 </header>
 
 <section id="login" class="card login">
-  <div class="eyebrow">ACCESO MENTOR</div>
-  <h2>IDENTIFÍCATE PARA CONTINUAR</h2>
-  <p class="mini">Escribe tu nombre. Quedará asociado a cada evaluación y modificación de puntaje.</p>
+  <div class="eyebrow">REGISTRO DE SESIÓN</div>
+  <h2>INGRESA COMO MENTOR</h2>
   <label for="mentorName">Nombre del mentor</label>
   <input id="mentorName" placeholder="Ej. Laura Cely" autocomplete="name">
   <button class="btn" id="loginBtn" type="button" style="margin-top:14px">INGRESAR →</button>
   <div id="loginToast" class="toast"></div>
 </section>
 
-<section id="app" class="hidden">
-  <div class="grid">
-    <div class="kpi"><b id="kDeliveries">0</b><span>ENTREGAS</span></div>
-    <div class="kpi"><b id="kPending">0</b><span>PENDIENTES</span></div>
-    <div class="kpi"><b id="kValidated">0</b><span>VALIDADAS</span></div>
-    <div class="kpi"><b id="kTeams">0</b><span>EQUIPOS</span></div>
-  </div>
+<section id="home" class="hidden">
+  <article class="card">
+    <div class="eyebrow">SESIÓN ACTIVA</div>
+    <h2>Hola, <span id="mentorLabel" class="mentor-tag"></span></h2>
+    <p class="mini">Identifica la iniciativa y te mostraremos automáticamente qué misiones están listas para evaluar.</p>
+    <div class="hero-actions">
+      <button class="btn" id="scanBtn" type="button">📷 ESCANEAR QR</button>
+      <button class="btn alt" id="previousBtn" type="button">🔎 VOY A EVALUAR UNA INICIATIVA CON LA QUE HABLÉ EN OTRA MISIÓN</button>
+    </div>
 
-  <article class="card mentor-control">
-    <div class="mentor-search-row">
-      <div>
-        <label for="search">Buscar iniciativa</label>
-        <input id="search" placeholder="Escribe el nombre de la iniciativa" autocomplete="off">
+    <div id="scannerPanel" class="scanner hidden">
+      <div class="selected-head">
+        <div><b>Escanea el QR del participante</b><div class="mini">Debe ser el QR generado en su pasaporte IdeaLab.</div></div>
+        <button class="btn alt" id="stopScanBtn" type="button">CERRAR</button>
       </div>
-      <button class="btn alt" id="refreshBtn" type="button">ACTUALIZAR</button>
+      <video id="scannerVideo" playsinline muted></video>
+      <div id="scanToast" class="toast"></div>
+      <div id="manualQrWrap" class="hidden">
+        <label for="manualQr">Si la cámara no puede leerlo, pega aquí el código o la URL del QR</label>
+        <input id="manualQr" placeholder="Código QR o URL">
+        <button class="btn cyan" id="manualQrBtn" type="button" style="margin-top:10px">BUSCAR INICIATIVA</button>
+      </div>
     </div>
 
-    <div class="team-filter-bar" aria-label="Filtros de iniciativas">
-      <button class="team-filter active" type="button" data-team-filter="all">VER TODAS</button>
-      <button class="team-filter" type="button" data-team-filter="pending">PENDIENTES POR EVALUAR</button>
-      <button class="team-filter" type="button" data-team-filter="validated">EVALUADAS</button>
+    <div id="selectorPanel" class="selector-panel hidden">
+      <label for="teamSearch">Buscar iniciativa por nombre</label>
+      <input id="teamSearch" placeholder="Escribe parte del nombre..." autocomplete="off">
+      <select id="teamSelect" size="8"></select>
+      <button class="btn cyan" id="selectTeamBtn" type="button" style="margin-top:10px">ABRIR INICIATIVA →</button>
+    </div>
+    <div id="homeToast" class="toast"></div>
+  </article>
+</section>
+
+<section id="initiativeView" class="hidden">
+  <article class="card">
+    <button class="btn alt back" id="backHome" type="button">← OTRA INICIATIVA</button>
+    <div class="selected-head">
+      <div>
+        <div class="eyebrow">INICIATIVA</div>
+        <h2 id="initiativeName">Iniciativa</h2>
+        <div id="initiativeMeta" class="mini"></div>
+      </div>
+      <button class="btn alt" id="refreshInitiative" type="button">ACTUALIZAR ESTADO</button>
     </div>
 
-    <div class="tabs">
-      <button class="tab active" data-view="teams">INICIATIVAS</button>
-      <button class="tab" data-view="bonus">PUNTOS ADICIONALES</button>
+    <div class="section-title">LISTAS PARA EVALUAR</div>
+    <div id="readyMissions" class="status-grid"></div>
+
+    <div class="section-title">OTRAS MISIONES</div>
+    <div id="otherMissions" class="status-grid"></div>
+  </article>
+</section>
+
+<section id="evaluationView" class="hidden">
+  <article class="card">
+    <button class="btn alt back" id="backInitiative" type="button">← VOLVER A LA INICIATIVA</button>
+    <div class="eyebrow" id="evalMissionLabel">MISIÓN</div>
+    <h2 id="evalTeamName">Iniciativa</h2>
+    <div id="evalTime" class="mini"></div>
+    <div id="evalEvidence" class="evidence"></div>
+    <div id="evalRubric" class="rubric"></div>
+
+    <div class="eval-grid">
+      <div>
+        <label id="scoreLabel" for="score">Tu calificación</label>
+        <input id="score" type="number" min="0" step=".5">
+      </div>
+      <div>
+        <label>Puntaje máximo</label>
+        <input id="maxScore" readonly>
+      </div>
+      <div class="full">
+        <label for="feedback">Retroalimentación</label>
+        <textarea id="feedback" placeholder="Escribe una retroalimentación breve y útil para el equipo."></textarea>
+      </div>
+      <div class="full">
+        <button class="btn" id="saveEvalBtn" type="button">GUARDAR MI EVALUACIÓN →</button>
+        <div id="evalToast" class="toast"></div>
+      </div>
     </div>
   </article>
-
-  <section id="teamsView">
-    <div id="teamList" class="team-list"></div>
-  </section>
-
-  <section id="deliveriesView" class="hidden">
-    <article class="card selected-team-head">
-      <button class="btn alt" id="backToTeams" type="button">← VER TODAS LAS INICIATIVAS</button>
-      <div>
-        <div class="eyebrow">EVALUACIÓN DE INICIATIVA</div>
-        <h2 class="section-title" id="selectedTeamName">Iniciativa</h2>
-        <div class="mini" id="selectedTeamMeta"></div>
-      </div>
-      <div class="delivery-filter-bar" aria-label="Filtros de evaluaciones">
-        <button class="delivery-filter active" type="button" data-delivery-filter="all">TODAS LAS ENTREGAS</button>
-        <button class="delivery-filter" type="button" data-delivery-filter="pending">PENDIENTES</button>
-        <button class="delivery-filter" type="button" data-delivery-filter="validated">EVALUADAS</button>
-      </div>
-    </article>
-    <div id="deliveryList" class="list"></div>
-  </section>
-
-  <section id="bonusView" class="hidden">
-    <article class="card">
-      <div class="eyebrow">TRACCIÓN Y VALIDACIÓN</div>
-      <h2 class="section-title">PUNTOS ADICIONALES · /20</h2>
-      <div class="bonus-layout">
-        <div>
-          <label>Equipo</label>
-          <select id="bonusTeam"></select>
-          <div class="card" style="margin-top:12px">
-            <div class="mini">TOTAL EXTRA</div>
-            <div id="bonusTotal" class="bonus-total">0 / 20</div>
-            <div id="teamTotal" class="mini">Puntaje total registrado: 0</div>
-          </div>
-        </div>
-        <div class="bonus-grid">
-          <div><label>Prospecto calificado · 0 o 2</label><input id="bProspecto" type="number" min="0" max="2" step="2"></div>
-          <div><label>Conversación comercial · 0 o 2</label><input id="bConversacion" type="number" min="0" max="2" step="2"></div>
-          <div><label>Reunión agendada · 0 o 4</label><input id="bReunion" type="number" min="0" max="4" step="4"></div>
-          <div><label>Cliente / venta · 0 o 6</label><input id="bVenta" type="number" min="0" max="6" step="6"></div>
-          <div><label>Entregas tempranas · 0 a 4</label><input id="bTempranas" type="number" min="0" max="4" step=".5"></div>
-          <div><label>Feedback potencial cliente · 0 o 2</label><input id="bFeedback" type="number" min="0" max="2" step="2"></div>
-          <div class="full"><button class="btn" id="saveBonus" type="button">GUARDAR PUNTOS ADICIONALES →</button><div id="bonusToast" class="toast"></div></div>
-        </div>
-      </div>
-    </article>
-  </section>
 </section>
-</div>
+</main>
 
 <script>
 const API='https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/01/workflows/000307ca6ada436f90dc7c71c0eada3b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wG3_oqoLlJ60LMm0Ofr_RQAt-XEQa7RivZS2U1UG4qI';
+const MENTOR_KEY='MENTOR-2026';
 const MISSIONS={
-M01:{name:'Escaneo de la misión',max:10,criteria:['Diagnóstico completo y relevante','Coherencia entre diagnóstico y acciones']},
-M02:{name:'Coordenadas de lanzamiento',max:15,criteria:['Cliente y problema claramente definidos','Propuesta de valor','Coherencia cliente-problema-solución']},
-M03:{name:'Ruta de entrada',max:10,criteria:['Mercado y posicionamiento','Acciones comerciales concretas y coherentes']},
-M04:{name:'Sistema de comunicación',max:15,criteria:['Funcionalidad de la herramienta','Claridad y adaptación al cliente','Propuesta de valor y CTA']},
-M05:{name:'La ruta del cliente',max:15,criteria:['Journey y puntos de contacto','Barreras identificadas','Oportunidades de conversión']},
-M06:{name:'Radar de misión',max:10,criteria:['Indicadores y metas','Relación entre objetivos y decisiones']},
-M07:{name:'Código de transmisión',max:10,criteria:['Problema, cliente y propuesta de valor claros','CTA comercial']},
-M08:{name:'Operación primer cliente',max:15,criteria:['Ejecución y evidencia','Resultado / tracción','Relación implementación-resultados']}
+M01:{label:'Misión 1',name:'Escaneo de la misión',max:10,criteria:['Diagnóstico completo y relevante','Coherencia entre diagnóstico y acciones']},
+M02:{label:'Misión 2',name:'Coordenadas de lanzamiento',max:15,criteria:['Cliente y problema claramente definidos','Propuesta de valor','Coherencia cliente-problema-solución']},
+M03:{label:'Misión 3',name:'Ruta de entrada',max:10,criteria:['Mercado y posicionamiento','Acciones comerciales concretas y coherentes']},
+M04:{label:'Misión 4',name:'Sistema de comunicación',max:15,criteria:['Funcionalidad de la herramienta','Claridad y adaptación al cliente','Propuesta de valor y CTA']},
+M05:{label:'Misión 5',name:'La ruta del cliente',max:15,criteria:['Journey y puntos de contacto','Barreras identificadas','Oportunidades de conversión']},
+M06:{label:'Misión 6',name:'Radar de misión',max:10,criteria:['Indicadores y metas','Relación entre objetivos y decisiones']},
+M07:{label:'Misión 7',name:'Código de transmisión',max:10,criteria:['Problema, cliente y propuesta de valor claros','CTA comercial']},
+M08:{label:'Misión 8',name:'Operación primer cliente',max:15,criteria:['Ejecución y evidencia','Resultado / tracción','Relación implementación-resultados']}
 };
-let mentorName='',mentorKey='MENTOR-2026',deliveries=[],teams=[],view='teams',teamFilter='all',selectedTeamId='',deliveryFilter='all';
+let mentorName='',teams=[],deliveries=[],selectedTeamId='',selectedDelivery=null,scannerStream=null,scannerLoop=null;
 
 const $=s=>document.querySelector(s);
 function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
+function show(id){['login','home','initiativeView','evaluationView'].forEach(x=>$('#'+x)?.classList.toggle('hidden',x!==id))}
 async function post(payload){
-  const r=await fetch(API,{
-    method:'POST',
-    headers:{'Content-Type':'application/json;charset=utf-8'},
-    body:JSON.stringify(payload)
-  });
-  const raw=await r.text();
-  let data={};
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json;charset=utf-8'},body:JSON.stringify(payload)});
+  const raw=await r.text(); let data={};
   try{data=raw?JSON.parse(raw):{}}catch{data={raw}}
-  if(!r.ok||data?.ok===false){
-    const msg=data?.error?.message||data?.message||data?.Mensaje||
-      (typeof data?.error==='string'?data.error:'')||raw||
-      'No fue posible completar la operación.';
-    throw new Error(String(msg));
-  }
+  if(!r.ok||data?.ok===false)throw new Error(data?.message||data?.Mensaje||data?.error?.message||raw||'No fue posible completar la operación.');
   return data;
 }
 function validDelivery(d){return /^M0[1-8]$/.test(String(d.ActividadID||'')) && String(d.EquipoID||'').startsWith('IDEALAB-')}
+function mentorAlreadyEvaluated(d){
+  const names=String(d?.Evaluador||'').split(/\s*(?:\||;|\n)\s*/).map(x=>x.trim().toLowerCase()).filter(Boolean);
+  return names.includes(mentorName.trim().toLowerCase());
+}
+function fmtDate(v){
+  if(!v)return 'Sin hora registrada';
+  const d=new Date(v); if(Number.isNaN(d.getTime()))return String(v);
+  try{return new Intl.DateTimeFormat('es-CO',{timeZone:'America/Bogota',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}).format(d)}catch{return d.toLocaleString('es-CO')}
+}
+function parseQrPayload(raw){
+  const value=String(raw||'').trim();
+  if(!value)return {teamId:'',code:''};
+  try{
+    const u=new URL(value,location.href);
+    return {
+      teamId:String(u.searchParams.get('team')||'').trim(),
+      code:String(u.searchParams.get('connect')||u.searchParams.get('qr')||u.searchParams.get('CodigoQR')||'').trim()
+    };
+  }catch{
+    return {teamId:'',code:value};
+  }
+}
+async function loadBase(){
+  const [a,b]=await Promise.all([
+    post({Accion:'listar_entregas',ClaveAcceso:MENTOR_KEY}),
+    post({Accion:'listar_equipos',ClaveAcceso:MENTOR_KEY})
+  ]);
+  deliveries=Array.isArray(a.Entregas)?a.Entregas.filter(validDelivery):[];
+  teams=(Array.isArray(b.Equipos)?b.Equipos:[]).slice().sort((x,y)=>String(x.NombreIniciativa||'').localeCompare(String(y.NombreIniciativa||''),'es',{sensitivity:'base'}));
+  renderTeamSelector();
+}
+function renderTeamSelector(){
+  const q=$('#teamSearch').value.trim().toLowerCase();
+  const arr=teams.filter(t=>String(t.NombreIniciativa||'').toLowerCase().includes(q));
+  $('#teamSelect').innerHTML=arr.map(t=>`<option value="${esc(t.EquipoID)}">${esc(t.NombreIniciativa||t.EquipoID)}</option>`).join('');
+}
 function teamById(id){return teams.find(t=>t.EquipoID===id)||{EquipoID:id,NombreIniciativa:id}}
-function fmtDate(v){if(!v)return 'Sin fecha';try{return new Intl.DateTimeFormat('es-CO',{dateStyle:'short',timeStyle:'short'}).format(new Date(v))}catch{return v}}
-
+function openTeam(id){
+  const t=teamById(id);
+  selectedTeamId=t.EquipoID;
+  $('#initiativeName').textContent=t.NombreIniciativa||t.EquipoID;
+  $('#initiativeMeta').textContent=t.EquipoID;
+  renderMissions();
+  show('initiativeView');
+}
+function missionCard(id,d){
+  const m=MISSIONS[id];
+  if(!d){
+    return `<article class="mission-card waiting"><div class="mission-top"><div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div><div class="status">○ ESPERANDO ENTREGA</div></div><div class="time">El equipo aún no ha cargado evidencia.</div></article>`;
+  }
+  const mine=mentorAlreadyEvaluated(d);
+  if(mine){
+    return `<article class="mission-card done"><div class="mission-top"><div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div><div class="status">✅ EVALUADA POR TI</div></div><div class="time">Evidencia: ${esc(fmtDate(d.FechaHoraEntrega))}</div></article>`;
+  }
+  return `<article class="mission-card ready"><div class="mission-top"><div><div class="mission-name">${m.label}</div><div class="mini">${esc(m.name)}</div></div><div class="status">🟢 LISTA PARA EVALUAR</div></div><div class="time">Evidencia: ${esc(fmtDate(d.FechaHoraEntrega))}</div><button class="btn" type="button" onclick="openEvaluation('${id}')">EVALUAR →</button></article>`;
+}
+function renderMissions(){
+  const ds=deliveries.filter(d=>d.EquipoID===selectedTeamId);
+  let ready='',other='';
+  Object.keys(MISSIONS).forEach(id=>{
+    const d=ds.find(x=>x.ActividadID===id);
+    const html=missionCard(id,d);
+    if(d && !mentorAlreadyEvaluated(d))ready+=html; else other+=html;
+  });
+  $('#readyMissions').innerHTML=ready||'<div class="mini">No hay misiones nuevas listas para tu evaluación en este momento.</div>';
+  $('#otherMissions').innerHTML=other||'<div class="mini">Sin otras misiones.</div>';
+}
 function evidenceMime(fileName){
   const n=String(fileName||'').toLowerCase();
   if(n.endsWith('.pdf'))return 'application/pdf';
@@ -247,375 +235,129 @@ function evidenceMime(fileName){
   if(n.endsWith('.txt'))return 'text/plain';
   if(n.endsWith('.mp4'))return 'video/mp4';
   if(n.endsWith('.webm'))return 'video/webm';
-  if(n.endsWith('.docx'))return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-  if(n.endsWith('.xlsx'))return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-  if(n.endsWith('.pptx'))return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
   return 'application/octet-stream';
 }
-
-async function openEvidence(teamId, activityId, fileName, btn){
-  const original=btn.textContent;
-  btn.disabled=true;
-  btn.textContent='ABRIENDO…';
-
+async function openEvidence(teamId,activityId,fileName,btn){
+  const old=btn.textContent;btn.disabled=true;btn.textContent='ABRIENDO…';
   const viewer=window.open('about:blank','_blank');
-  if(viewer){
-    viewer.document.write(
-      '<!doctype html><title>Cargando evidencia…</title>'+
-      '<body style="font-family:Arial;padding:30px">Cargando evidencia…</body>'
-    );
-  }
-
+  if(viewer)viewer.document.write('<title>Cargando evidencia…</title><body style="font-family:Arial;padding:30px">Cargando evidencia…</body>');
   try{
-    const r=await fetch(API,{
-      method:'POST',
-      headers:{'Content-Type':'application/json;charset=utf-8'},
-      body:JSON.stringify({
-        Accion:'obtener_evidencia',
-        ClaveAcceso:mentorKey,
-        EquipoID:teamId,
-        ActividadID:activityId
-      })
-    });
-
-    if(!r.ok){
-      const raw=await r.text();
-      let msg=raw;
-      try{
-        const data=JSON.parse(raw);
-        msg=data?.error?.message||data?.message||data?.Mensaje||raw;
-      }catch{}
-      throw new Error(String(msg||('HTTP '+r.status)));
-    }
-
-    const received=await r.blob();
-    if(!received.size)throw new Error('Power Automate respondió sin contenido de archivo.');
-
-    const contentType=r.headers.get('content-type')||'';
-    if(contentType.includes('application/json')){
-      const raw=await received.text();
-      throw new Error('Power Automate devolvió JSON en lugar del archivo: '+raw.slice(0,300));
-    }
-
-    const mime=(contentType && !contentType.includes('application/octet-stream'))
-      ? contentType
-      : evidenceMime(fileName);
-
-    const blob=new Blob([received],{type:mime});
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json;charset=utf-8'},body:JSON.stringify({Accion:'obtener_evidencia',ClaveAcceso:MENTOR_KEY,EquipoID:teamId,ActividadID:activityId})});
+    if(!r.ok)throw new Error(await r.text()||'No fue posible abrir la evidencia.');
+    const ct=(r.headers.get('content-type')||'').toLowerCase();
+    if(ct.includes('application/json'))throw new Error((await r.text())||'El backend devolvió JSON en lugar del archivo.');
+    let blob=await r.blob();
+    const mime=evidenceMime(fileName);
+    if((!blob.type||blob.type==='application/octet-stream')&&mime!=='application/octet-stream')blob=new Blob([blob],{type:mime});
     const url=URL.createObjectURL(blob);
+    if(viewer)viewer.location.href=url;else window.open(url,'_blank');
+    setTimeout(()=>URL.revokeObjectURL(url),120000);
+  }catch(e){if(viewer)viewer.close();alert(e.message)}finally{btn.disabled=false;btn.textContent=old}
+}
+function evidenceHtml(d){
+  let parts=[];
+  if(d.Respuesta)parts.push(`<div><b>Respuesta:</b><br>${esc(d.Respuesta)}</div>`);
+  if(d.Enlace)parts.push(`<div style="margin-top:8px"><a href="${esc(d.Enlace)}" target="_blank" rel="noopener">ABRIR ENLACE ↗</a></div>`);
+  if(d.NombreArchivo)parts.push(`<div style="margin-top:8px"><b>${esc(d.NombreArchivo)}</b><br><button class="btn cyan" type="button" onclick="openEvidence('${esc(d.EquipoID)}','${esc(d.ActividadID)}','${esc(d.NombreArchivo)}',this)" style="margin-top:8px">ABRIR EVIDENCIA</button></div>`);
+  else if(d.EvidenciaURL)parts.push(`<div style="margin-top:8px"><a href="${esc(d.EvidenciaURL)}" target="_blank" rel="noopener">ABRIR EVIDENCIA ↗</a></div>`);
+  return parts.join('')||'<span class="mini">La entrega está registrada, pero no hay una evidencia visible.</span>';
+}
+function openEvaluation(activityId){
+  const d=deliveries.find(x=>x.EquipoID===selectedTeamId&&x.ActividadID===activityId);
+  if(!d)return;
+  if(mentorAlreadyEvaluated(d)){alert('Esta misión ya fue evaluada por ti.');return}
+  selectedDelivery=d; const m=MISSIONS[activityId],t=teamById(selectedTeamId);
+  $('#evalMissionLabel').textContent=`${m.label.toUpperCase()} · ${m.name}`;
+  $('#evalTeamName').textContent=t.NombreIniciativa||t.EquipoID;
+  $('#evalTime').textContent='Evidencia recibida · '+fmtDate(d.FechaHoraEntrega);
+  $('#evalEvidence').innerHTML=evidenceHtml(d);
+  $('#evalRubric').innerHTML='<b>CRITERIOS DE REFERENCIA</b><br>'+m.criteria.map(x=>'• '+esc(x)).join('<br>');
+  $('#score').value=''; $('#score').max=m.max; $('#maxScore').value=m.max; $('#scoreLabel').textContent=`Tu calificación · 0 a ${m.max}`;
+  $('#feedback').value=''; $('#evalToast').textContent='';
+  show('evaluationView');
+}
+window.openEvaluation=openEvaluation; window.openEvidence=openEvidence;
 
-    if(viewer){
-      viewer.location.replace(url);
-    }else{
-      const a=document.createElement('a');
-      a.href=url;
-      a.target='_blank';
-      a.rel='noopener';
-      a.click();
+async function saveEvaluation(){
+  if(!selectedDelivery)return;
+  const m=MISSIONS[selectedDelivery.ActividadID],raw=$('#score').value.trim(),score=Number(raw),feedback=$('#feedback').value.trim(),toast=$('#evalToast');
+  if(raw===''||!Number.isFinite(score)||score<0||score>m.max){toast.textContent=`Ingresa un puntaje entre 0 y ${m.max}.`;return}
+  $('#saveEvalBtn').disabled=true;toast.textContent='Guardando evaluación…';
+  try{
+    await post({Accion:'guardar_evaluacion',ClaveAcceso:MENTOR_KEY,EquipoID:selectedDelivery.EquipoID,ActividadID:selectedDelivery.ActividadID,PuntosValidados:score,Evaluador:mentorName,Retroalimentacion:feedback,MotivoCambio:''});
+    toast.textContent='✅ Evaluación guardada.';
+    await loadBase(); renderMissions();
+    setTimeout(()=>show('initiativeView'),550);
+  }catch(e){toast.textContent=e.message}finally{$('#saveEvalBtn').disabled=false}
+}
+async function resolveQr(raw){
+  const payload=parseQrPayload(raw),toast=$('#scanToast');
+  if(!payload.teamId && !payload.code){toast.textContent='No pude leer un código QR válido.';return}
+  toast.textContent='Buscando iniciativa…';
+  try{
+    await loadBase();
+
+    // QR nuevo: el EquipoID viene directamente en la URL. No necesita Power Automate adicional.
+    if(payload.teamId){
+      const exists=teams.some(t=>String(t.EquipoID)===payload.teamId);
+      if(!exists)throw new Error('El QR contiene un equipo que no aparece en la lista actual.');
+      stopScanner();
+      openTeam(payload.teamId);
+      return;
     }
 
-    setTimeout(()=>URL.revokeObjectURL(url),300000);
-  }catch(e){
-    if(viewer)viewer.close();
-    alert('No fue posible abrir la evidencia: '+(e?.message||String(e)));
-  }finally{
-    btn.disabled=false;
-    btn.textContent=original;
-  }
+    // Fallback para QR antiguos, solo si se crea buscar_equipo_por_qr en el backend.
+    const r=await post({Accion:'buscar_equipo_por_qr',ClaveAcceso:MENTOR_KEY,CodigoQR:payload.code});
+    const id=r.EquipoID||r.equipoID||r.Equipo?.EquipoID;
+    if(!id)throw new Error(r.Mensaje||'Este es un QR antiguo y no se pudo resolver el equipo.');
+    stopScanner();
+    openTeam(id);
+  }catch(e){toast.textContent=e.message}
 }
-function evidenceHTML(d){
-  const bits=[];
-  if(d.Respuesta)bits.push(`<p><b>Texto:</b> ${esc(d.Respuesta)}</p>`);
-  if(d.Enlace)bits.push(`<p>🔗 <a href="${esc(d.Enlace)}" target="_blank" rel="noopener">ABRIR ENLACE</a></p>`);
-
-  if(d.NombreArchivo){
-    bits.push(`<p>📎 <button class="evidence-open-btn" type="button"
-      onclick="openEvidence('${esc(d.EquipoID)}','${esc(d.ActividadID)}','${esc(d.NombreArchivo)}',this)">ABRIR EVIDENCIA</button>
-      <span class="evidence-name">${esc(d.NombreArchivo)}</span></p>`);
-  }else if(d.EvidenciaURL){
-    bits.push(`<p>📎 <a href="${esc(d.EvidenciaURL)}" target="_blank" rel="noopener">ABRIR EVIDENCIA</a></p>`);
-  }
-
-  return bits.join('')||'<p class="mini">La entrega está registrada, pero no tiene evidencia visible.</p>';
-}
-
-function renderKpis(){
-  const rows=deliveries.filter(validDelivery);
-  $('#kDeliveries').textContent=rows.length;
-  $('#kPending').textContent=rows.filter(x=>x.EstadoEvaluacion!=='Validada').length;
-  $('#kValidated').textContent=rows.filter(x=>x.EstadoEvaluacion==='Validada').length;
-  $('#kTeams').textContent=teams.length;
-}
-
-function renderTeams(){
-  const q=$('#search').value.trim().toLowerCase();
-
-  const rows=teams.filter(t=>{
-    const name=String(t.NombreIniciativa||'').toLowerCase();
-    if(q && !name.includes(q))return false;
-
-    const ds=deliveries.filter(d=>validDelivery(d)&&d.EquipoID===t.EquipoID);
-    const pending=ds.filter(d=>(d.EstadoEvaluacion||'Pendiente')!=='Validada').length;
-    const validated=ds.filter(d=>d.EstadoEvaluacion==='Validada').length;
-
-    if(teamFilter==='pending')return pending>0;
-    if(teamFilter==='validated')return ds.length>0 && pending===0 && validated>0;
-    return true;
-  });
-
-  $('#teamList').innerHTML=rows.length?rows.map(t=>{
-    const ds=deliveries.filter(d=>validDelivery(d)&&d.EquipoID===t.EquipoID);
-    const validated=ds.filter(d=>d.EstadoEvaluacion==='Validada').length;
-    const pending=ds.filter(d=>(d.EstadoEvaluacion||'Pendiente')!=='Validada').length;
-    const prototypeName=t.PrototipoNombre||'';
-    const prototypeURL=t.PrototipoURL||'';
-    const prototype=prototypeURL
-      ? `<a href="${esc(prototypeURL)}" target="_blank" rel="noopener">ABRIR PROTOTIPO ↗</a>${prototypeName?' · '+esc(prototypeName):''}`
-      : (prototypeName?esc(prototypeName):'<span class="mini">Sin prototipo visible en la respuesta del backend.</span>');
-
-    let statusLabel='SIN ENTREGAS';
-    if(pending>0)statusLabel=`${pending} PENDIENTE${pending===1?'':'S'}`;
-    else if(ds.length>0)statusLabel='EVALUADA';
-
-    return `<article class="team-card">
-      <div class="eyebrow">${esc(t.EquipoID||'EQUIPO')} · ${statusLabel}</div>
-      <h3>${esc(t.NombreIniciativa||t.EquipoID||'Iniciativa')}</h3>
-      <div class="team-meta">${esc(t.Categoria||'Sin categoría')} · ${esc(t.Sector||'Sin sector')}</div>
-      <div class="team-stats">
-        <div class="team-stat"><b>${ds.length}</b><span>ENTREGAS</span></div>
-        <div class="team-stat"><b>${pending}</b><span>PENDIENTES</span></div>
-        <div class="team-stat"><b>${validated}</b><span>EVALUADAS</span></div>
-      </div>
-      <div class="team-prototype"><b>Prototipo</b><br>${prototype}</div>
-      <div class="actions">
-        <button class="btn alt" type="button" data-open-team="${esc(t.EquipoID||'')}">VER Y EVALUAR →</button>
-      </div>
-    </article>`;
-  }).join(''):'<div class="empty" style="grid-column:1/-1">No hay iniciativas para este filtro.</div>';
-
-  document.querySelectorAll('[data-open-team]').forEach(btn=>btn.addEventListener('click',()=>{
-    selectedTeamId=btn.dataset.openTeam||'';
-    deliveryFilter='all';
-    document.querySelectorAll('.delivery-filter').forEach(x=>x.classList.toggle('active',x.dataset.deliveryFilter==='all'));
-    openSelectedTeam();
-  }));
-}
-
-function openSelectedTeam(){
-  const t=teamById(selectedTeamId);
-  view='deliveries';
-  $('#teamsView').classList.add('hidden');
-  $('#deliveriesView').classList.remove('hidden');
-  $('#bonusView').classList.add('hidden');
-
-  $('#selectedTeamName').textContent=t.NombreIniciativa||t.EquipoID||'Iniciativa';
-  $('#selectedTeamMeta').textContent=`${t.EquipoID||''}${t.Categoria?' · '+t.Categoria:''}${t.Sector?' · '+t.Sector:''}`;
-
-  renderDeliveries();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function goBackToTeams(){
-  selectedTeamId='';
-  deliveryFilter='all';
-  view='teams';
-  $('#deliveriesView').classList.add('hidden');
-  $('#bonusView').classList.add('hidden');
-  $('#teamsView').classList.remove('hidden');
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.view==='teams'));
-  renderTeams();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-
-function scoringGuide(max){
-  const m=Math.max(1,Number(max)||0);
-  if(m===10){
-    return '0 No cumple · 1–2 Incipiente · 3–4 En desarrollo · 5–6 Cumple · 7–8 Destacado · 9–10 Sobresaliente';
-  }
-  if(m===15){
-    return '0 No cumple · 1–3 Incipiente · 4–6 En desarrollo · 7–9 Cumple · 10–12 Destacado · 13–15 Sobresaliente';
-  }
-  const a=Math.max(1,Math.floor(m*.20));
-  const b=Math.max(a+1,Math.floor(m*.40));
-  const c=Math.max(b+1,Math.floor(m*.60));
-  const d=Math.max(c+1,Math.floor(m*.80));
-  return `0 No cumple · 1–${a} Incipiente · ${a+1}–${b} En desarrollo · ${b+1}–${c} Cumple · ${c+1}–${d} Destacado · ${d+1}–${m} Sobresaliente`;
-}
-
-function renderDeliveries(){
-  const rows=deliveries.filter(validDelivery).filter(d=>{
-    if(selectedTeamId && d.EquipoID!==selectedTeamId)return false;
-    const st=d.EstadoEvaluacion||'Pendiente';
-    if(deliveryFilter==='pending')return st!=='Validada';
-    if(deliveryFilter==='validated')return st==='Validada';
-    return true;
-  });
-  $('#deliveryList').innerHTML=rows.length?rows.map((d,i)=>{
-    const m=MISSIONS[d.ActividadID]||{name:d.ActividadID,max:num(d.PuntosObtenidos)||0,criteria:[]};
-    const team=teamById(d.EquipoID);
-    const status=d.EstadoEvaluacion||'Pendiente';
-    const accumulated=d.PuntosValidados==null?0:num(d.PuntosValidados);
-    const previousEvaluator=String(d.Evaluador||'').trim();
-    const previousFeedback=String(d.Retroalimentacion||'').trim();
-    return `<article class="delivery ${status.toLowerCase()}">
-      <div class="delivery-head">
-        <div><div class="eyebrow">${d.ActividadID} · ${esc(m.name)}</div><h3>${esc(team.NombreIniciativa||d.EquipoID)}</h3><div class="meta">${esc(d.EquipoID)} · ${fmtDate(d.FechaHoraEntrega)}</div></div>
-        <span class="badge ${status.toLowerCase()}">${esc(status.toUpperCase())}</span>
-      </div>
-      <div class="evidence">${evidenceHTML(d)}</div>
-      <div class="rubric">
-        <b>CRITERIOS DE REFERENCIA</b><br>
-        ${m.criteria.map(x=>'• '+esc(x)).join('<br>')}
-        <div class="score-instruction">Cada mentor asigna <b>su propia calificación entre 0 y ${m.max} puntos</b>. Esta calificación se <b>SUMA</b> al acumulado de la iniciativa y no reemplaza evaluaciones anteriores.</div>
-        <span class="mini"><b>Escala orientadora para esta misión (${m.max} puntos por mentor):</b> ${scoringGuide(m.max)}.</span>
-      </div>
-      ${(previousEvaluator||previousFeedback||accumulated>0)?`<div class="rubric evaluation-history">
-        <b>EVALUACIONES REGISTRADAS</b><br>
-        <span class="mini"><b>Puntaje acumulado de mentores:</b> ${accumulated.toFixed(1)} puntos</span>
-        ${previousEvaluator?`<br><span class="mini"><b>Mentor(es):</b> ${esc(previousEvaluator)}</span>`:''}
-        ${previousFeedback?`<br><span class="mini"><b>Historial / retroalimentación:</b><br>${esc(previousFeedback).replace(/\n/g,'<br>')}</span>`:''}
-      </div>`:''}
-      <div class="eval">
-        <div><label>Puntaje máximo por mentor</label><input value="${m.max}" readonly></div>
-        <div><label>Tu calificación · 0 a ${m.max}</label><input id="score_${i}" type="number" min="0" max="${m.max}" step=".5" value="" placeholder="Ej. ${m.max}"><div class="mini">Este valor se sumará al puntaje acumulado existente (${accumulated.toFixed(1)}).</div></div>
-        <div class="full"><label>Tu retroalimentación</label><textarea id="feed_${i}" placeholder="Escribe tu retroalimentación como mentor..."></textarea></div>
-        <div class="full actions"><button class="btn" onclick="saveEvaluation(${i})" type="button">SUMAR MI EVALUACIÓN →</button></div>
-        <div class="full toast" id="toast_${i}"></div>
-      </div>
-    </article>`;
-  }).join(''):'<div class="empty">Esta iniciativa todavía no tiene entregas para evaluar.</div>';
-  window.filteredRows=rows;
-}
-async function saveEvaluation(i){
-  const d=window.filteredRows[i]; if(!d)return;
-  const m=MISSIONS[d.ActividadID];
-  const scoreEl=$('#score_'+i);
-  const raw=String(scoreEl.value||'').trim();
-  const score=Number(raw);
-  const feed=$('#feed_'+i).value.trim();
-  const toast=$('#toast_'+i);
-
-  if(raw==='' || !Number.isFinite(score)){
-    toast.textContent='Ingresa tu calificación antes de guardar.';
-    scoreEl.focus();
-    return;
-  }
-  if(score<0||score>m.max){
-    toast.textContent=`Tu calificación debe estar entre 0 y ${m.max}.`;
-    return;
-  }
-
-  toast.textContent='Sumando evaluación…';
+async function startScanner(){
+  $('#selectorPanel').classList.add('hidden');$('#scannerPanel').classList.remove('hidden');$('#scanToast').textContent='';
+  $('#manualQrWrap').classList.toggle('hidden',!!window.BarcodeDetector);
+  if(!navigator.mediaDevices?.getUserMedia){$('#scanToast').textContent='Este navegador no permite usar la cámara. Usa la búsqueda por iniciativa.';$('#manualQrWrap').classList.remove('hidden');return}
   try{
-    await post({
-      Accion:'guardar_evaluacion',
-      ClaveAcceso:mentorKey,
-      EquipoID:d.EquipoID,
-      ActividadID:d.ActividadID,
-      PuntosValidados:score,
-      Evaluador:mentorName,
-      Retroalimentacion:feed,
-      MotivoCambio:''
-    });
-    toast.textContent='✅ Tu evaluación fue sumada al acumulado.';
-    await loadData();
-  }catch(e){
-    toast.textContent=e.message;
-  }
+    scannerStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+    const video=$('#scannerVideo');video.srcObject=scannerStream;await video.play();
+    if(!window.BarcodeDetector){$('#scanToast').textContent='La cámara está activa, pero este navegador no puede leer QR directamente. Pega la URL/código o usa la búsqueda por nombre.';return}
+    const detector=new BarcodeDetector({formats:['qr_code']});
+    const tick=async()=>{
+      if(!scannerStream)return;
+      try{
+        const codes=await detector.detect(video);
+        if(codes?.length){await resolveQr(codes[0].rawValue);return}
+      }catch{}
+      scannerLoop=requestAnimationFrame(tick);
+    };
+    tick();
+  }catch(e){$('#scanToast').textContent='No fue posible abrir la cámara. Puedes buscar la iniciativa por nombre.';$('#manualQrWrap').classList.remove('hidden')}
 }
-function bonusVal(t,key){return num(t?.[key] ?? (key==='BonusProspecto'?t?.['BonusProspecto\n']:0))}
-function renderBonusTeams(){
-  const sel=$('#bonusTeam'); const cur=sel.value;
-  sel.innerHTML=teams.map(t=>`<option value="${esc(t.EquipoID)}">${esc(t.NombreIniciativa||t.EquipoID)}</option>`).join('');
-  if(cur && teams.some(t=>t.EquipoID===cur))sel.value=cur;
-  fillBonus();
+function stopScanner(){
+  if(scannerLoop)cancelAnimationFrame(scannerLoop);scannerLoop=null;
+  if(scannerStream)scannerStream.getTracks().forEach(t=>t.stop());scannerStream=null;
+  const v=$('#scannerVideo');if(v)v.srcObject=null;
+  $('#scannerPanel').classList.add('hidden');
 }
-function fillBonus(){
-  const t=teamById($('#bonusTeam').value);
-  $('#bProspecto').value=bonusVal(t,'BonusProspecto');
-  $('#bConversacion').value=bonusVal(t,'BonusConversacion');
-  $('#bReunion').value=bonusVal(t,'BonusReunion');
-  $('#bVenta').value=bonusVal(t,'BonusVenta');
-  $('#bTempranas').value=bonusVal(t,'BonusTempranas');
-  $('#bFeedback').value=bonusVal(t,'BonusFeedback');
-  updateBonusPreview();
-  $('#teamTotal').textContent=`Puntaje total registrado: ${num(t.PuntosTotal).toFixed(1)}`;
-}
-function updateBonusPreview(){
-  const total=['#bProspecto','#bConversacion','#bReunion','#bVenta','#bTempranas','#bFeedback'].reduce((s,id)=>s+num($(id).value),0);
-  $('#bonusTotal').textContent=`${total.toFixed(1)} / 20`;
-}
-async function saveBonus(){
-  const t=teamById($('#bonusTeam').value); const toast=$('#bonusToast');
-  const payload={
-    Accion:'guardar_bonus',ClaveAcceso:mentorKey,EquipoID:t.EquipoID,
-    BonusProspecto:num($('#bProspecto').value),BonusConversacion:num($('#bConversacion').value),
-    BonusReunion:num($('#bReunion').value),BonusVenta:num($('#bVenta').value),
-    BonusTempranas:num($('#bTempranas').value),BonusFeedback:num($('#bFeedback').value)
-  };
-  const total=payload.BonusProspecto+payload.BonusConversacion+payload.BonusReunion+payload.BonusVenta+payload.BonusTempranas+payload.BonusFeedback;
-  if(total>20){toast.textContent='Los puntos adicionales no pueden superar 20.';return}
-  toast.textContent='Guardando…';
-  try{await post(payload);toast.textContent='✅ Puntos adicionales actualizados.';await loadData();}catch(e){toast.textContent=e.message}
-}
-async function loadData(){
-  const [a,b]=await Promise.all([
-    post({Accion:'listar_entregas',ClaveAcceso:mentorKey}),
-    post({Accion:'listar_equipos',ClaveAcceso:mentorKey})
-  ]);
-  deliveries=Array.isArray(a.Entregas)?a.Entregas:[];
-  teams=Array.isArray(b.Equipos)?b.Equipos:[];
-  renderKpis(); renderTeams(); renderDeliveries(); renderBonusTeams();
-}
+
 async function login(){
   mentorName=$('#mentorName').value.trim(); const toast=$('#loginToast');
   if(!mentorName){toast.textContent='Escribe tu nombre para continuar.';return}
-  toast.textContent='Cargando iniciativas…'; $('#loginBtn').disabled=true;
-  try{
-    await loadData();
-    sessionStorage.setItem('idealab_mentor_name',mentorName);
-    $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); toast.textContent='';
-  }catch(e){toast.textContent=e.message}finally{$('#loginBtn').disabled=false}
+  $('#loginBtn').disabled=true;toast.textContent='Cargando…';
+  try{await loadBase();sessionStorage.setItem('idealab_mentor_name',mentorName);$('#mentorLabel').textContent=mentorName;show('home')}catch(e){toast.textContent=e.message}finally{$('#loginBtn').disabled=false}
 }
-$('#loginBtn').addEventListener('click',login);
-$('#mentorName').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
-$('#refreshBtn').addEventListener('click',()=>loadData().catch(e=>alert(e.message)));
-$('#search').addEventListener('input',renderTeams);
-$('#backToTeams').addEventListener('click',goBackToTeams);
-
-document.querySelectorAll('.team-filter').forEach(btn=>btn.addEventListener('click',()=>{
-  teamFilter=btn.dataset.teamFilter||'all';
-  view='teams';
-  selectedTeamId='';
-  document.querySelectorAll('.team-filter').forEach(x=>x.classList.toggle('active',x===btn));
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.view==='teams'));
-  $('#teamsView').classList.remove('hidden');
-  $('#deliveriesView').classList.add('hidden');
-  $('#bonusView').classList.add('hidden');
-  renderTeams();
-}));
-
-document.querySelectorAll('.delivery-filter').forEach(btn=>btn.addEventListener('click',()=>{
-  deliveryFilter=btn.dataset.deliveryFilter||'all';
-  document.querySelectorAll('.delivery-filter').forEach(x=>x.classList.toggle('active',x===btn));
-  renderDeliveries();
-}));
-
-$('#bonusTeam').addEventListener('change',fillBonus); $('#saveBonus').addEventListener('click',saveBonus);
-['#bProspecto','#bConversacion','#bReunion','#bVenta','#bTempranas','#bFeedback'].forEach(id=>$(id).addEventListener('input',updateBonusPreview));
-document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
-  view=btn.dataset.view;
-  selectedTeamId='';
-  $('#teamsView').classList.toggle('hidden',view!=='teams');
-  $('#deliveriesView').classList.add('hidden');
-  $('#bonusView').classList.toggle('hidden',view!=='bonus');
-  if(view==='teams')renderTeams();
-  if(view==='bonus')renderBonusTeams();
-}));
-window.saveEvaluation=saveEvaluation;
-window.openEvidence=openEvidence;
+$('#loginBtn').onclick=login;$('#mentorName').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+$('#scanBtn').onclick=startScanner;$('#stopScanBtn').onclick=stopScanner;
+$('#previousBtn').onclick=()=>{stopScanner();$('#selectorPanel').classList.toggle('hidden');$('#homeToast').textContent='';$('#teamSearch').focus()};
+$('#teamSearch').addEventListener('input',renderTeamSelector);
+$('#selectTeamBtn').onclick=()=>{const id=$('#teamSelect').value;if(!id){$('#homeToast').textContent='Selecciona una iniciativa.';return}openTeam(id)};
+$('#teamSelect').addEventListener('dblclick',()=>{if($('#teamSelect').value)openTeam($('#teamSelect').value)});
+$('#manualQrBtn').onclick=()=>resolveQr($('#manualQr').value);
+$('#backHome').onclick=()=>{selectedTeamId='';show('home')};
+$('#backInitiative').onclick=()=>show('initiativeView');
+$('#refreshInitiative').onclick=async()=>{await loadBase();renderMissions()};
+$('#saveEvalBtn').onclick=saveEvaluation;
 $('#mentorName').value=sessionStorage.getItem('idealab_mentor_name')||'';
 </script>
 </body>
