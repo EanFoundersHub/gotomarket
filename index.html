@@ -3,420 +3,1583 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Aceleratón Go-To-Market · Centro de Evaluación</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Aceleratón Go-To-Market</title>
 <style>
-:root{--bg:#0b0907;--panel:#15110e;--panel2:#1c1510;--gold:#ffc94a;--cyan:#59dce1;--text:#f4efe9;--muted:#a99887;--line:#493626;--ok:#57d68d;--danger:#ff7d73}
-*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 80% 0,#37200f 0,transparent 26%),linear-gradient(#0b0907,#100c09);color:var(--text);font-family:Poppins,sans-serif;min-height:100vh}
-a{color:var(--cyan)} button,input,select,textarea{font:inherit} button{cursor:pointer}
-.shell{max-width:1240px;margin:auto;padding:22px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:18px}
-.brand{display:flex;align-items:center;gap:14px} .brand img{width:64px;height:64px;object-fit:contain} .brand h1{font-family:"Black Ops One";margin:0;color:var(--gold);font-size:clamp(24px,4vw,42px)} .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--cyan);font-weight:700}
-.btn{border:1px solid var(--gold);background:var(--gold);color:#17100a;padding:11px 16px;font-weight:700;border-radius:3px;text-decoration:none;display:inline-block}
-.btn.alt{background:transparent;color:var(--gold)} .btn.danger{border-color:var(--danger);color:var(--danger);background:transparent} .btn:disabled{opacity:.45;cursor:not-allowed}
-.card{background:rgba(21,17,14,.94);border:1px solid var(--line);padding:20px;margin-top:18px} .hidden{display:none!important}
-.login{max-width:620px;margin:8vh auto} .login h2,.section-title{font-family:"Black Ops One";color:var(--gold);margin:5px 0 14px}
-label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px} input,select,textarea{width:100%;background:#0c0907;color:var(--text);border:1px solid #60462f;padding:11px;border-radius:3px} textarea{min-height:110px}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px} .kpi{border:1px solid var(--line);background:#0f0c0a;padding:14px} .kpi b{display:block;font:28px "Black Ops One";color:var(--gold)} .kpi span{font-size:10px;color:var(--muted)}
-.toolbar{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end} .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px} .tab{padding:8px 11px;border:1px solid var(--line);background:#0f0c0a;color:var(--muted)} .tab.active{border-color:var(--gold);color:var(--gold)}
-.list{display:grid;gap:12px;margin-top:14px} .delivery{border:1px solid var(--line);background:#110d0a;padding:16px} .delivery.validada{border-left:4px solid var(--ok)} .delivery.pendiente{border-left:4px solid var(--gold)}
-.delivery-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start} .delivery h3{margin:3px 0} .meta{font-size:11px;color:var(--muted)} .badge{font-size:10px;border:1px solid var(--line);padding:5px 8px;border-radius:20px;white-space:nowrap} .badge.validada{color:var(--ok);border-color:var(--ok)} .badge.pendiente{color:var(--gold);border-color:var(--gold)}
-.evidence{margin:12px 0;padding:12px;border:1px solid #34271e;background:#0c0907;word-break:break-word} .evidence p{margin:6px 0} .actions{display:flex;gap:8px;flex-wrap:wrap}
-.eval{margin-top:14px;padding-top:14px;border-top:1px solid #34271e;display:grid;grid-template-columns:180px 1fr;gap:12px} .full{grid-column:1/-1}
-.rubric{font-size:12px;color:var(--muted);background:#0d0a08;border:1px solid #34271e;padding:10px;margin-top:8px} .rubric b{color:var(--cyan)} .toast{min-height:20px;color:var(--cyan);font-size:12px;margin-top:8px}
-.bonus-layout{display:grid;grid-template-columns:280px 1fr;gap:16px} .bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .bonus-total{font:34px "Black Ops One";color:var(--gold)}
-.mini{font-size:11px;color:var(--muted)} .empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line)}
-@media(max-width:800px){.top,.delivery-head{flex-direction:column}.grid{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.eval,.bonus-layout,.bonus-grid{grid-template-columns:1fr}}
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Poppins:wght@400;500;600;700&display=swap');
+:root{--bg:#080706;--panel:#15110e;--panel2:#21170f;--line:#5c432d;--gold:#FFC94A;--cyan:#59dce1;--text:#f8f3eb;--muted:#baa999;--ok:#7bd7a1;--danger:#ff786f}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);font-family:Poppins,Arial,sans-serif;background:radial-gradient(circle at 78% 5%,#603016 0,transparent 30%),linear-gradient(150deg,#070605,#120d09 55%,#080706)}
+button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--gold);letter-spacing:.18em;font-size:11px}.logo{font-family:'Black Ops One';font-size:clamp(30px,5vw,54px);margin:2px 0}.sub{color:var(--muted);font-size:13px}.chip{border:1px solid var(--cyan);color:var(--cyan);padding:8px 11px;font-size:11px}
+.screen{display:none}.screen.active{display:block}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center;padding:54px 0}.rockyWrap{text-align:center}.rocky{width:min(100%,390px);height:auto;filter:drop-shadow(0 18px 25px rgba(0,0,0,.45))}.hero h2,.title{font-family:'Black Ops One';font-weight:400}.hero h2{font-size:clamp(40px,7vw,78px);line-height:.96;margin:10px 0 18px}.hero h2 span{color:var(--gold)}.hero p{max-width:650px;color:#d6c7b8}.hud{border:1px solid var(--line);background:rgba(20,15,11,.8);padding:24px;position:relative}.hud:before,.hud:after{content:"";position:absolute;width:26px;height:26px;border-color:var(--gold)}.hud:before{left:-1px;top:-1px;border-left:3px solid var(--gold);border-top:3px solid var(--gold)}.hud:after{right:-1px;bottom:-1px;border-right:3px solid var(--gold);border-bottom:3px solid var(--gold)}.hud strong{font-family:'Black Ops One';color:var(--gold);font-size:28px}.btn{border:0;background:var(--gold);color:#1a1108;font-weight:700;padding:13px 18px;cursor:pointer;margin-top:14px}.btn.alt{background:transparent;color:var(--cyan);border:1px solid var(--cyan)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.card{background:rgba(21,17,14,.9);border:1px solid var(--line);padding:22px;margin-top:22px}.card h2,.card h3{margin-top:0}.title{font-size:30px}.stepbar{display:flex;gap:8px;margin:18px 0}.step{height:5px;flex:1;background:#30241b}.step.on{background:var(--gold)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}input,select,textarea{width:100%;background:#0b0907;color:var(--text);border:1px solid #60462f;padding:12px;border-radius:3px}textarea{min-height:110px;resize:vertical}.full{grid-column:1/-1}.check{display:flex;gap:10px;align-items:flex-start}.check input{width:auto;margin-top:4px}.member{border-top:1px solid #39291e;padding-top:18px;margin-top:18px}.member-head{display:flex;justify-content:space-between;gap:10px}.member-head b{color:var(--gold)}.conditional{display:none}.conditional.show{display:block}.actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px}.hint{font-size:12px;color:var(--muted)}.boarding{max-width:850px;margin:36px auto;border:2px solid var(--gold);background:linear-gradient(135deg,#15100c,#2a160b);padding:28px;position:relative}.boarding:before{content:"BOARDING PASS";position:absolute;right:18px;top:16px;color:var(--gold);font-family:'Black Ops One';letter-spacing:.1em}.boarding h2{font-family:'Black Ops One';font-size:clamp(34px,6vw,64px);margin:28px 0 8px}.boarding .code{font-family:'Black Ops One';color:var(--cyan);font-size:24px}.boarding-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin:24px 0}.label{color:var(--muted);font-size:11px;letter-spacing:.12em}.value{font-weight:700;margin-top:4px}.dash{display:grid;grid-template-columns:1.4fr .75fr;gap:18px;margin-top:22px}.progress{height:11px;background:#2a211a;border:1px solid #57412d;margin:12px 0 20px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#ed8730)}.mission{display:grid;grid-template-columns:46px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-top:1px solid #33261d}.num{width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--gold);font-family:'Black Ops One';color:var(--gold)}.mission h4{margin:0}.mission p{margin:3px 0 0;color:var(--muted);font-size:12px}.status{font-size:10px;border:1px solid var(--line);padding:5px 7px;border-radius:20px}.done{color:var(--ok);border-color:var(--ok)}.open{color:var(--gold);border-color:var(--gold)}.locked{color:#777}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{border:1px solid #3b2d22;padding:14px;background:#0f0c0a}.stat b{font-family:'Black Ops One';font-size:25px;color:var(--gold)}.stat span{display:block;color:var(--muted);font-size:10px}.toast{min-height:20px;margin-top:10px;color:var(--cyan);font-size:12px}.admin-table{width:100%;border-collapse:collapse;font-size:12px}.admin-table th,.admin-table td{padding:9px;border-bottom:1px solid #34271e;text-align:left}.admin-table th{color:var(--muted)}
 
-.team-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
-.team-card{border:1px solid var(--line);background:#110d0a;padding:16px;min-width:0}
-.team-card h3{margin:4px 0 5px;font-size:18px}
-.team-card .team-meta{font-size:11px;color:var(--muted);word-break:break-word}
-.team-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}
-.team-stat{border:1px solid #34271e;background:#0c0907;padding:10px}
-.team-stat b{display:block;color:var(--gold);font-size:18px}
-.team-stat span{font-size:9px;color:var(--muted)}
-.team-prototype{margin-top:12px;padding:11px;border:1px solid #34271e;background:#0c0907;word-break:break-word}
-.team-card .actions{margin-top:12px}
-@media(max-width:800px){.team-list{grid-template-columns:1fr}.team-stats{grid-template-columns:repeat(3,1fr)}}
+.navtools{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}.navtools .btn{margin-top:6px}
+.rocky-dialog{display:grid;grid-template-columns:180px 1fr;gap:18px;align-items:center;border:1px solid #315c5e;background:linear-gradient(135deg,rgba(8,28,29,.92),rgba(21,17,14,.96));padding:18px;margin:18px 0}
+.rocky-dialog img{width:100%;max-height:190px;object-fit:contain;filter:drop-shadow(0 15px 22px rgba(0,0,0,.5))}
+.rocky-dialog h3{font-family:'Black Ops One';color:var(--cyan);margin:0 0 8px}.rocky-dialog p{margin:0;color:#e8ded4}
+.mission{cursor:pointer}.mission:hover,.mission.selected{background:rgba(255,201,74,.055)}
+.mission-detail{border:1px solid var(--line);background:rgba(12,9,7,.78);padding:20px;margin-top:18px}
+.mission-kicker{color:var(--gold);font-size:11px;letter-spacing:.14em}
+.resource{display:flex;justify-content:space-between;align-items:center;gap:14px;border:1px solid #3b2d22;padding:14px;margin:16px 0;background:#0f0c0a}
+.resource a{color:var(--cyan);font-weight:700;text-decoration:none}.resource a:hover{text-decoration:underline}
+.delivery-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.delivery-options .full{grid-column:1/-1}
+.points-pill{display:inline-block;border:1px solid var(--gold);color:var(--gold);padding:5px 8px;font-size:10px;border-radius:20px;margin-left:10px}
+.connection-card{display:grid;grid-template-columns:1fr 220px;gap:18px;align-items:center}.qrbox{background:#fff;padding:12px;min-height:210px;display:grid;place-items:center;color:#111;text-align:center}.qrbox img{width:100%;height:auto}
+.admin-login{max-width:600px}.admin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.admin-kpi{border:1px solid #3b2d22;padding:16px;background:#0f0c0a}.admin-kpi b{display:block;color:var(--gold);font-family:'Black Ops One';font-size:28px}
+.hidden{display:none!important}
+
+@media(max-width:760px){.shell{padding:15px}.top{align-items:flex-start;flex-direction:column}.hero,.dash,.formgrid,.boarding-grid{grid-template-columns:1fr}.hero{padding:30px 0}.mission{grid-template-columns:42px 1fr}.mission .status{grid-column:2}.boarding:before{position:static;display:block}.full{grid-column:auto}.rocky-dialog,.connection-card{grid-template-columns:1fr}.rocky-dialog img{max-height:160px}.delivery-options,.admin-grid{grid-template-columns:1fr}}
+
+.demo-banner{border:1px solid var(--cyan);background:rgba(89,220,225,.06);padding:10px 14px;margin-top:14px;color:var(--cyan);font-size:11px}
+.delivery-list{display:grid;gap:12px}.delivery-card{border:1px solid #3b2d22;background:#0f0c0a;padding:16px}.delivery-card.pending{border-left:4px solid var(--gold)}.delivery-card.validated{border-left:4px solid var(--ok)}.delivery-card.adjust{border-left:4px solid var(--danger)}
+.delivery-head{display:flex;justify-content:space-between;gap:12px}.delivery-head h3{margin:0}.delivery-meta{font-size:11px;color:var(--muted)}
+.evidence-box{border:1px dashed #60462f;padding:13px;margin:12px 0;background:#0b0907}.evidence-box a{color:var(--cyan)}
+.grade-panel{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grade-panel .full{grid-column:1/-1}.grade-actions{display:flex;gap:8px;flex-wrap:wrap}.grade-actions .btn{margin-top:0}
+.badge{display:inline-block;padding:5px 8px;border:1px solid var(--line);border-radius:20px;font-size:10px}.badge.pending{color:var(--gold);border-color:var(--gold)}.badge.validated{color:var(--ok);border-color:var(--ok)}.badge.adjust{color:var(--danger);border-color:var(--danger)}
+.feedback{border-left:3px solid var(--cyan);padding:10px 12px;background:rgba(89,220,225,.05);margin-top:10px;font-size:12px}
+.ranking-list{width:100%;border-collapse:collapse}.ranking-list td,.ranking-list th{padding:10px;border-bottom:1px solid #34271e;text-align:left}.ranking-list th{color:var(--muted);font-size:11px}
 
 
-/* ===== Mentor · navegación simplificada ===== */
-.mentor-control{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}
-.mentor-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end}
-.mentor-search-row .btn{min-height:44px}
-.team-filter-bar,.delivery-filter-bar{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
-.team-filter,.delivery-filter{
-  min-height:42px;padding:9px 14px;border:1px solid var(--line);background:#0f0c0a;color:var(--muted);
-  font-weight:700;font-size:11px;letter-spacing:.03em;cursor:pointer
+.mission-row:not(.locked),.mission:not(.locked),[data-activity]:not(.locked){cursor:pointer}
+.mission-row:not(.locked):hover,.mission:not(.locked):hover,[data-activity]:not(.locked):hover{outline:1px solid var(--gold);transform:translateY(-1px)}
+.project-match{border:1px solid var(--cyan);padding:14px;margin:12px 0;background:rgba(89,220,225,.05)}
+.qr-demo{background:#fff;padding:12px;display:inline-block;margin:12px 0}
+.qr-demo img{width:190px;height:190px;display:block}
+
+.mission-screen-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:22px;flex-wrap:wrap}
+.mission-screen-head .btn{margin:0}
+.mission-screen-progress{display:flex;gap:14px;align-items:center;color:var(--muted);font-size:12px}
+.mission-screen-progress b{color:var(--gold)}
+.mission-focus{max-width:920px;margin:22px auto}
+.mission-submit-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.mission-success{display:grid;grid-template-columns:210px 1fr;gap:24px;align-items:center;border:1px solid var(--ok);background:rgba(123,215,161,.06);padding:24px;margin-top:18px}
+.mission-success img{width:100%;max-height:210px;object-fit:contain}
+.mission-success h2{font-family:'Black Ops One';font-weight:400;font-size:36px;margin:6px 0;color:var(--ok)}
+.success-actions{display:flex;gap:10px;flex-wrap:wrap}
+.project-match{grid-column:1/-1}
+.project-match strong{color:var(--cyan)}
+.project-found-input{border-color:var(--cyan)!important;box-shadow:0 0 0 1px rgba(89,220,225,.2)}
+
+.large-file-box{margin-top:14px;border:1px solid var(--gold);background:rgba(255,208,0,.06);padding:16px}
+.large-file-box h4{margin:0 0 8px;color:var(--gold)}
+.large-file-box p{margin:6px 0}
+.large-file-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.pending-evidence-list{display:grid;gap:8px;margin-top:14px}
+.pending-evidence-item{display:flex;gap:10px;align-items:flex-start;border:1px solid #4b392b;background:#0d0a08;padding:11px}
+.pending-evidence-item input{width:auto;margin-top:3px}
+.pending-evidence-item b{display:block}
+.pending-evidence-item small{color:var(--muted)}
+.file-limit-note{display:block;margin-top:6px;color:var(--muted);font-size:11px}
+
+.completed-delivery-actions{margin-top:18px;border:1px solid var(--cyan);background:rgba(89,220,225,.05);padding:18px}
+.completed-delivery-actions h3{margin:4px 0 8px}
+.completed-delivery-actions .evidence-current{margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.14);background:#0d0a08}
+.completed-delivery-actions .evidence-current b{display:block;word-break:break-word}
+.completed-delivery-actions .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.replacement-notice{margin:0 0 16px;padding:12px;border:1px solid var(--gold);background:rgba(255,208,0,.06);color:#f4e6b0}
+
+
+.large-upload-name{margin:12px 0;border:1px dashed var(--cyan);padding:12px;background:rgba(29,215,255,.05)}
+.large-upload-name code{display:block;word-break:break-all;font-size:12px;color:var(--cyan);margin-top:6px}
+.large-upload-steps{margin:12px 0 0;padding-left:20px;color:#eee}
+.large-upload-steps li{margin:6px 0}
+
+
+@media(max-width:760px){.mission-success{grid-template-columns:1fr}.mission-success img{max-height:150px}.mission-screen-progress{width:100%;justify-content:space-between}}
+
+
+.delivery-requirement{border:1px solid var(--cyan);background:rgba(89,220,225,.05);padding:10px 12px;margin:10px 0 16px;color:var(--cyan);font-size:12px}
+
+
+.qrbox img{object-fit:contain}
+#qrParticipant{margin-top:6px}
+.validation-note{border-left:3px solid var(--cyan);padding:10px 12px;background:rgba(89,220,225,.05)}
+
+.connection-detected{display:grid;grid-template-columns:110px 1fr;gap:18px;align-items:center;margin:18px 0;padding:18px;border:1px solid var(--cyan);background:rgba(89,220,225,.06)}
+.connection-detected .signal{width:96px;height:96px;border:1px solid var(--cyan);display:grid;place-items:center;font-family:'Black Ops One';font-size:34px;color:var(--cyan);background:#0d0a08}
+.connection-detected h3{margin:0 0 6px}
+.connection-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.connection-form-grid .full{grid-column:1/-1}
+.connection-success{border:1px solid var(--cyan);padding:22px;background:rgba(89,220,225,.07);margin-top:18px}
+.connection-success h2{margin:6px 0}
+.connection-login-note{border:1px solid var(--gold);background:rgba(255,201,74,.06);padding:14px;margin:16px 0}
+.connection-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.connection-choice{border:1px solid rgba(255,255,255,.18);padding:10px;cursor:pointer;background:#130f0c}
+.connection-choice input{width:auto;margin-right:6px}
+@media(max-width:760px){.connection-detected{grid-template-columns:1fr}.connection-form-grid,.connection-options{grid-template-columns:1fr}}
+
+
+/* ===== IdeaLab V2 · jerarquía y responsive ===== */
+.shell{max-width:1180px;padding-left:clamp(16px,3vw,30px);padding-right:clamp(16px,3vw,30px)}
+#register .card{max-width:980px;margin:28px auto}
+#register h3{margin:4px 0 16px}.formgrid>div{min-width:0}
+.member{padding:18px;border:1px solid rgba(255,201,74,.15);background:rgba(255,255,255,.018);margin-top:14px}.member-head{margin-bottom:12px}
+.prototype-panel{margin-top:8px;padding:20px;border:1px solid rgba(89,220,225,.42);background:linear-gradient(135deg,rgba(89,220,225,.055),rgba(255,201,74,.035))}
+.prototype-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:8px}.prototype-head h3{margin:4px 0 0}
+.required-pill{display:inline-flex;align-items:center;min-height:28px;padding:4px 9px;border:1px solid var(--gold);color:var(--gold);font-size:10px;font-weight:700;letter-spacing:.08em}
+.prototype-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.prototype-meta span{font-size:10px;color:var(--muted);border:1px solid rgba(255,255,255,.12);padding:6px 8px}
+.prototype-large{margin-top:16px;padding:16px;border:1px solid var(--gold);background:rgba(255,201,74,.055)}.prototype-large h4{margin:5px 0 7px}
+.prototype-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.prototype-actions .btn{margin-top:8px}
+.boarding-warning{margin:14px 0;padding:12px;border:1px solid rgba(255,201,74,.55);background:rgba(255,201,74,.06);color:#f6d98c;font-size:12px;line-height:1.5}
+.error-toast{color:var(--danger)!important;white-space:pre-line}
+#missionWorkspace{max-width:980px;margin-left:auto;margin-right:auto}
+.mission-screen-head{max-width:980px;margin:22px auto 0;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.delivery-options>div{min-width:0}.mission-submit-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.actions{align-items:center}.actions #nextBtn{margin-left:auto}input[type="file"]{padding:10px;min-height:46px}
+@media(max-width:760px){
+  input,select,textarea{font-size:16px}#register .card{padding:17px;margin-top:14px}.prototype-panel{padding:15px}.prototype-head{display:grid}
+  .prototype-actions{display:grid;grid-template-columns:1fr}.prototype-actions .btn{width:100%;text-align:center}
+  .actions{display:grid;grid-template-columns:1fr}.actions .btn{width:100%;margin:0}.actions #nextBtn{margin:0}
+  .mission-screen-head{align-items:stretch}.mission-screen-head .btn{width:100%}.mission-screen-progress{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .boarding-grid{gap:13px}.boarding{padding:20px}
 }
-.team-filter.active,.delivery-filter.active{border-color:var(--gold);background:rgba(255,201,74,.09);color:var(--gold)}
-.selected-team-head{display:grid;gap:14px}
-.selected-team-head .section-title{margin-bottom:3px}
-.team-card .actions .btn{width:100%;text-align:center}
-@media(max-width:800px){
-  .mentor-search-row{grid-template-columns:1fr}
-  .mentor-search-row .btn{width:100%}
-  .team-filter-bar,.delivery-filter-bar{display:grid;grid-template-columns:1fr}
-  .team-filter,.delivery-filter{width:100%}
-  .mentor-control{position:static}
-}
+
+
+.logo{line-height:.92;max-width:520px}
+@media(max-width:760px){.logo{font-size:clamp(26px,9vw,42px)}}
 
 </style>
 </head>
 <body>
-<div class="shell">
+<main class="shell">
 <header class="top">
-  <div class="brand"><img src="assets/rocky/rocky_08_evaluacion.png" alt="Rocky"><div><div class="eyebrow">ACELERATÓN GO-TO-MARKET</div><h1>CENTRO DE EVALUACIÓN</h1></div></div>
-  <a class="btn alt" href="index.html">← PARTICIPANTE</a>
-</header>
+  <div><div class="eyebrow">IMPACTA · UNIVERSIDAD EAN</div><div class="logo">ACELERATÓN<br>GO-TO-MARKET</div><div class="sub">Más de 15 horas para llevar una idea al mercado</div></div>
+  <div class="chip">MICROSOFT 365 READY</div>
+</header><div class="demo-banner">MODO CONECTADO · Registro, prototipo, entregas, recuperación, archivos grandes y conexiones QR sincronizados con Microsoft 365.</div>
 
-<section id="login" class="card login">
-  <div class="eyebrow">ACCESO MENTOR</div>
-  <h2>IDENTIFÍCATE PARA CONTINUAR</h2>
-  <p class="mini">Escribe tu nombre. Quedará asociado a cada evaluación y modificación de puntaje.</p>
-  <label for="mentorName">Nombre del mentor</label>
-  <input id="mentorName" placeholder="Ej. Laura Cely" autocomplete="name">
-  <button class="btn" id="loginBtn" type="button" style="margin-top:14px">INGRESAR →</button>
-  <div id="loginToast" class="toast"></div>
+<section id="welcome" class="screen active">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">ACELERATÓN GO-TO-MARKET</div>
+      <h2>¿ESTÁN LISTOS<br>PARA LA <span>MISIÓN?</span></h2>
+      <p>Registra tu tripulación, crea el pasaporte de tu iniciativa y completa las misiones de la Aceleratón Go-To-Market. Cada avance quedará preparado para sistematizarse en Microsoft 365.</p>
+      <button class="btn" id="startBtn">INICIAR MISIÓN →</button>
+      <div class="navtools">
+        <button class="btn alt" id="continueBtn" type="button">CONTINUAR MI MISIÓN</button>
+        
+      </div>
+    </div>
+    <div><div class="rockyWrap"><img class="rocky" src="assets/rocky/rocky_01_cool.png" alt="Rocky, guía de la misión Aceleratón Go-To-Market"></div><div class="hud"><div class="label">SU MISIÓN</div><strong>MÁS DE 15 HORAS</strong><p>Validar la idea · tomar decisiones · construir estrategia · conseguir ventas.</p><div class="hint">PROTOCOLO ACELERATÓN // GTM-2026</div></div></div>
+  </div>
 </section>
 
-<section id="app" class="hidden">
-  <div class="grid">
-    <div class="kpi"><b id="kDeliveries">0</b><span>ENTREGAS</span></div>
-    <div class="kpi"><b id="kPending">0</b><span>PENDIENTES</span></div>
-    <div class="kpi"><b id="kValidated">0</b><span>VALIDADAS</span></div>
-    <div class="kpi"><b id="kTeams">0</b><span>EQUIPOS</span></div>
-  </div>
-
-  <article class="card mentor-control">
-    <div class="mentor-search-row">
-      <div>
-        <label for="search">Buscar iniciativa</label>
-        <input id="search" placeholder="Escribe el nombre de la iniciativa" autocomplete="off">
+<section id="register" class="screen">
+  <article class="card">
+    <div class="eyebrow">PROTOCOLO DE ABORDAJE</div>
+    <h2 class="title">REGISTRO DE TRIPULACIÓN</h2>
+    <div class="stepbar"><span class="step on"></span><span class="step"></span><span class="step"></span></div>
+    <form id="registrationForm">
+      <div id="regStep1">
+        <h3>01 · Autorización</h3>
+        <div class="check">
+          <input type="checkbox" id="privacy" required>
+          <label for="privacy">Autorizo de manera voluntaria, explícita e informada a la Universidad Ean para el tratamiento de mis datos personales conforme a su política institucional.</label>
+        </div>
+        <p class="hint">Para el demo, el enlace institucional puede añadirse después sin afectar el flujo.</p>
       </div>
-      <button class="btn alt" id="refreshBtn" type="button">ACTUALIZAR</button>
-    </div>
 
-    <div class="team-filter-bar" aria-label="Filtros de iniciativas">
-      <button class="team-filter active" type="button" data-team-filter="all">VER TODAS</button>
-      <button class="team-filter" type="button" data-team-filter="pending">PENDIENTES POR EVALUAR</button>
-      <button class="team-filter" type="button" data-team-filter="validated">EVALUADAS</button>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" data-view="teams">INICIATIVAS</button>
-      <button class="tab" data-view="bonus">PUNTOS ADICIONALES</button>
-    </div>
-  </article>
-
-  <section id="teamsView">
-    <div id="teamList" class="team-list"></div>
-  </section>
-
-  <section id="deliveriesView" class="hidden">
-    <article class="card selected-team-head">
-      <button class="btn alt" id="backToTeams" type="button">← VER TODAS LAS INICIATIVAS</button>
-      <div>
-        <div class="eyebrow">EVALUACIÓN DE INICIATIVA</div>
-        <h2 class="section-title" id="selectedTeamName">Iniciativa</h2>
-        <div class="mini" id="selectedTeamMeta"></div>
+      <div id="regStep2" hidden>
+        <h3>02 · Integrantes</h3>
+        <div class="formgrid">
+          <div><label for="memberCount">¿Cuántos integrantes son?</label><input id="memberCount" type="number" min="1" max="10" value="1"></div>
+        </div>
+        <div id="members"></div>
+        <button class="btn alt" type="button" id="addMember">+ AÑADIR INTEGRANTE</button>
       </div>
-      <div class="delivery-filter-bar" aria-label="Filtros de evaluaciones">
-        <button class="delivery-filter active" type="button" data-delivery-filter="all">TODAS LAS ENTREGAS</button>
-        <button class="delivery-filter" type="button" data-delivery-filter="pending">PENDIENTES</button>
-        <button class="delivery-filter" type="button" data-delivery-filter="validated">EVALUADAS</button>
-      </div>
-    </article>
-    <div id="deliveryList" class="list"></div>
-  </section>
 
-  <section id="bonusView" class="hidden">
-    <article class="card">
-      <div class="eyebrow">TRACCIÓN Y VALIDACIÓN</div>
-      <h2 class="section-title">PUNTOS ADICIONALES · /20</h2>
-      <div class="bonus-layout">
-        <div>
-          <label>Equipo</label>
-          <select id="bonusTeam"></select>
-          <div class="card" style="margin-top:12px">
-            <div class="mini">TOTAL EXTRA</div>
-            <div id="bonusTotal" class="bonus-total">0 / 20</div>
-            <div id="teamTotal" class="mini">Puntaje total registrado: 0</div>
+      <div id="regStep3" hidden>
+        <h3>03 · Datos de la iniciativa</h3>
+        <div class="formgrid">
+          <div>
+  <label for="initiative">Nombre de la iniciativa</label>
+  <input id="initiative" required list="demoProjects" placeholder="Ej. NovaLab" autocomplete="off">
+  <datalist id="demoProjects"><option value="Super Floral"><option value="NovaLab"><option value="EcoLoop"><option value="BioRuta"></datalist>
+</div>
+<div id="projectMatchBox" class="full"></div>
+          <div><label for="origin">Programa del que viene</label><select id="origin" required><option value="">Selecciona</option><option>Ninguno</option><option>Programa Conecta – Bridge for Billions</option><option>Founders Hub</option><option>Programa de incubación</option><option>Sandbox para emprendedores</option><option>Minor</option><option>Otro</option></select></div>
+          <div class="full"><label for="description">Descripción de la iniciativa</label><textarea id="description" required placeholder="La iniciativa consiste en... Busca solucionar... Está dirigida a... Su propuesta de valor consiste en... y su principal objetivo es..."></textarea></div>
+          <div><label for="category">Categoría</label><select id="category" required><option value="">Selecciona</option><option>Tradicional</option><option>Digital</option><option>Tech</option><option>Innovación</option></select></div>
+          <div><label for="sector">Sector</label><select id="sector" required><option value="">Selecciona</option><option>Agropecuario y agroindustria</option><option>Alimentos y bebidas</option><option>Educación</option><option>Tecnología y software</option><option>Comercio y retail</option><option>Servicios profesionales</option><option>Industrias creativas y culturales</option><option>Turismo</option><option>Manufactura / industria</option><option>Otro</option></select></div>
+
+          <div class="full prototype-panel">
+            <div class="prototype-head">
+              <div>
+                <div class="eyebrow">PROTOCOLO DE ALISTAMIENTO</div>
+                <h3>04 · Prototipo actual</h3>
+              </div>
+              <span class="required-pill">OBLIGATORIO</span>
+            </div>
+            <p class="hint">Carga el prototipo que tu equipo tiene hoy. Puede ser una presentación, documento, imagen, video, ZIP u otro archivo que represente su estado actual.</p>
+            <label for="prototypeFile">Archivo del prototipo</label>
+            <input id="prototypeFile" type="file" required>
+            <div class="prototype-meta">
+              <span>Hasta 50 MB: carga directa</span>
+              <span>Más de 50 MB: carga segura de Microsoft</span>
+            </div>
+            <div id="prototypeLargeBox" class="prototype-large hidden">
+              <div class="eyebrow">CARGA EXTERNA PREPARADA</div>
+              <h4>Tu archivo supera 50 MB</h4>
+              <p id="prototypeLargeMessage" class="hint">La Aceleratón preparó una sesión segura para subir el prototipo.</p>
+              <div class="prototype-actions">
+                <a class="btn" id="prototypeExternalLink" href="#" target="_blank" rel="noopener">SUBIR PROTOTIPO EN MICROSOFT ↗</a>
+                <button class="btn alt" id="confirmPrototypeLarge" type="button">YA TERMINÉ LA CARGA · CONTINUAR →</button>
+              </div>
+              <div id="prototypeLargeStatus" class="toast" aria-live="polite"></div>
+            </div>
           </div>
         </div>
-        <div class="bonus-grid">
-          <div><label>Prospecto calificado · 0 o 2</label><input id="bProspecto" type="number" min="0" max="2" step="2"></div>
-          <div><label>Conversación comercial · 0 o 2</label><input id="bConversacion" type="number" min="0" max="2" step="2"></div>
-          <div><label>Reunión agendada · 0 o 4</label><input id="bReunion" type="number" min="0" max="4" step="4"></div>
-          <div><label>Cliente / venta · 0 o 6</label><input id="bVenta" type="number" min="0" max="6" step="6"></div>
-          <div><label>Entregas tempranas · 0 a 4</label><input id="bTempranas" type="number" min="0" max="4" step=".5"></div>
-          <div><label>Feedback potencial cliente · 0 o 2</label><input id="bFeedback" type="number" min="0" max="2" step="2"></div>
-          <div class="full"><button class="btn" id="saveBonus" type="button">GUARDAR PUNTOS ADICIONALES →</button><div id="bonusToast" class="toast"></div></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn alt" type="button" id="backBtn" hidden>← ATRÁS</button>
+        <button class="btn" type="button" id="nextBtn">CONTINUAR →</button>
+      </div>
+      <div class="toast" id="regToast" aria-live="polite"></div>
+    </form>
+  </article>
+</section>
+
+<section id="boardingScreen" class="screen">
+  <div class="boarding">
+    <div class="eyebrow">UNIVERSIDAD EAN · IMPACTA</div>
+    <h2>¡BIENVENIDOS A LA TRIPULACIÓN!</h2>
+    <div class="code" id="bpCode">IDEALAB-026</div>
+    <div class="boarding-grid">
+      <div><div class="label">EMPRENDIMIENTO</div><div class="value" id="bpInitiative"></div></div>
+      <div><div class="label">TRIPULACIÓN</div><div class="value" id="bpMembers"></div></div>
+      <div><div class="label">CATEGORÍA</div><div class="value" id="bpCategory"></div></div>
+      <div><div class="label">SECTOR</div><div class="value" id="bpSector"></div></div>
+      <div class="full"><div class="label">PROTOTIPO REGISTRADO</div><div class="value" id="bpPrototype">Archivo cargado</div></div>
+    </div>
+    <div id="bpWarnings" class="boarding-warning hidden"></div>
+    <p class="hint">PASAPORTE VALIDADO · Acceso autorizado al Centro de Misión de la Aceleratón.</p>
+    <button class="btn" id="enterPassport">INICIAR MISIÓN →</button>
+  </div>
+</section>
+
+<section id="passport" class="screen">
+  <div class="dash">
+    <div>
+      <article class="card">
+        <div class="eyebrow">PASAPORTE DE MISIÓN</div>
+        <h2 class="title" id="dashInitiative">INICIATIVA</h2>
+        <div style="display:flex;justify-content:space-between;gap:12px"><span id="dashCode"></span><b id="pct">0%</b></div>
+        <div class="progress"><span id="bar" style="width:0%"></span></div>
+        <div id="missions"></div>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow">PROTOCOLO DE CONEXIONES</div>
+        <h2 class="title">AMPLÍA TU RED</h2>
+        <div class="connection-card">
+          <div>
+            <p>Cada integrante tiene un QR personal. Cuando otra persona lo escanee, la plataforma abrirá el registro de conexión de forma automática.</p>
+            <p class="hint">Las conexiones pueden clasificarse como potencial cliente, mentor, emprendedor, aliado, experto u otro. También puedes registrar si quedó un próximo encuentro.</p>
+            <label for="qrParticipant">Mostrar QR de</label>
+            <select id="qrParticipant"></select>
+            <a class="btn alt" id="openConnectionPage" href="#" target="_blank" rel="noopener" style="display:inline-block;margin-top:10px">PROBAR MI QR ↗</a>
+          </div>
+          <div class="qrbox">
+            <img id="participantQR" alt="QR personal de conexión" style="width:190px;height:190px;background:#fff;padding:8px">
+            <div><b id="qrOwner">QR PERSONAL</b><br><small id="qrOwnerMeta">Conexiones Aceleratón</small></div>
+          </div>
+        </div>
+      </article>
+    </div>
+    <aside>
+      <article class="card"><h2 class="title">TELEMETRÍA</h2><div class="stats"><div class="stat"><b id="completed">0/8</b><span>MISIONES</span></div><div class="stat"><b id="pendingValidation">0</b><span>POR VALIDAR</span></div><div class="stat"><b id="connectionCount">0</b><span>CONEXIONES</span></div><div class="stat"><b id="nextMission">M01</b><span>SIGUIENTE</span></div></div></article>
+      <article class="card"><h2 class="title">ESTADO DE MISIÓN</h2><p class="hint">Tus calificaciones permanecerán ocultas durante la Aceleratón Go-To-Market. Aquí solo verás el estado de cada entrega.</p><table class="admin-table"><thead><tr><th>Misión</th><th>Estado</th></tr></thead><tbody id="scoreTable"></tbody></table></article>
+    </aside>
+  </div>
+</section>
+
+
+<section id="missionScreen" class="screen">
+  <div class="mission-screen-head">
+    <button class="btn alt" type="button" id="backToPassportTop">← VOLVER AL CONTROL DE MISIÓN</button>
+    <div class="mission-screen-progress"><span id="missionScreenTeam"></span><b id="missionScreenProgress">0/8 MISIONES</b></div>
+  </div>
+
+  <article class="card mission-focus" id="missionWorkspace">
+    <div class="mission-kicker" id="missionCode">M01 · MISIÓN</div>
+    <h2 class="title" id="missionTitle">ESCANEO DE LA MISIÓN</h2>
+
+    <div class="rocky-dialog">
+      <img id="missionRocky" src="assets/rocky/rocky_04_aprendizaje.png" alt="Rocky, guía de la misión">
+      <div>
+        <h3>TRANSMISIÓN DE ROCKY</h3>
+        <p id="missionInstruction"></p>
+      </div>
+    </div>
+<form id="deliveryForm" onsubmit="return false;">
+      <input id="activity" type="hidden"><input id="team" type="hidden">
+      <div class="eyebrow">ENTREGA DE LA MISIÓN</div>
+      <div id="replacementNotice" class="replacement-notice hidden">
+        <b>REEMPLAZAR ENTREGA</b><br>
+        La nueva evidencia sustituirá la evidencia vigente de esta misión y volverá a quedar pendiente de validación.
+      </div>
+      <p class="hint" id="deliveryFormatHint">Para completar la misión debes adjuntar un archivo o incluir un enlace. Con uno de los dos es suficiente.</p>
+      <div class="delivery-requirement">✓ ENTREGA VÁLIDA: adjunta un archivo <b>o</b> pega un enlace. No necesitas completar ambos.</div><div class="delivery-options">
+        <div class="full">
+          <label for="answer">Observaciones <span class="hint">(opcional)</span></label>
+          <textarea id="answer" placeholder="Puedes agregar una nota breve sobre la entrega..."></textarea>
+        </div>
+        <div>
+          <label for="deliveryUrl">Enlace al resultado <span class="hint">(opción habilitada)</span></label>
+          <input id="deliveryUrl" type="url" placeholder="https://...">
+        </div>
+        <div>
+          <label for="deliveryFile" id="deliveryFileLabel">Archivo <span class="hint">(opción de carga)</span></label>
+          <input id="deliveryFile" type="file">
+          <span class="file-limit-note">Carga directa hasta 50 MB. Si pesa más, la plataforma prepara automáticamente una carga externa segura.</span>
         </div>
       </div>
-    </article>
-  </section>
+
+      <div id="largeFileBox" class="large-file-box hidden">
+        <h4>⚠ ARCHIVO DE GRAN TAMAÑO</h4>
+        <p id="largeFileMessage">Este archivo supera el límite de carga directa de 50 MB.</p>
+        <p class="hint">la plataforma preparará automáticamente la carga para tu equipo y esta misión. No necesitas renombrar el archivo.</p>
+
+        <div class="large-upload-name">
+          <span class="hint">ARCHIVO SELECCIONADO</span>
+          <code id="largeOriginalFileName">archivo.ext</code>
+        </div>
+
+        <ol class="large-upload-steps">
+          <li>Pulsa <b>CARGAR ARCHIVO GRANDE</b>.</li>
+          <li>la plataforma registrará automáticamente el equipo, la misión, el nombre y el tamaño.</li>
+          <li>Se abrirá la carga segura de Microsoft. Sube <b>el mismo archivo con su nombre normal</b>.</li>
+          <li>Cuando termine, vuelve a la plataforma y pulsa <b>VERIFICAR MI CARGA</b>.</li>
+        </ol>
+
+        <div class="large-file-actions">
+          <button class="btn" id="prepareAndOpenUpload" type="button">CARGAR ARCHIVO GRANDE ↗</button>
+          <button class="btn alt" id="verifyLargeUpload" type="button">VERIFICAR MI CARGA</button>
+        </div>
+
+        <div id="largeUploadStatus" class="toast" aria-live="polite"></div>
+      </div>
+
+      <div class="mission-submit-row">
+        <button class="btn" type="submit">TRANSMITIR ENTREGA →</button>
+        <span class="points-pill" id="missionPoints"></span>
+      </div>
+      <div class="toast" id="toast" aria-live="polite"></div>
+    </form>
+
+    <div id="completedDeliveryActions" class="completed-delivery-actions hidden">
+      <div class="eyebrow">ENTREGA REGISTRADA</div>
+      <h3>Esta misión ya fue transmitida.</h3>
+      <p class="hint">Puedes consultar la evidencia vigente o reemplazarla si cargaste el archivo o enlace equivocado.</p>
+
+      <div class="evidence-current">
+        <span class="hint">EVIDENCIA VIGENTE</span>
+        <b id="currentEvidenceName">Consultando evidencia…</b>
+      </div>
+
+      <div class="action-row">
+        <a class="btn" id="viewEvidenceBtn" href="#" target="_blank" rel="noopener">VER EVIDENCIA ↗</a>
+        <button class="btn alt" id="replaceDeliveryBtn" type="button">REEMPLAZAR ENTREGA</button>
+      </div>
+      <div class="toast" id="evidenceToast" aria-live="polite"></div>
+    </div>
+
+    <div id="missionSuccess" class="mission-success hidden">
+      <img src="assets/rocky/rocky_01_cool.png" alt="Rocky celebrando">
+      <div>
+        <div class="eyebrow">TRANSMISIÓN RECIBIDA</div>
+        <h2>¡MISIÓN COMPLETADA!</h2>
+        <p>La entrega quedó registrada correctamente. Estado: <b id="successPoints">validación del mentor pendiente</b>.</p>
+        <div class="success-actions">
+          <button class="btn" type="button" id="backToPassportSuccess">VOLVER AL CONTROL DE MISIÓN</button>
+          <button class="btn alt" type="button" id="nextMissionBtn">IR A LA SIGUIENTE MISIÓN →</button>
+        </div>
+      </div>
+    </div>
+  </article>
 </section>
-</div>
+
+
+<section id="connectionScreen" class="screen">
+  <article class="card">
+    <div class="eyebrow">PROTOCOLO DE CONEXIONES · ACELERATÓN GO-TO-MARKET</div>
+    <h2 class="title">CONEXIÓN DETECTADA</h2>
+
+    <div id="connectionLoading" class="connection-detected">
+      <div class="signal">···</div>
+      <div>
+        <h3>LEYENDO SEÑAL</h3>
+        <p class="hint">La plataforma está verificando el código QR.</p>
+      </div>
+    </div>
+
+    <div id="connectionTarget" class="connection-detected hidden">
+      <div class="signal">QR</div>
+      <div>
+        <div class="eyebrow">HAS CONECTADO CON</div>
+        <h3 id="connectionTargetName">Participante</h3>
+        <div class="hint" id="connectionTargetMeta"></div>
+      </div>
+    </div>
+
+    <div id="connectionError" class="connection-login-note hidden"></div>
+
+    <div id="connectionNeedPassport" class="connection-login-note hidden">
+      <b>IDENTIFICA TU TRIPULACIÓN</b>
+      <p>Para registrar quién realizó esta conexión, abre o recupera tu pasaporte en este dispositivo. El QR detectado quedará guardado mientras vuelves.</p>
+      <button class="btn" type="button" id="connectionRecoverBtn">RECUPERAR MI PASAPORTE →</button>
+    </div>
+
+    <form id="qrConnectionForm" class="hidden">
+      <div class="connection-form-grid">
+        <div class="full">
+          <label for="connectionOriginParticipant">¿Quién de tu equipo realizó la conexión?</label>
+          <select id="connectionOriginParticipant" required></select>
+        </div>
+
+        <div class="full">
+          <label>Tipo de conexión</label>
+          <div class="connection-options">
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Potencial cliente" required> Potencial cliente</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Mentor"> Mentor</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Emprendedor"> Emprendedor</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Aliado"> Aliado</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Experto"> Experto</label>
+            <label class="connection-choice"><input type="radio" name="connectionType" value="Otro"> Otro</label>
+          </div>
+        </div>
+
+        <div>
+          <label for="connectionFollowUp">¿Quedó un próximo encuentro?</label>
+          <select id="connectionFollowUp" required>
+            <option value="No">No</option>
+            <option value="Sí">Sí</option>
+          </select>
+        </div>
+
+        <div id="connectionMeetingTypeWrap" class="hidden">
+          <label for="connectionMeetingType">Tipo de encuentro</label>
+          <select id="connectionMeetingType">
+            <option value="">Selecciona</option>
+            <option>Reunión con potencial cliente</option>
+            <option>Mentoría / asesoría</option>
+            <option>Reunión con aliado</option>
+            <option>Demostración / prueba</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn" id="registerQrConnection" type="submit" style="margin-top:18px">REGISTRAR CONEXIÓN →</button>
+      <div class="toast" id="qrConnectionToast" aria-live="polite"></div>
+    </form>
+
+    <div id="connectionSuccess" class="connection-success hidden">
+      <div class="eyebrow">SEÑAL REGISTRADA</div>
+      <h2>✅ CONEXIÓN REGISTRADA</h2>
+      <p id="connectionSuccessText">La conexión quedó registrada correctamente.</p>
+      <button class="btn" type="button" id="connectionBackPassport">VOLVER A MI PASAPORTE →</button>
+    </div>
+  </article>
+</section>
+
+<section id="continueScreen" class="screen">
+  <article class="card admin-login"><div class="eyebrow">RECUPERACIÓN DE PASAPORTE</div><h2 class="title">CONTINUAR MI MISIÓN</h2>
+  <div class="rocky-dialog"><img src="assets/rocky/rocky_03_silencio.png" alt="Rocky"><div><h3>ROCKY TE AYUDA</h3><p>Si registraste tu equipo en este mismo navegador, puedes volver directamente a tu pasaporte. También puedes recuperar tu equipo por correo desde otro navegador.</p></div></div>
+
+  <div id="savedPassportBox" style="margin:18px 0;padding:16px;border:1px solid var(--cyan);background:rgba(89,220,225,.05)">
+    <div class="eyebrow">PASAPORTE EN ESTE DISPOSITIVO</div>
+    <div id="savedPassportText" style="margin:8px 0 14px">Buscando registro local...</div>
+    <button class="btn" id="openSavedPassport" type="button" onclick="openLocalPassport()">ABRIR MI PASAPORTE →</button>
+  </div>
+
+  <div style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)">
+    <div class="eyebrow">RECUPERACIÓN POR CORREO</div>
+    <p class="hint">Ingresa el correo con el que te registraste. La plataforma consultará SharePoint y reconstruirá tu pasaporte y progreso.</p>
+    <label>Correo registrado</label>
+    <input id="recoverEmail" type="email" placeholder="correo@ejemplo.com">
+    <button class="btn alt" id="recoverSearch" type="button" onclick="recoverByEmail(event)">BUSCAR MI EQUIPO →</button>
+    <div class="toast" id="recoverToast" style="min-height:22px;margin-top:10px"></div>
+  </div>
+
+  <button class="btn alt" type="button" onclick="show('welcome')" style="margin-top:18px">← VOLVER</button></article>
+</section>
+
+</main>
 
 <script>
-const API='https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/01/workflows/000307ca6ada436f90dc7c71c0eada3b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wG3_oqoLlJ60LMm0Ofr_RQAt-XEQa7RivZS2U1UG4qI';
-const MISSIONS={
-M01:{name:'Escaneo de la misión',max:10,criteria:['Diagnóstico completo y relevante','Coherencia entre diagnóstico y acciones']},
-M02:{name:'Coordenadas de lanzamiento',max:15,criteria:['Cliente y problema claramente definidos','Propuesta de valor','Coherencia cliente-problema-solución']},
-M03:{name:'Ruta de entrada',max:10,criteria:['Mercado y posicionamiento','Acciones comerciales concretas y coherentes']},
-M04:{name:'Sistema de comunicación',max:15,criteria:['Funcionalidad de la herramienta','Claridad y adaptación al cliente','Propuesta de valor y CTA']},
-M05:{name:'La ruta del cliente',max:15,criteria:['Journey y puntos de contacto','Barreras identificadas','Oportunidades de conversión']},
-M06:{name:'Radar de misión',max:10,criteria:['Indicadores y metas','Relación entre objetivos y decisiones']},
-M07:{name:'Código de transmisión',max:10,criteria:['Problema, cliente y propuesta de valor claros','CTA comercial']},
-M08:{name:'Operación primer cliente',max:15,criteria:['Ejecución y evidencia','Resultado / tracción','Relación implementación-resultados']}
-};
-let mentorName='',mentorKey='MENTOR-2026',deliveries=[],teams=[],view='teams',teamFilter='all',selectedTeamId='',deliveryFilter='all';
+const API_DEFAULT={registrarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/948a17ed67814acc8a4e0c10cae52aa3/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UBV6LXB0tp6tMWZWjCMYlIuda9Bbq-4chmSTLeik_aM",guardarPrototipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/29/workflows/5fc52a568ec64eceb78ab2b6f7cbc9b0/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fA5-7Z2QlvnQrF7QFfMWG_SXcXyA7tuhwARdZw9yu_s",guardarEntrega:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/b7753716dda54656a79674ae8a00c6f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2Q1dGAsi15AnYNKzPf3cBXP-fhRn1qQNjssjYcqWDGM",consultarProgreso:"",ranking:"",registrarConexion:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/06/workflows/e039ed1fd1754251aa20252902037c76/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uhqQMDypaKxhqIn92poihKyWOZy1eencYwHiFmujpsQ",admin:"",recuperarEquipo:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/00b46863cb3d4c7c9fc6601082f978fe/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=CJwLvUjbgS5XTsOf4_Mx9kyNw1ZPfuSbzPNNy_EBj1o",buscarEvidencias:"",asociarEvidencia:"",requestFilesUrl:"https://universidadeaneduco-my.sharepoint.com/:f:/g/personal/tangara_ir_universidadean_edu_co/IgCxirjKtT72T4koarYvwg4cAYTTXY6W1sMJDw6aKswIaJ4",prepararCargaGrande:"https://defaultc06fb5591b684b84a14f47d0d837a5.ab.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/20814ead877640ea879231c99aa97d7d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kGAl68UY6pZxJsqqKUwNUE4X-dp85x3fkcwB2BJt5Ms"};
+const API={...API_DEFAULT};
+function apiReady(){return Boolean(API.registrarEquipo&&API.guardarEntrega)}
 
-const $=s=>document.querySelector(s);
-function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
-async function post(payload){
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json;charset=utf-8'},body:JSON.stringify(payload)});
-  let data={}; try{data=await r.json()}catch{}
-  if(!r.ok||data?.ok===false)throw new Error(data?.error||data?.message||'No fue posible completar la operación.');
-  return data;
+const screens=[...document.querySelectorAll('.screen')];
+function show(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelector('#startBtn').addEventListener('click',()=>show('register'));
+document.querySelector('#continueBtn').addEventListener('click',()=>{
+  show('continueScreen');
+  refreshSavedPassportBox();
+});
+
+let step=1,memberN=0,team={},selectedMission="M01";
+const stepEls=[...document.querySelectorAll('.step')];
+function memberTemplate(i){return `<div class="member" data-member="${i}"><div class="member-head"><b>TRIPULANTE ${i}</b></div><div class="formgrid">
+<div><label>Nombre completo</label><input name="nombre" required></div><div><label>Rol en la universidad</label><select name="rol" class="role" required><option value="">Selecciona</option><option>Estudiante</option><option>Graduado</option><option>Docente</option><option>Colaborador</option><option>Externo, integrante de equipo eanista</option></select></div>
+<div><label>Tipo de documento</label><select name="tipoDocumento" required><option>Cédula de ciudadanía</option><option>Tarjeta de identidad</option><option>Pasaporte</option><option>Otro</option></select></div><div><label>Número de documento</label><input name="documento" required></div>
+<div><label>Correo electrónico</label><input name="correo" type="email" required><span class="hint student-email-note hidden">Si eres estudiante, debes usar tu correo institucional terminado en <b>@universidadean.edu.co</b>.</span></div><div><label>Número de teléfono</label><input name="telefono" type="tel" required></div>
+<div class="conditional academic"><label>Programa / carrera</label><input name="programa"></div><div class="conditional academic"><label>Modalidad</label><select name="modalidad"><option value="">Selecciona</option><option>Presencial</option><option>Virtual</option></select></div>
+<div class="conditional student"><label>Semestre</label><input name="semestre" type="number" min="1" max="20"></div><div class="conditional graduate"><label>Año de graduación</label><input name="graduacion" type="number" min="1950" max="2035"></div></div></div>`}
+function validateStudentEmail(b){
+  const role=b.querySelector('[name="rol"]')?.value||'';
+  const email=b.querySelector('[name="correo"]');
+  if(!email)return true;
+  const value=email.value.trim().toLowerCase();
+  if(role==='Estudiante' && value && !value.endsWith('@universidadean.edu.co')){
+    email.setCustomValidity('Si eres estudiante, debes registrarte con tu correo institucional terminado en @universidadean.edu.co');
+    return false;
+  }
+  email.setCustomValidity('');
+  return true;
 }
-function validDelivery(d){return /^M0[1-8]$/.test(String(d.ActividadID||'')) && String(d.EquipoID||'').startsWith('IDEALAB-')}
-function teamById(id){return teams.find(t=>t.EquipoID===id)||{EquipoID:id,NombreIniciativa:id}}
-function fmtDate(v){if(!v)return 'Sin fecha';try{return new Intl.DateTimeFormat('es-CO',{dateStyle:'short',timeStyle:'short'}).format(new Date(v))}catch{return v}}
-function evidenceHTML(d){
-  const bits=[];
-  if(d.Respuesta)bits.push(`<p><b>Texto:</b> ${esc(d.Respuesta)}</p>`);
-  if(d.Enlace)bits.push(`<p>🔗 <a href="${esc(d.Enlace)}" target="_blank" rel="noopener">ABRIR ENLACE</a></p>`);
-  if(d.EvidenciaURL)bits.push(`<p>📎 <a href="${esc(d.EvidenciaURL)}" target="_blank" rel="noopener">ABRIR EVIDENCIA</a>${d.NombreArchivo?' · '+esc(d.NombreArchivo):''}</p>`);
-  else if(d.NombreArchivo)bits.push(`<p>📎 <b>${esc(d.NombreArchivo)}</b> <span class="mini">(sin vínculo directo disponible)</span></p>`);
-  return bits.join('')||'<p class="mini">La entrega está registrada, pero no tiene evidencia visible en el vínculo recibido.</p>';
+function addMember(){
+  memberN++;
+  document.querySelector('#members').insertAdjacentHTML('beforeend',memberTemplate(memberN));
+  const b=document.querySelector(`[data-member="${memberN}"]`);
+  const role=b.querySelector('.role');
+  const email=b.querySelector('[name="correo"]');
+  role.addEventListener('change',e=>updateRole(b,e.target.value));
+  email.addEventListener('input',()=>validateStudentEmail(b));
+  email.addEventListener('blur',()=>validateStudentEmail(b));
+  document.querySelector('#memberCount').value=memberN;
 }
-function renderKpis(){
-  const rows=deliveries.filter(validDelivery);
-  $('#kDeliveries').textContent=rows.length;
-  $('#kPending').textContent=rows.filter(x=>x.EstadoEvaluacion!=='Validada').length;
-  $('#kValidated').textContent=rows.filter(x=>x.EstadoEvaluacion==='Validada').length;
-  $('#kTeams').textContent=teams.length;
+function updateRole(b,r){
+  b.querySelectorAll('.conditional').forEach(x=>x.classList.remove('show'));
+  if(r==='Estudiante')b.querySelectorAll('.academic,.student').forEach(x=>x.classList.add('show'));
+  if(r==='Graduado')b.querySelectorAll('.academic,.graduate').forEach(x=>x.classList.add('show'));
+  const note=b.querySelector('.student-email-note');
+  if(note)note.classList.toggle('hidden',r!=='Estudiante');
+  validateStudentEmail(b);
+}
+addMember();
+document.querySelector('#addMember').addEventListener('click',()=>{if(memberN<10)addMember()});
+document.querySelector('#memberCount').addEventListener('change',e=>{let n=Math.max(1,Math.min(10,Number(e.target.value)||1));while(memberN<n)addMember();while(memberN>n){document.querySelector(`[data-member="${memberN}"]`).remove();memberN--}});
+function setStep(n){step=n;['regStep1','regStep2','regStep3'].forEach((id,i)=>document.querySelector('#'+id).hidden=i!==n-1);stepEls.forEach((s,i)=>s.classList.toggle('on',i<n));document.querySelector('#backBtn').hidden=n===1;document.querySelector('#nextBtn').textContent=n===3?'GENERAR BOARDING PASS →':'CONTINUAR →'}
+function validateVisible(){
+  if(step===2){
+    for(const b of document.querySelectorAll('.member'))validateStudentEmail(b);
+  }
+  for(const f of document.querySelector('#regStep'+step).querySelectorAll('input,select,textarea')){
+    if(!f.checkValidity()){f.reportValidity();return false}
+  }
+  return true;
+}
+document.querySelector('#nextBtn').addEventListener('click',()=>{if(!validateVisible())return;if(step<3)return setStep(step+1);finishRegistration()});
+document.querySelector('#backBtn').addEventListener('click',()=>setStep(Math.max(1,step-1)));
+function collectMembers(){return [...document.querySelectorAll('.member')].map(b=>{const q=n=>b.querySelector(`[name="${n}"]`)?.value||'';return {ParticipanteID:"",Nombre:q('nombre'),Rol:q('rol'),TipoDocumento:q('tipoDocumento'),Documento:q('documento'),Correo:q('correo'),Telefono:q('telefono'),Programa:q('programa'),Modalidad:q('modalidad'),Semestre:q('semestre'),AnoGraduacion:q('graduacion')}})}
+async function postJSON(url,payload){
+  if(!url)throw new Error('La conexión con la plataforma aún no está configurada en este navegador.');
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),120000);
+  try{
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+    const text=await r.text();
+    let data={};
+    try{data=text?JSON.parse(text):{}}catch{data={raw:text}}
+    if(!r.ok){
+      const err=new Error(data?.error?.message||data?.Mensaje||data?.message||data?.mensaje||('La plataforma respondió '+r.status));
+      err.status=r.status;
+      err.data=data;
+      throw err;
+    }
+    return data;
+  }catch(err){
+    if(err.name==='AbortError')throw new Error('La transmisión tardó demasiado. Intenta nuevamente.');
+    if(err instanceof TypeError)throw new Error('El navegador no pudo conectarse con la plataforma. Puede ser un bloqueo CORS o de red.');
+    throw err;
+  }finally{clearTimeout(timer)}
+}
+function fileToBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]||'');reader.onerror=()=>reject(new Error('No fue posible leer el archivo.'));reader.readAsDataURL(file)})}
+
+const DIRECT_FILE_LIMIT=50*1024*1024;
+const SHAREPOINT_EVIDENCE_BASE='https://universidadeaneduco.sharepoint.com/sites/ComunidadTngara/IDEALAB_Evidencias/';
+
+function refreshLargeUploadUI(){
+  const file=document.querySelector('#deliveryFile')?.files?.[0];
+  const code=document.querySelector('#largeOriginalFileName');
+  if(code)code.textContent=file?.name||'archivo.ext';
 }
 
-function renderTeams(){
-  const q=$('#search').value.trim().toLowerCase();
+function resetLargeFileUI(){
+  const box=document.querySelector('#largeFileBox');
+  const status=document.querySelector('#largeUploadStatus');
+  if(box)box.classList.add('hidden');
+  if(status)status.textContent='';
+}
 
-  const rows=teams.filter(t=>{
-    const name=String(t.NombreIniciativa||'').toLowerCase();
-    if(q && !name.includes(q))return false;
+async function prepareAndOpenLargeUpload(){
+  hydrateTeam();
+  const status=document.querySelector('#largeUploadStatus');
+  const btn=document.querySelector('#prepareAndOpenUpload');
+  const a=activities.find(x=>x.id===selectedMission);
+  const file=document.querySelector('#deliveryFile')?.files?.[0];
 
-    const ds=deliveries.filter(d=>validDelivery(d)&&d.EquipoID===t.EquipoID);
-    const pending=ds.filter(d=>(d.EstadoEvaluacion||'Pendiente')!=='Validada').length;
-    const validated=ds.filter(d=>d.EstadoEvaluacion==='Validada').length;
+  if(!a){status.textContent='No se encontró la misión actual.';return}
+  if(!file){status.textContent='Selecciona primero el archivo.';return}
+  if(file.size<=DIRECT_FILE_LIMIT){status.textContent='Este archivo puede enviarse directamente desde la plataforma.';return}
+  if(!API.prepararCargaGrande){status.textContent='Falta configurar IDEALAB - Preparar Carga Grande.';return}
+  if(!API.requestFilesUrl){status.textContent='Falta configurar el enlace seguro Request Files.';return}
 
-    if(teamFilter==='pending')return pending>0;
-    if(teamFilter==='validated')return ds.length>0 && pending===0 && validated>0;
+  const old=btn.textContent;
+  try{
+    btn.disabled=true;
+    btn.textContent='PREPARANDO CARGA…';
+    status.textContent='Preparando una sesión segura para tu archivo…';
+
+    const result=await postJSON(API.prepararCargaGrande,{
+      EquipoID:team.EquipoID,
+      ActividadID:a.id,
+      NombreArchivo:file.name,
+      TamanoBytes:file.size
+    });
+
+    if(result?.ok===false) throw new Error(result?.mensaje||result?.error||'No fue posible preparar la carga.');
+
+    localStorage.setItem('idealab_large_upload_pending',JSON.stringify({
+      UploadID:result?.UploadID||'',
+      EquipoID:team.EquipoID,
+      ActividadID:a.id,
+      NombreArchivo:file.name,
+      TamanoBytes:file.size,
+      createdAt:new Date().toISOString()
+    }));
+
+    status.textContent=`Sesión ${result?.UploadID||''} preparada. Sube ahora el mismo archivo en Microsoft.`;
+    window.open(API.requestFilesUrl,'_blank','noopener');
+  }catch(err){
+    status.textContent='No fue posible preparar la carga: '+(err?.message||'error desconocido');
+  }finally{
+    btn.disabled=false;
+    btn.textContent=old;
+  }
+}
+
+async function verifyLargeUpload(){
+  hydrateTeam();
+  const status=document.querySelector('#largeUploadStatus');
+  const a=activities.find(x=>x.id===selectedMission);
+  const email=team?.Participantes?.find(p=>p?.Correo)?.Correo||'';
+
+  if(!a){status.textContent='No se encontró la misión actual.';return}
+  if(!email){status.textContent='No encontramos un correo registrado para verificar la entrega.';return}
+  if(!API.recuperarEquipo){status.textContent='La recuperación de equipo no está configurada.';return}
+
+  status.textContent='Verificando si Power Automate ya procesó tu archivo…';
+
+  try{
+    const result=await postJSON(API.recuperarEquipo,{Correo:email});
+    const entregas=Array.isArray(result?.Entregas)?result.Entregas:[];
+    const key=`${team.EquipoID}|${a.id}`;
+
+    let pending=null;
+    try{pending=JSON.parse(localStorage.getItem('idealab_large_upload_pending')||'null')}catch{}
+    const found=entregas.some(e=>{
+      const title=String(e?.Title||'');
+      const act=String(e?.ActividadID||e?.field_2||'');
+      const name=String(e?.NombreArchivo||'');
+      const sameMission=title===key || (title.startsWith(team.EquipoID+'|') && (act===a.id || title.endsWith('|'+a.id)));
+      const sameUpload=!pending?.UploadID || name.includes(pending.UploadID);
+      return sameMission && sameUpload;
+    });
+
+    saveDeliveryCache(entregas);
+    if(found){
+      localStorage.removeItem('idealab_large_upload_pending');
+      status.textContent='✅ Archivo procesado y entrega registrada.';
+      markMissionCompleted(a);
+    }else{
+      status.textContent='Todavía no aparece procesado. Espera unos segundos y vuelve a verificar.';
+    }
+  }catch(err){
+    status.textContent='No fue posible verificar la carga: '+(err?.message||'error desconocido');
+  }
+}
+
+
+const DELIVERY_CACHE_KEY='idealab_current_deliveries';
+let currentDeliveryDetails=null;
+let isReplacingDelivery=false;
+
+function saveDeliveryCache(entregas){
+  const arr=Array.isArray(entregas)?entregas:[];
+  try{localStorage.setItem(DELIVERY_CACHE_KEY,JSON.stringify(arr))}catch{}
+  return arr;
+}
+function loadDeliveryCache(){
+  try{return JSON.parse(localStorage.getItem(DELIVERY_CACHE_KEY)||'[]')||[]}catch{return []}
+}
+function participantEmail(){
+  hydrateTeam();
+  return team?.Participantes?.find(p=>p?.Correo)?.Correo||'';
+}
+function deliveryActivityId(e){
+  const direct=String(e?.ActividadID||e?.field_2||'').toUpperCase();
+  if(/^M\d{2}$/.test(direct))return direct;
+  const parts=String(e?.Title||'').split('|');
+  return /^M\d{2}$/i.test(parts[1]||'')?String(parts[1]).toUpperCase():'';
+}
+function findDeliveryForActivity(entregas,activityId){
+  return (Array.isArray(entregas)?entregas:[]).find(e=>deliveryActivityId(e)===activityId)||null;
+}
+function evidenceInfo(e){
+  if(!e)return {url:'',name:'Evidencia registrada'};
+  const url=String(
+    e.EvidenciaURL ||
+    e.evidenciaURL ||
+    e.Enlace ||
+    e.enlace ||
+    ''
+  ).trim();
+  const name=String(
+    e.NombreArchivo ||
+    e.nombreArchivo ||
+    (e.Enlace?'Enlace de la entrega':'') ||
+    'Evidencia registrada'
+  ).trim();
+  return {url,name};
+}
+async function fetchLatestDeliveries(){
+  const email=participantEmail();
+  if(!email||!API?.recuperarEquipo)return loadDeliveryCache();
+  const result=await postJSON(API.recuperarEquipo,{Correo:email});
+  if(result?.ok!==true)return loadDeliveryCache();
+  return saveDeliveryCache(result.Entregas||[]);
+}
+async function refreshCompletedDeliveryPanel(activityId,force=true){
+  const panel=document.querySelector('#completedDeliveryActions');
+  const nameEl=document.querySelector('#currentEvidenceName');
+  const link=document.querySelector('#viewEvidenceBtn');
+  const toast=document.querySelector('#evidenceToast');
+  if(!panel||!nameEl||!link)return;
+
+  panel.classList.remove('hidden');
+  nameEl.textContent='Consultando evidencia…';
+  link.setAttribute('href','#');
+  link.classList.add('disabled');
+  if(toast)toast.textContent='';
+
+  try{
+    const deliveries=force?await fetchLatestDeliveries():loadDeliveryCache();
+    currentDeliveryDetails=findDeliveryForActivity(deliveries,activityId);
+    const info=evidenceInfo(currentDeliveryDetails);
+    nameEl.textContent=info.name||'Evidencia registrada';
+
+    if(info.url && /^https?:\/\//i.test(info.url)){
+      link.href=info.url;
+      link.classList.remove('disabled');
+    }else{
+      link.href='#';
+      link.classList.add('disabled');
+      if(toast)toast.textContent='La entrega está registrada, pero no tiene un vínculo directo disponible.';
+    }
+  }catch(err){
+    currentDeliveryDetails=findDeliveryForActivity(loadDeliveryCache(),activityId);
+    const info=evidenceInfo(currentDeliveryDetails);
+    nameEl.textContent=info.name||'Evidencia registrada';
+    if(info.url && /^https?:\/\//i.test(info.url)){
+      link.href=info.url;
+      link.classList.remove('disabled');
+    }else if(toast){
+      toast.textContent='No fue posible consultar el vínculo de la evidencia en este momento.';
+    }
+  }
+}
+function startReplacement(){
+  const a=activities.find(x=>x.id===selectedMission);
+  if(!a)return;
+  isReplacingDelivery=true;
+  document.querySelector('#completedDeliveryActions')?.classList.add('hidden');
+  document.querySelector('#missionSuccess')?.classList.add('hidden');
+  document.querySelector('#deliveryForm')?.classList.remove('hidden');
+  document.querySelector('#replacementNotice')?.classList.remove('hidden');
+  document.querySelector('#answer').value='';
+  document.querySelector('#deliveryUrl').value='';
+  document.querySelector('#deliveryFile').value='';
+  resetLargeFileUI();
+  const submit=document.querySelector('#deliveryForm button[type="submit"]');
+  if(submit)submit.textContent='ACTUALIZAR ENTREGA →';
+  document.querySelector('#toast').textContent='Carga la nueva evidencia. La entrega anterior no se borrará físicamente, pero dejará de ser la evidencia vigente.';
+  window.scrollTo({top:document.querySelector('#deliveryForm')?.offsetTop||0,behavior:'smooth'});
+}
+
+function markMissionCompleted(a){
+  a.state='done';
+  const next=activities[activities.indexOf(a)+1];
+  if(next)next.state='open';
+  localStorage.setItem('idealab_progress',JSON.stringify(activities.map(x=>({id:x.id,state:x.state}))));
+  document.querySelector('#answer').value='';
+  document.querySelector('#deliveryUrl').value='';
+  document.querySelector('#deliveryFile').value='';
+  resetLargeFileUI();
+  renderMissions();
+  document.querySelector('#deliveryForm').classList.add('hidden');
+  document.querySelector('#completedDeliveryActions')?.classList.add('hidden');
+  document.querySelector('#successPoints').textContent='validación del mentor pendiente';
+  document.querySelector('#missionSuccess').classList.remove('hidden');
+  const nextBtn=document.querySelector('#nextMissionBtn');
+  if(next){nextBtn.classList.remove('hidden');nextBtn.textContent='IR A '+next.id+' →';nextBtn.onclick=()=>openMission(next.id)}
+  else{nextBtn.classList.add('hidden')}
+  document.querySelector('#toast').textContent='';
+  document.querySelector('#missionScreenProgress').textContent=activities.filter(x=>x.state==='done').length+'/8 MISIONES';
+  isReplacingDelivery=false;
+  document.querySelector('#replacementNotice')?.classList.add('hidden');
+  fetchLatestDeliveries().catch(()=>{});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+
+function renderRegistrationDuplicateError(err){
+  const toast=document.querySelector('#regToast');
+  const data=err?.data||{};
+  if(data?.Codigo==='PARTICIPANTE_OTRO_EQUIPO'){
+    const duplicates=Array.isArray(data.Duplicados)?data.Duplicados:[];
+    const details=duplicates.map(d=>{
+      const who=d.NombreExistente||d.NombreIngresado||'Un integrante';
+      const equipo=d.EquipoExistente?` (${d.EquipoExistente})`:'';
+      return `${who} ya está registrado en otro equipo${equipo}.`;
+    }).join(' ');
+    toast.textContent=`No podemos completar este registro. ${details} Cada persona puede participar en un solo equipo durante la Aceleratón Go-To-Market.`;
+    toast.classList.add('error-toast');
     return true;
+  }
+  return false;
+}
+function showBoardingWarnings(){
+  const box=document.querySelector('#bpWarnings');
+  const warnings=Array.isArray(team?.CoincidenciasNombre)?team.CoincidenciasNombre:[];
+  if(!box)return;
+  if(!warnings.length){box.classList.add('hidden');box.textContent='';return}
+  const items=warnings.map(w=>`${w.NombreIngresado||'Integrante'} se parece a ${w.NombreExistente||'un registro existente'}`).join(' · ');
+  box.textContent='Revisión recomendada: '+items+'. La inscripción fue permitida porque documento y correo no coinciden.';
+  box.classList.remove('hidden');
+}
+function finalizeRegistrationBoarding(){
+  localStorage.setItem('idealab_team',JSON.stringify(team));
+  localStorage.removeItem('idealab_progress');
+  localStorage.removeItem(DELIVERY_CACHE_KEY);
+  activities.forEach((a,i)=>a.state=i===0?'open':'locked');
+  document.querySelector('#bpCode').textContent=team.EquipoID;
+  document.querySelector('#bpInitiative').textContent=team.NombreIniciativa||'';
+  const members=Array.isArray(team.Participantes)?team.Participantes:[];
+  document.querySelector('#bpMembers').textContent=`${members.length} tripulante${members.length===1?'':'s'}${team.ProyectoExistente?' · añadido a proyecto existente':''}`;
+  document.querySelector('#bpCategory').textContent=team.Categoria||'';
+  document.querySelector('#bpSector').textContent=team.Sector||'';
+  document.querySelector('#bpPrototype').textContent=team.PrototipoNombre||'Prototipo registrado';
+  showBoardingWarnings();
+  document.querySelector('#regToast').textContent='';
+  document.querySelector('#regToast').classList.remove('error-toast');
+  hydrateTeam();refreshParticipantQR();renderMissions();show('boardingScreen');
+}
+async function uploadPrototypeDirect(file){
+  if(!API.guardarPrototipo)throw new Error('La carga de prototipo aún no está configurada.');
+  document.querySelector('#regToast').textContent='Cargando prototipo…';
+  const ContenidoArchivo=await fileToBase64(file);
+  const result=await postJSON(API.guardarPrototipo,{EquipoID:team.EquipoID,NombreArchivo:file.name,ContenidoArchivo});
+  if(result?.ok===false)throw new Error(result?.Mensaje||result?.mensaje||'No fue posible guardar el prototipo.');
+  team.PrototipoNombre=file.name;
+  team.PrototipoPendiente=false;
+}
+async function preparePrototypeLarge(file){
+  if(!API.prepararCargaGrande)throw new Error('La carga de archivos grandes aún no está configurada.');
+  if(!API.requestFilesUrl)throw new Error('Falta el enlace seguro de Microsoft.');
+  document.querySelector('#regToast').textContent='Preparando carga segura para el prototipo…';
+  const result=await postJSON(API.prepararCargaGrande,{EquipoID:team.EquipoID,ActividadID:'PROTOTIPO',NombreArchivo:file.name,TamanoBytes:file.size,TipoCarga:'PROTOTIPO'});
+  if(result?.ok===false)throw new Error(result?.Mensaje||result?.mensaje||result?.error||'No fue posible preparar la carga.');
+  team.PrototipoNombre=file.name;team.PrototipoPendiente=true;team.PrototipoUploadID=result?.UploadID||'';
+  localStorage.setItem('idealab_team',JSON.stringify(team));
+  localStorage.setItem('idealab_prototype_large_pending',JSON.stringify({UploadID:result?.UploadID||'',EquipoID:team.EquipoID,NombreArchivo:file.name,TamanoBytes:file.size,createdAt:new Date().toISOString()}));
+  const box=document.querySelector('#prototypeLargeBox');
+  const message=document.querySelector('#prototypeLargeMessage');
+  const link=document.querySelector('#prototypeExternalLink');
+  const status=document.querySelector('#prototypeLargeStatus');
+  if(message)message.textContent=`${file.name} supera 50 MB. La sesión ${result?.UploadID||''} está lista.`;
+  if(link)link.href=API.requestFilesUrl;
+  if(status)status.textContent='Abre Microsoft, sube exactamente este archivo y, cuando finalice, vuelve a esta pestaña.';
+  if(box)box.classList.remove('hidden');
+  document.querySelector('#nextBtn').style.display='none';
+  box?.scrollIntoView({behavior:'smooth',block:'center'});
+}
+async function finishRegistration(){
+  const initiative=document.querySelector('#initiative').value.trim();
+  const prototype=document.querySelector('#prototypeFile')?.files?.[0];
+  if(!prototype){document.querySelector('#prototypeFile')?.reportValidity();return}
+  const newMembers=collectMembers();
+  const payload={EquipoID:"",NombreIniciativa:initiative,Descripcion:document.querySelector('#description').value.trim(),Categoria:document.querySelector('#category').value,Sector:document.querySelector('#sector').value,ProcesoOrigen:document.querySelector('#origin').value,Estado:'Activo',Participantes:newMembers};
+  const btn=document.querySelector('#nextBtn'),oldText=btn.textContent,toast=document.querySelector('#regToast');
+  btn.disabled=true;btn.textContent='VALIDANDO TRIPULACIÓN…';toast.classList.remove('error-toast');toast.textContent='Validando integrantes y registrando el equipo…';
+  try{
+    const result=await postJSON(API.registrarEquipo,payload);
+    const returnedParticipants=Array.isArray(result.Participantes)?result.Participantes:[];
+    const mergedMembers=newMembers.map((p,i)=>({...p,...(returnedParticipants[i]||{})}));
+    team={...payload,EquipoID:result.EquipoID||payload.EquipoID,ProyectoExistente:Boolean(result.ProyectoExistente),Participantes:mergedMembers,CoincidenciasNombre:Array.isArray(result.CoincidenciasNombre)?result.CoincidenciasNombre:[]};
+    if(!team.EquipoID)throw new Error('La plataforma no devolvió el código del equipo.');
+
+    const alreadyInSameTeam=returnedParticipants.filter(p=>
+      String(p?.Estado||'').toLowerCase().includes('ya pertenec')
+    );
+
+    if(alreadyInSameTeam.length){
+      const names=alreadyInSameTeam.map(p=>p.Nombre||p.Correo||'Integrante').join(', ');
+      team.PrototipoNombre='Prototipo previamente registrado';
+      team.PrototipoPendiente=false;
+      toast.classList.remove('error-toast');
+      toast.textContent=`✓ ${names} ya estaba registrado en esta iniciativa (${team.EquipoID}). No se creó un duplicado ni es necesario volver a cargar el prototipo.`;
+      btn.textContent='ABRIENDO EQUIPO…';
+      await new Promise(r=>setTimeout(r,700));
+      finalizeRegistrationBoarding();
+      return;
+    }
+
+    if(result.ProyectoExistente){
+      toast.textContent=`✓ Iniciativa existente identificada (${team.EquipoID}). Registrando únicamente los integrantes nuevos…`;
+    }
+
+    if(prototype.size<=DIRECT_FILE_LIMIT){btn.textContent='CARGANDO PROTOTIPO…';await uploadPrototypeDirect(prototype);finalizeRegistrationBoarding();}
+    else{btn.textContent='PREPARANDO CARGA GRANDE…';await preparePrototypeLarge(prototype);}
+  }catch(e){
+    if(!renderRegistrationDuplicateError(e)){toast.textContent=e?.message||'No fue posible completar el registro.';toast.classList.add('error-toast');}
+  }finally{btn.disabled=false;btn.textContent=oldText}
+}
+document.querySelector('#prototypeFile')?.addEventListener('change',e=>{
+  const file=e.target.files?.[0],box=document.querySelector('#prototypeLargeBox'),next=document.querySelector('#nextBtn');
+  if(box)box.classList.add('hidden');if(next)next.style.display='';if(!file)return;
+  const mb=(file.size/1024/1024).toFixed(1),toast=document.querySelector('#regToast');
+  toast.classList.remove('error-toast');
+  toast.textContent=file.size>DIRECT_FILE_LIMIT?`${file.name} · ${mb} MB. Se usará la carga segura para archivos grandes.`:`${file.name} · ${mb} MB. Se cargará directamente al registrar el equipo.`;
+});
+document.querySelector('#confirmPrototypeLarge')?.addEventListener('click',()=>{
+  team.PrototipoPendiente=false;localStorage.setItem('idealab_team',JSON.stringify(team));localStorage.removeItem('idealab_prototype_large_pending');finalizeRegistrationBoarding();
+});
+document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();renderMissions();show('passport')});
+
+const activities=[
+{id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Completen el Diagnóstico Go-To-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",points:10,state:"open"},
+{id:"M02",name:"Coordenadas de lanzamiento",rocky:"rocky_01_cool.png",instruction:"Definan con precisión a quién quieren llegar y por qué esa persona debería elegirlos. Construyan el Perfil de Cliente y su Propuesta de Valor.",points:15,state:"locked"},
+{id:"M03",name:"Ruta de entrada",rocky:"rocky_03_silencio.png",instruction:"Diseñen la ruta inicial para entrar al mercado: mercado objetivo, posicionamiento, canales y primeras acciones comerciales.",points:10,state:"locked"},
+{id:"M04",name:"Sistema de comunicación",rocky:"rocky_06_comunicacion.png",instruction:"Construyan una herramienta comercial funcional que les permita presentar su propuesta y captar interés real: landing, página de ventas, catálogo o formulario de leads.",points:15,state:"locked"},
+{id:"M05",name:"La ruta del cliente",rocky:"rocky_02_trabajando.png",instruction:"Mapeen el recorrido de su cliente y definan los momentos clave que lo llevan desde el descubrimiento hasta la conversión.",points:15,state:"locked"},
+{id:"M06",name:"Radar de misión",rocky:"rocky_07_metricas.png",instruction:"Definan qué señales demostrarán que su estrategia funciona. Seleccionen indicadores de impacto y tracción y establezcan metas concretas.",points:10,state:"locked"},
+{id:"M07",name:"Código de transmisión",rocky:"rocky_06_comunicacion.png",instruction:"Construyan un pitch comercial breve y claro. Debe explicar el valor de su iniciativa y cerrar con un llamado a la acción concreto.",points:10,state:"locked"},
+{id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",points:15,state:"locked"}
+];
+function hydrateTeam(){if(!team.EquipoID){try{team=JSON.parse(localStorage.getItem('idealab_team')||'{}')}catch{}}if(team.EquipoID){document.querySelector('#dashInitiative').textContent=team.NombreIniciativa;document.querySelector('#dashCode').textContent=team.EquipoID;document.querySelector('#team').value=team.EquipoID}}
+
+function populateMission(id){
+  const a=activities.find(x=>x.id===id);
+  if(!a||a.state==='locked')return false;
+  selectedMission=id;
+  document.querySelector('#missionCode').textContent=a.id+' · MISIÓN';
+  document.querySelector('#missionTitle').textContent=a.name.toUpperCase();
+  document.querySelector('#missionRocky').src='assets/rocky/'+a.rocky;
+  document.querySelector('#missionInstruction').textContent=a.instruction;
+  document.querySelector('#activity').value=a.id;
+  document.querySelector('#missionPoints').textContent='ENTREGA SUJETA A VALIDACIÓN';
+  const deliveryFile=document.querySelector('#deliveryFile');
+  const deliveryHint=document.querySelector('#deliveryFormatHint');
+  const deliveryLabel=document.querySelector('#deliveryFileLabel');
+  if(a.id==='M01'){
+    if(deliveryFile)deliveryFile.setAttribute('accept','image/*,.pdf,application/pdf');
+    if(deliveryHint)deliveryHint.textContent='Entrega el Diagnóstico Go-To-Market como imagen, PDF o enlace. Con una de las tres opciones es suficiente.';
+    if(deliveryLabel)deliveryLabel.innerHTML='Imagen o PDF <span class="hint">(opción de carga)</span>';
+  }else{
+    if(deliveryFile)deliveryFile.removeAttribute('accept');
+    if(deliveryHint)deliveryHint.textContent='Para completar la misión debes adjuntar un archivo o incluir un enlace. Con uno de los dos es suficiente.';
+    if(deliveryLabel)deliveryLabel.innerHTML='Archivo <span class="hint">(opción de carga)</span>';
+  }
+  isReplacingDelivery=false;
+  document.querySelector('#missionSuccess').classList.add('hidden');
+  document.querySelector('#replacementNotice')?.classList.add('hidden');
+  const completedPanel=document.querySelector('#completedDeliveryActions');
+  const deliveryForm=document.querySelector('#deliveryForm');
+  const submit=document.querySelector('#deliveryForm button[type="submit"]');
+  if(submit)submit.textContent='TRANSMITIR ENTREGA →';
+  if(a.state==='done'){
+    deliveryForm.classList.add('hidden');
+    completedPanel?.classList.remove('hidden');
+    refreshCompletedDeliveryPanel(a.id,true);
+  }else{
+    deliveryForm.classList.remove('hidden');
+    completedPanel?.classList.add('hidden');
+  }
+  resetLargeFileUI();
+  refreshLargeUploadUI();
+  document.querySelector('#missionScreenTeam').textContent=(team.NombreIniciativa||'')+' · '+(team.EquipoID||'');
+  const done=activities.filter(x=>x.state==='done').length;
+  document.querySelector('#missionScreenProgress').textContent=done+'/8 MISIONES';
+  return true;
+}
+function openMission(id){
+  hydrateTeam();
+  if(!populateMission(id))return;
+  show('missionScreen');
+}
+function renderMissions(){
+  const wrap=document.querySelector('#missions');
+  wrap.innerHTML='';
+  activities.forEach((a,i)=>{
+    const row=document.createElement('div');
+    row.className='mission '+(a.id===selectedMission?'selected':'');
+    row.setAttribute('data-activity',a.id);
+    row.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div><h4>${a.name}</h4><p>${a.state==='done'?'Pendiente de validación':a.state==='open'?'Lista para trabajar':'Completa la misión anterior'}</p></div><span class="status ${a.state}">${a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA'}</span>`;
+    if(a.state!=='locked'){
+      row.setAttribute('role','button');
+      row.setAttribute('tabindex','0');
+      row.addEventListener('click',()=>openMission(a.id));
+      row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')openMission(a.id)});
+    }
+    wrap.appendChild(row);
   });
+  const done=activities.filter(x=>x.state==='done');
+  const pct=Math.round(done.length/activities.length*100);
+  const next=activities.find(x=>x.state==='open');
+  document.querySelector('#pct').textContent=pct+'%';
+  document.querySelector('#bar').style.width=pct+'%';
+  document.querySelector('#completed').textContent=`${done.length}/${activities.length}`;
+    document.querySelector('#nextMission').textContent=next?next.id:'COMPLETA';
+  document.querySelector('#scoreTable').innerHTML=activities.map(a=>`<tr><td>${a.id}</td><td>${a.state==='done'?'Pendiente de validación':a.state==='open'?'Disponible':'Bloqueada'}</td></tr>`).join('');
+}
+try{
+  const p=JSON.parse(localStorage.getItem('idealab_progress')||'[]');
+  p.forEach(st=>{const a=activities.find(x=>x.id===st.id);if(a)a.state=st.state});
+}catch{}
+renderMissions();
 
-  $('#teamList').innerHTML=rows.length?rows.map(t=>{
-    const ds=deliveries.filter(d=>validDelivery(d)&&d.EquipoID===t.EquipoID);
-    const validated=ds.filter(d=>d.EstadoEvaluacion==='Validada').length;
-    const pending=ds.filter(d=>(d.EstadoEvaluacion||'Pendiente')!=='Validada').length;
-    const prototypeName=t.PrototipoNombre||'';
-    const prototypeURL=t.PrototipoURL||'';
-    const prototype=prototypeURL
-      ? `<a href="${esc(prototypeURL)}" target="_blank" rel="noopener">ABRIR PROTOTIPO ↗</a>${prototypeName?' · '+esc(prototypeName):''}`
-      : (prototypeName?esc(prototypeName):'<span class="mini">Sin prototipo visible en la respuesta del backend.</span>');
 
-    let statusLabel='SIN ENTREGAS';
-    if(pending>0)statusLabel=`${pending} PENDIENTE${pending===1?'':'S'}`;
-    else if(ds.length>0)statusLabel='EVALUADA';
+document.querySelector('#resourceLink')?.addEventListener('click',e=>{if(e.currentTarget.getAttribute('href')==='#'){e.preventDefault();document.querySelector('#toast').textContent='Recurso pendiente de cargar por Impacta.'}});
 
-    return `<article class="team-card">
-      <div class="eyebrow">${esc(t.EquipoID||'EQUIPO')} · ${statusLabel}</div>
-      <h3>${esc(t.NombreIniciativa||t.EquipoID||'Iniciativa')}</h3>
-      <div class="team-meta">${esc(t.Categoria||'Sin categoría')} · ${esc(t.Sector||'Sin sector')}</div>
-      <div class="team-stats">
-        <div class="team-stat"><b>${ds.length}</b><span>ENTREGAS</span></div>
-        <div class="team-stat"><b>${pending}</b><span>PENDIENTES</span></div>
-        <div class="team-stat"><b>${validated}</b><span>EVALUADAS</span></div>
-      </div>
-      <div class="team-prototype"><b>Prototipo</b><br>${prototype}</div>
-      <div class="actions">
-        <button class="btn alt" type="button" data-open-team="${esc(t.EquipoID||'')}">VER Y EVALUAR →</button>
-      </div>
-    </article>`;
-  }).join(''):'<div class="empty" style="grid-column:1/-1">No hay iniciativas para este filtro.</div>';
+document.querySelector('#deliveryFile')?.addEventListener('change',e=>{
+  const file=e.target.files?.[0];
+  const box=document.querySelector('#largeFileBox');
+  const msg=document.querySelector('#largeFileMessage');
+  const submit=document.querySelector('#deliveryForm button[type="submit"]');
 
-  document.querySelectorAll('[data-open-team]').forEach(btn=>btn.addEventListener('click',()=>{
-    selectedTeamId=btn.dataset.openTeam||'';
-    deliveryFilter='all';
-    document.querySelectorAll('.delivery-filter').forEach(x=>x.classList.toggle('active',x.dataset.deliveryFilter==='all'));
-    openSelectedTeam();
+  if(file && file.size>DIRECT_FILE_LIMIT){
+    box.classList.remove('hidden');
+    const mb=(file.size/1024/1024).toFixed(1);
+    msg.textContent=`${file.name} pesa ${mb} MB y supera el límite de carga directa de 50 MB.`;
+    if(submit)submit.dataset.oversize='1';
+    refreshLargeUploadUI();
+  }else{
+    resetLargeFileUI();
+    if(submit)delete submit.dataset.oversize;
+  }
+});
+
+document.querySelector('#prepareAndOpenUpload')?.addEventListener('click',prepareAndOpenLargeUpload);
+document.querySelector('#verifyLargeUpload')?.addEventListener('click',verifyLargeUpload);
+
+document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  hydrateTeam();
+  if(!team.EquipoID){document.querySelector('#toast').textContent='Primero debes registrar tu equipo.';return}
+  const a=activities.find(x=>x.id===selectedMission);
+  const answer=document.querySelector('#answer').value.trim();
+  const url=document.querySelector('#deliveryUrl').value.trim();
+  const file=document.querySelector('#deliveryFile').files[0];
+  if(!url&&!file){document.querySelector('#toast').textContent='Para completar la misión debes adjuntar un archivo o incluir un enlace.';return}
+  if(file && file.size>DIRECT_FILE_LIMIT){document.querySelector('#largeFileBox').classList.remove('hidden');refreshLargeUploadUI();document.querySelector('#toast').textContent='Este archivo supera 50 MB. Usa CARGAR ARCHIVO GRANDE y luego VERIFICAR MI CARGA.';return}
+  const submitBtn=e.submitter||document.querySelector('#deliveryForm button[type="submit"]');
+  const oldText=submitBtn?.textContent||'';
+  try{
+    if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='TRANSMITIENDO…'}
+    document.querySelector('#toast').textContent=file?'Preparando archivo y transmitiendo…':'Transmitiendo entrega…';
+    const ArchivoBase64=file?await fileToBase64(file):'';
+    const payload={
+      EquipoID:team.EquipoID,
+      ActividadID:a.id,
+      Respuesta:answer,
+      Enlace:url,
+      NombreArchivo:file?.name||'',
+      ArchivoBase64,
+      FechaHoraEntrega:new Date().toISOString()
+    };
+    const result=await postJSON(API.guardarEntrega,payload);
+    if(result.ok===false)throw new Error(result.error||'No fue posible guardar la entrega.');
+    markMissionCompleted(a);
+  }catch(err){
+    document.querySelector('#toast').textContent='No fue posible transmitir la entrega: '+(err?.message||'error desconocido');
+  }finally{if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=oldText}}
+});
+
+
+document.querySelector('#replaceDeliveryBtn')?.addEventListener('click',startReplacement);
+document.querySelector('#viewEvidenceBtn')?.addEventListener('click',e=>{
+  const href=e.currentTarget.getAttribute('href')||'#';
+  if(href==='#'){
+    e.preventDefault();
+    document.querySelector('#evidenceToast').textContent='Esta entrega no tiene un vínculo directo disponible todavía.';
+  }
+});
+
+document.querySelector('#backToPassportTop').addEventListener('click',()=>{renderMissions();show('passport')});
+document.querySelector('#backToPassportSuccess').addEventListener('click',()=>{renderMissions();show('passport')});
+
+function normalizeRecoveredTeam(result){
+  const e=result?.Equipo||{};
+  const participantsRaw=Array.isArray(result?.Participantes)?result.Participantes:[];
+  const participants=participantsRaw.map(p=>({
+    ParticipanteID:p.Title||'',
+    EquipoID:p.field_1||result.EquipoID||'',
+    Nombre:p.field_2||'',
+    TipoDocumento:p.field_3||'',
+    Documento:p.field_4||'',
+    Correo:p.field_5||'',
+    Telefono:p.field_6||'',
+    Rol:p.field_7||'',
+    Programa:p.field_8||'',
+    Modalidad:p.field_9||'',
+    Semestre:p.field_10||'',
+    AnoGraduacion:p.field_11||'',
+    CodigoQR:p.CodigoQR||''
   }));
-}
-
-function openSelectedTeam(){
-  const t=teamById(selectedTeamId);
-  view='deliveries';
-  $('#teamsView').classList.add('hidden');
-  $('#deliveriesView').classList.remove('hidden');
-  $('#bonusView').classList.add('hidden');
-
-  $('#selectedTeamName').textContent=t.NombreIniciativa||t.EquipoID||'Iniciativa';
-  $('#selectedTeamMeta').textContent=`${t.EquipoID||''}${t.Categoria?' · '+t.Categoria:''}${t.Sector?' · '+t.Sector:''}`;
-
-  renderDeliveries();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function goBackToTeams(){
-  selectedTeamId='';
-  deliveryFilter='all';
-  view='teams';
-  $('#deliveriesView').classList.add('hidden');
-  $('#bonusView').classList.add('hidden');
-  $('#teamsView').classList.remove('hidden');
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.view==='teams'));
-  renderTeams();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function renderDeliveries(){
-  const rows=deliveries.filter(validDelivery).filter(d=>{
-    if(selectedTeamId && d.EquipoID!==selectedTeamId)return false;
-    const st=d.EstadoEvaluacion||'Pendiente';
-    if(deliveryFilter==='pending')return st!=='Validada';
-    if(deliveryFilter==='validated')return st==='Validada';
-    return true;
-  });
-  $('#deliveryList').innerHTML=rows.length?rows.map((d,i)=>{
-    const m=MISSIONS[d.ActividadID]||{name:d.ActividadID,max:num(d.PuntosObtenidos)||0,criteria:[]};
-    const team=teamById(d.EquipoID);
-    const status=d.EstadoEvaluacion||'Pendiente';
-    const current=d.PuntosValidados==null?'':num(d.PuntosValidados);
-    const needsReason=status==='Validada';
-    return `<article class="delivery ${status.toLowerCase()}">
-      <div class="delivery-head">
-        <div><div class="eyebrow">${d.ActividadID} · ${esc(m.name)}</div><h3>${esc(team.NombreIniciativa||d.EquipoID)}</h3><div class="meta">${esc(d.EquipoID)} · ${fmtDate(d.FechaHoraEntrega)}</div></div>
-        <span class="badge ${status.toLowerCase()}">${esc(status.toUpperCase())}</span>
-      </div>
-      <div class="evidence">${evidenceHTML(d)}</div>
-      <div class="rubric"><b>CRITERIOS DE REFERENCIA</b><br>${m.criteria.map(x=>'• '+esc(x)).join('<br>')}<br><span class="mini">Escala orientadora: 0 No cumple · 1 Incipiente · 2 En desarrollo · 3 Cumple · 4 Destacado · 5 Sobresaliente.</span></div>
-      <div class="eval">
-        <div><label>Puntaje máximo</label><input value="${m.max}" readonly></div>
-        <div><label>Puntaje validado</label><input id="score_${i}" type="number" min="0" max="${m.max}" step=".5" value="${current}"></div>
-        <div class="full"><label>Retroalimentación</label><textarea id="feed_${i}">${esc(d.Retroalimentacion||'')}</textarea></div>
-        <div class="full ${needsReason?'':'hidden'}" id="reasonWrap_${i}"><label>Motivo del cambio ${needsReason?'(requerido si modificas una evaluación validada)':''}</label><textarea id="reason_${i}">${esc(d.MotivoCambio||'')}</textarea></div>
-        <div class="full actions"><button class="btn" onclick="saveEvaluation(${i})" type="button">${status==='Validada'?'ACTUALIZAR EVALUACIÓN':'VALIDAR EVALUACIÓN'} →</button></div>
-        <div class="full toast" id="toast_${i}"></div>
-      </div>
-    </article>`;
-  }).join(''):'<div class="empty">Esta iniciativa todavía no tiene entregas para evaluar.</div>';
-  window.filteredRows=rows;
-}
-async function saveEvaluation(i){
-  const d=window.filteredRows[i]; if(!d)return;
-  const m=MISSIONS[d.ActividadID]; const score=num($('#score_'+i).value); const feed=$('#feed_'+i).value.trim(); const reason=$('#reason_'+i)?.value.trim()||'';
-  const toast=$('#toast_'+i);
-  if(score<0||score>m.max){toast.textContent=`El puntaje debe estar entre 0 y ${m.max}.`;return}
-  const old=d.PuntosValidados==null?null:num(d.PuntosValidados);
-  if(d.EstadoEvaluacion==='Validada' && old!==score && !reason){toast.textContent='Escribe el motivo del cambio de puntaje.';return}
-  toast.textContent='Guardando evaluación…';
-  try{
-    await post({Accion:'guardar_evaluacion',ClaveAcceso:mentorKey,EquipoID:d.EquipoID,ActividadID:d.ActividadID,PuntosValidados:score,Evaluador:mentorName,Retroalimentacion:feed,MotivoCambio:reason});
-    toast.textContent='✅ Evaluación guardada.';
-    await loadData();
-  }catch(e){toast.textContent=e.message}
-}
-function bonusVal(t,key){return num(t?.[key] ?? (key==='BonusProspecto'?t?.['BonusProspecto\n']:0))}
-function renderBonusTeams(){
-  const sel=$('#bonusTeam'); const cur=sel.value;
-  sel.innerHTML=teams.map(t=>`<option value="${esc(t.EquipoID)}">${esc(t.NombreIniciativa||t.EquipoID)}</option>`).join('');
-  if(cur && teams.some(t=>t.EquipoID===cur))sel.value=cur;
-  fillBonus();
-}
-function fillBonus(){
-  const t=teamById($('#bonusTeam').value);
-  $('#bProspecto').value=bonusVal(t,'BonusProspecto');
-  $('#bConversacion').value=bonusVal(t,'BonusConversacion');
-  $('#bReunion').value=bonusVal(t,'BonusReunion');
-  $('#bVenta').value=bonusVal(t,'BonusVenta');
-  $('#bTempranas').value=bonusVal(t,'BonusTempranas');
-  $('#bFeedback').value=bonusVal(t,'BonusFeedback');
-  updateBonusPreview();
-  $('#teamTotal').textContent=`Puntaje total registrado: ${num(t.PuntosTotal).toFixed(1)}`;
-}
-function updateBonusPreview(){
-  const total=['#bProspecto','#bConversacion','#bReunion','#bVenta','#bTempranas','#bFeedback'].reduce((s,id)=>s+num($(id).value),0);
-  $('#bonusTotal').textContent=`${total.toFixed(1)} / 20`;
-}
-async function saveBonus(){
-  const t=teamById($('#bonusTeam').value); const toast=$('#bonusToast');
-  const payload={
-    Accion:'guardar_bonus',ClaveAcceso:mentorKey,EquipoID:t.EquipoID,
-    BonusProspecto:num($('#bProspecto').value),BonusConversacion:num($('#bConversacion').value),
-    BonusReunion:num($('#bReunion').value),BonusVenta:num($('#bVenta').value),
-    BonusTempranas:num($('#bTempranas').value),BonusFeedback:num($('#bFeedback').value)
+  return {
+    EquipoID:result?.EquipoID||e.Title||'',
+    NombreIniciativa:e.field_1||'',
+    Descripcion:e.field_2||'',
+    Categoria:e.field_3||'',
+    Sector:e.field_4||'',
+    ProcesoOrigen:e.field_5||'',
+    Estado:e.field_6||'Activo',
+    ProyectoExistente:true,
+    Participantes:participants
   };
-  const total=payload.BonusProspecto+payload.BonusConversacion+payload.BonusReunion+payload.BonusVenta+payload.BonusTempranas+payload.BonusFeedback;
-  if(total>20){toast.textContent='Los puntos adicionales no pueden superar 20.';return}
-  toast.textContent='Guardando…';
-  try{await post(payload);toast.textContent='✅ Puntos adicionales actualizados.';await loadData();}catch(e){toast.textContent=e.message}
 }
-async function loadData(){
-  const [a,b]=await Promise.all([
-    post({Accion:'listar_entregas',ClaveAcceso:mentorKey}),
-    post({Accion:'listar_equipos',ClaveAcceso:mentorKey})
-  ]);
-  deliveries=Array.isArray(a.Entregas)?a.Entregas:[];
-  teams=Array.isArray(b.Equipos)?b.Equipos:[];
-  renderKpis(); renderTeams(); renderDeliveries(); renderBonusTeams();
+
+function restoreMissionProgress(entregas){
+  saveDeliveryCache(entregas);
+  const delivered=new Set((Array.isArray(entregas)?entregas:[]).map(e=>{
+    const direct=e.ActividadID||e.field_2||'';
+    if(/^M\d{2}$/i.test(String(direct))) return String(direct).toUpperCase();
+    const parts=String(e.Title||'').split('|');
+    return /^M\d{2}$/i.test(parts[1]||'')?parts[1].toUpperCase():'';
+  }).filter(Boolean));
+  activities.forEach(a=>a.state='locked');
+  let firstOpenSet=false;
+  for(const a of activities){
+    if(delivered.has(a.id)) a.state='done';
+    else if(!firstOpenSet){a.state='open';firstOpenSet=true;}
+  }
+  if(!firstOpenSet&&activities.length) activities.forEach(a=>a.state='done');
+  localStorage.setItem('idealab_progress',JSON.stringify(activities.map(a=>({id:a.id,state:a.state}))));
 }
-async function login(){
-  mentorName=$('#mentorName').value.trim(); const toast=$('#loginToast');
-  if(!mentorName){toast.textContent='Escribe tu nombre para continuar.';return}
-  toast.textContent='Cargando iniciativas…'; $('#loginBtn').disabled=true;
+
+function refreshSavedPassportBox(){
+  const text=document.querySelector('#savedPassportText');
+  const btn=document.querySelector('#openSavedPassport');
   try{
-    await loadData();
-    sessionStorage.setItem('idealab_mentor_name',mentorName);
-    $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); toast.textContent='';
-  }catch(e){toast.textContent=e.message}finally{$('#loginBtn').disabled=false}
+    const saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
+    if(saved?.EquipoID){
+      const name=saved.NombreIniciativa||'Equipo Aceleratón';
+      text.innerHTML='<b>'+name+'</b><br><span class="hint">'+saved.EquipoID+'</span>';
+      btn.disabled=false;
+      return;
+    }
+  }catch{}
+  text.textContent='No hay un pasaporte guardado en este navegador.';
+  btn.disabled=true;
 }
-$('#loginBtn').addEventListener('click',login);
-$('#mentorName').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
-$('#refreshBtn').addEventListener('click',()=>loadData().catch(e=>alert(e.message)));
-$('#search').addEventListener('input',renderTeams);
-$('#backToTeams').addEventListener('click',goBackToTeams);
+function openLocalPassport(){
+  const toast=document.querySelector('#recoverToast');
+  let saved=null;
+  try{
+    saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
+  }catch(e){
+    if(toast)toast.textContent='No fue posible leer el pasaporte guardado en este navegador.';
+    return;
+  }
 
-document.querySelectorAll('.team-filter').forEach(btn=>btn.addEventListener('click',()=>{
-  teamFilter=btn.dataset.teamFilter||'all';
-  document.querySelectorAll('.team-filter').forEach(x=>x.classList.toggle('active',x===btn));
-  renderTeams();
-}));
+  if(!saved?.EquipoID){
+    if(toast)toast.textContent='No hay un pasaporte guardado en este navegador.';
+    return;
+  }
 
-document.querySelectorAll('.delivery-filter').forEach(btn=>btn.addEventListener('click',()=>{
-  deliveryFilter=btn.dataset.deliveryFilter||'all';
-  document.querySelectorAll('.delivery-filter').forEach(x=>x.classList.toggle('active',x===btn));
-  renderDeliveries();
-}));
+  team=saved;
 
-$('#bonusTeam').addEventListener('change',fillBonus); $('#saveBonus').addEventListener('click',saveBonus);
-['#bProspecto','#bConversacion','#bReunion','#bVenta','#bTempranas','#bFeedback'].forEach(id=>$(id).addEventListener('input',updateBonusPreview));
-document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===btn));
-  view=btn.dataset.view;
-  selectedTeamId='';
-  $('#teamsView').classList.toggle('hidden',view!=='teams');
-  $('#deliveriesView').classList.add('hidden');
-  $('#bonusView').classList.toggle('hidden',view!=='bonus');
-  if(view==='teams')renderTeams();
-  if(view==='bonus')renderBonusTeams();
-}));
-window.saveEvaluation=saveEvaluation;
-$('#mentorName').value=sessionStorage.getItem('idealab_mentor_name')||'';
+  // Primero navegamos al pasaporte. Las funciones auxiliares no deben impedir el acceso.
+  show('passport');
+
+  try{ hydrateTeam(); }catch(e){ console.warn('hydrateTeam:',e); }
+  try{ renderMissions(); }catch(e){ console.warn('renderMissions:',e); }
+  try{ refreshParticipantQR(); }catch(e){ console.warn('refreshParticipantQR:',e); }
+  try{ refreshParticipantTelemetry(); }catch(e){ console.warn('refreshParticipantTelemetry:',e); }
+
+  if(toast)toast.textContent='';
+  resumePendingConnectionIfAny();
+}
+window.openLocalPassport=openLocalPassport;
+
+async function recoverByEmail(event){
+  if(event){event.preventDefault();event.stopPropagation();}
+  const emailEl=document.querySelector('#recoverEmail');
+  const toast=document.querySelector('#recoverToast');
+  const btn=document.querySelector('#recoverSearch');
+  const email=String(emailEl?.value||'').trim();
+
+  if(!email){
+    if(toast)toast.textContent='Ingresa el correo con el que te registraste.';
+    if(emailEl)emailEl.focus();
+    return false;
+  }
+
+  if(!API?.recuperarEquipo){
+    if(toast)toast.textContent='La recuperación por correo no está configurada.';
+    return false;
+  }
+
+  const oldText=btn?.textContent||'BUSCAR MI EQUIPO →';
+  try{
+    if(btn){btn.disabled=true;btn.textContent='BUSCANDO…';}
+    if(toast)toast.textContent='Consultando tu pasaporte en SharePoint…';
+
+    const result=await postJSON(API.recuperarEquipo,{Correo:email});
+    if(!result || result.ok!==true){
+      throw new Error(result?.mensaje||result?.message||'No fue posible recuperar el equipo.');
+    }
+
+    team=normalizeRecoveredTeam(result);
+    if(!team.EquipoID)throw new Error('La plataforma encontró el registro, pero no devolvió el EquipoID.');
+
+    localStorage.setItem('idealab_team',JSON.stringify(team));
+    restoreMissionProgress(result.Entregas||[]);
+
+    try{hydrateTeam()}catch(e){console.warn('hydrateTeam:',e)}
+    try{renderMissions()}catch(e){console.warn('renderMissions:',e)}
+    try{refreshParticipantQR()}catch(e){console.warn('refreshParticipantQR:',e)}
+    try{refreshParticipantTelemetry()}catch(e){console.warn('refreshParticipantTelemetry:',e)}
+
+    if(toast)toast.textContent='Pasaporte recuperado.';
+    refreshSavedPassportBox();
+    if(!(await resumePendingConnectionIfAny())) show('passport');
+  }catch(err){
+    console.error('IdeaLab recuperación:',err);
+    if(toast)toast.textContent=err?.message||'No fue posible recuperar el equipo.';
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=oldText;}
+  }
+  return false;
+}
+window.recoverByEmail=recoverByEmail;
+document.querySelector('#recoverEmail')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();recoverByEmail(e);}});
+
+refreshSavedPassportBox();
+
+const DEMO_KEY='idealab_demo_deliveries_v3';
+const demoSeed=[
+{id:'D001',EquipoID:'IDEALAB-101',Equipo:'NovaLab',ActividadID:'M03',Mision:'Ruta de entrada',Respuesta:'Definimos entrada B2B mediante aliados y venta consultiva.',Enlace:'https://example.com',Archivo:'Plan_GTM_NovaLab.pdf',PuntosProvisionales:10,PuntosValidados:null,EstadoEvaluacion:'Pendiente',Retroalimentacion:'',Fecha:'06/10/2026 10:42'},
+{id:'D002',EquipoID:'IDEALAB-202',Equipo:'EcoLoop',ActividadID:'M02',Mision:'Coordenadas de lanzamiento',Respuesta:'Priorizamos empresas medianas con metas de circularidad.',Enlace:'',Archivo:'Cliente_Propuesta_EcoLoop.pdf',PuntosProvisionales:15,PuntosValidados:18,EstadoEvaluacion:'Validada',Retroalimentacion:'Buen foco. Falta precisar el decisor de compra.',Fecha:'06/10/2026 11:15'},
+{id:'D003',EquipoID:'IDEALAB-303',Equipo:'BioRuta',ActividadID:'M04',Mision:'Sistema de comunicación',Respuesta:'Creamos una landing con formulario para leads.',Enlace:'https://example.com',Archivo:'',PuntosProvisionales:15,PuntosValidados:null,EstadoEvaluacion:'Pendiente',Retroalimentacion:'',Fecha:'06/10/2026 12:03'}];
+function loadD(){try{return JSON.parse(localStorage.getItem(DEMO_KEY))||[...demoSeed]}catch{return [...demoSeed]}}
+let demoDeliveries=loadD();function saveD(){localStorage.setItem(DEMO_KEY,JSON.stringify(demoDeliveries))}if(!localStorage.getItem(DEMO_KEY))saveD();
+function effectivePoints(d){return d.PuntosValidados==null?d.PuntosProvisionales:Number(d.PuntosValidados)}
+function sclass(s){return s==='Validada'?'validated':s==='Requiere ajuste'?'adjust':'pending'}
+function syncParticipantDelivery(p,fileName){const a=activities.find(x=>x.id===p.ActividadID);const old=demoDeliveries.find(d=>d.EquipoID===p.EquipoID&&d.ActividadID===p.ActividadID);const d={id:old?.id||'D'+Date.now(),EquipoID:p.EquipoID,Equipo:team.NombreIniciativa||p.EquipoID,ActividadID:p.ActividadID,Mision:a?.name||p.ActividadID,Respuesta:p.Respuesta||'',Enlace:p.Enlace||'',Archivo:fileName||'',PuntosProvisionales:a?.points||10,PuntosValidados:old?.PuntosValidados??null,EstadoEvaluacion:old?.EstadoEvaluacion||'Pendiente',Retroalimentacion:old?.Retroalimentacion||'',Fecha:new Date().toLocaleString('es-CO')};old?Object.assign(old,d):demoDeliveries.unshift(d);saveD();renderAdmin()}
+function renderAdmin(){const list=document.querySelector('#deliveryList');if(!list)return;const f=document.querySelector('#adminFilter')?.value||'all',q=(document.querySelector('#adminSearch')?.value||'').toLowerCase();const rows=demoDeliveries.filter(d=>(f==='all'||d.EstadoEvaluacion===f)&&(!q||d.Equipo.toLowerCase().includes(q)));list.innerHTML=rows.map(d=>`<div class="delivery-card ${sclass(d.EstadoEvaluacion)}"><div class="delivery-head"><div><div class="mission-kicker">${d.ActividadID} · ${d.Mision}</div><h3>${d.Equipo}</h3><div class="delivery-meta">${d.Fecha} · ${d.EquipoID}</div></div><span class="badge ${sclass(d.EstadoEvaluacion)}">${d.EstadoEvaluacion.toUpperCase()}</span></div><div class="evidence-box"><div class="label">EVIDENCIA</div>${d.Respuesta?`<p>${d.Respuesta}</p>`:''}${d.Enlace?`<p>🔗 <a href="${d.Enlace}" target="_blank">ABRIR ENLACE</a></p>`:''}${d.Archivo?`<p>📎 <b>${d.Archivo}</b> <button class="btn alt" type="button" style="padding:6px;margin:0" onclick="alert('Vista previa demo: ${d.Archivo}\\nEn producción abrirá el archivo de SharePoint.')">VER ARCHIVO</button></p>`:''}</div><div class="grade-panel"><div><label>Puntos automáticos</label><input value="${d.PuntosProvisionales}" readonly></div><div><label>Calificación final</label><input id="g_${d.id}" type="number" min="0" max="${d.PuntosProvisionales}" value="${d.PuntosValidados??d.PuntosProvisionales}"></div><div class="full"><label>Retroalimentación</label><textarea id="f_${d.id}">${d.Retroalimentacion||''}</textarea></div><div class="full grade-actions"><button class="btn" type="button" onclick="grade('${d.id}','Validada')">CONFIRMAR EVALUACIÓN</button><button class="btn alt" type="button" onclick="grade('${d.id}','Requiere ajuste')">REQUIERE AJUSTE</button></div></div>${d.Retroalimentacion?`<div class="feedback"><b>Retroalimentación:</b> ${d.Retroalimentacion}</div>`:''}</div>`).join('')||'<p class="hint">No hay entregas.</p>';document.querySelector('#admDeliveries').textContent=demoDeliveries.length;document.querySelector('#admPending').textContent=demoDeliveries.filter(d=>d.EstadoEvaluacion==='Pendiente').length;ranking()}
+function grade(id,status){const d=demoDeliveries.find(x=>x.id===id);if(!d)return;d.PuntosValidados=Math.max(0,Math.min(d.PuntosProvisionales,Number(document.querySelector('#g_'+id).value)));d.EstadoEvaluacion=status;d.Retroalimentacion=document.querySelector('#f_'+id).value.trim();d.EvaluadoPor='Mentor Aceleratón';d.FechaEvaluacion=new Date().toLocaleString('es-CO');saveD();renderAdmin();refreshScore()}
+function ranking(){const b=document.querySelector('#adminRanking');if(!b)return;const r=[{n:'NovaLab',p:58,m:3},{n:'EcoLoop',p:54,m:3},{n:'BioRuta',p:40,m:2}];if(team.EquipoID){const o=demoDeliveries.filter(d=>d.EquipoID===team.EquipoID);r.push({n:team.NombreIniciativa||'Tu equipo',p:o.reduce((s,d)=>s+effectivePoints(d),0),m:o.length})}r.sort((a,b)=>b.p-a.p);b.innerHTML=r.map((x,i)=>`<tr><td>${i+1}</td><td>${x.n}</td><td>${x.p}</td><td>${x.m}/8</td></tr>`).join('')}
+function refreshScore(){refreshParticipantTelemetry();}
+document.querySelector('#adminFilter')?.addEventListener('change',renderAdmin);document.querySelector('#adminSearch')?.addEventListener('input',renderAdmin);
+const showBase=show;show=function(id){showBase(id);if(id==='passport')refreshScore()}
+renderAdmin();
+
+
+
+
+
+
+
+
+let selectedExistingProject=null;
+const BASE_DEMO_PROJECTS=[];
+function normProject(v){return (v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function availableProjects(){
+  const list=[...BASE_DEMO_PROJECTS];
+  try{
+    const local=JSON.parse(localStorage.getItem('idealab_team')||'{}');
+    if(local.EquipoID&&local.NombreIniciativa){
+      const idx=list.findIndex(x=>normProject(x.NombreIniciativa)===normProject(local.NombreIniciativa));
+      const p={EquipoID:local.EquipoID,NombreIniciativa:local.NombreIniciativa,Categoria:local.Categoria||'',Sector:local.Sector||'',Descripcion:local.Descripcion||'',miembros:(local.Participantes||[]).map(x=>x.Nombre).filter(Boolean)};
+      if(idx>=0)list[idx]=p;else list.push(p);
+    }
+  }catch{}
+  return list;
+}
+function checkExistingProject(){
+  const inp=document.querySelector('#initiative');
+  const box=document.querySelector('#projectMatchBox');
+  if(!inp||!box)return;
+  selectedExistingProject=null;
+  inp.classList.remove('project-found-input');
+  const query=normProject(inp.value);
+  if(query.length<3){box.innerHTML='';return}
+  const hit=availableProjects().find(p=>normProject(p.NombreIniciativa)===query);
+  if(!hit){box.innerHTML='<div class="hint">El nombre de la iniciativa se validará con la base de IdeaLab al continuar.</div>';return}
+  inp.classList.add('project-found-input');
+  box.innerHTML=`<div class="project-match">
+    <div class="eyebrow">PROYECTO YA REGISTRADO</div>
+    <h3>${hit.NombreIniciativa}</h3>
+    <p>Encontramos esta iniciativa con el código <strong>${hit.EquipoID}</strong>. No crearemos un duplicado.</p>
+    <p class="hint">Tripulación actual: ${hit.miembros.length?hit.miembros.join(', '):'Equipo registrado'}</p>
+    <button class="btn" type="button" id="joinExistingBtn">USAR ESTA INICIATIVA</button>
+  </div>`;
+  document.querySelector('#joinExistingBtn').onclick=()=>joinExistingProject(hit);
+}
+function joinExistingProject(p){
+  selectedExistingProject=p;
+  document.querySelector('#initiative').value=p.NombreIniciativa;
+  if(p.Categoria)document.querySelector('#category').value=p.Categoria;
+  if(p.Sector&&[...document.querySelector('#sector').options].some(o=>o.value===p.Sector))document.querySelector('#sector').value=p.Sector;
+  if(p.Descripcion)document.querySelector('#description').value=p.Descripcion;
+  document.querySelector('#projectMatchBox').innerHTML=`<div class="project-match">
+    <div class="eyebrow">TRIPULACIÓN EXISTENTE SELECCIONADA</div>
+    <h3>${p.NombreIniciativa}</h3>
+    <p>Tu participante se añadirá al proyecto <strong>${p.EquipoID}</strong>. No se creará un proyecto nuevo.</p>
+  </div>`;
+}
+document.querySelector('#initiative').addEventListener('input',checkExistingProject);
+document.querySelector('#initiative').addEventListener('change',checkExistingProject);
+
+
+const CONNECTION_KEY='idealab_connections_v2';
+let activeConnectionCode='';
+let activeConnectionTarget=null;
+
+function connectionUrlForParticipant(p){
+  const code=String(p?.CodigoQR||'').trim();
+  if(!code)return '';
+  const u=new URL(location.href);
+  u.search='';
+  u.hash='';
+  u.searchParams.set('connect',code);
+  return u.href;
+}
+
+function refreshParticipantQR(){
+  const sel=document.querySelector('#qrParticipant');
+  if(!sel||!team.Participantes)return;
+  const current=sel.value;
+  sel.innerHTML=team.Participantes.map((p,i)=>`<option value="${i}">${p.Nombre}</option>`).join('');
+  if(current && team.Participantes[Number(current)])sel.value=current;
+  const p=team.Participantes[Number(sel.value)||0];
+  if(!p)return;
+  const url=connectionUrlForParticipant(p);
+  const img=document.querySelector('#participantQR');
+  const open=document.querySelector('#openConnectionPage');
+  if(url){
+    img.src='https://api.qrserver.com/v1/create-qr-code/?size=240x240&data='+encodeURIComponent(url);
+    open.href=url;
+    open.classList.remove('hidden');
+  }else{
+    img.removeAttribute('src');
+    open.removeAttribute('href');
+    open.classList.add('hidden');
+  }
+  document.querySelector('#qrOwner').textContent=p.Nombre;
+  document.querySelector('#qrOwnerMeta').textContent=url?team.NombreIniciativa+' · '+p.CodigoQR:'Código QR pendiente de sincronización';
+}
+
+function participantConnectionCount(){
+  try{
+    const arr=JSON.parse(localStorage.getItem(CONNECTION_KEY)||'[]');
+    return arr.filter(x=>x.EquipoOrigen===team.EquipoID).length;
+  }catch{return 0}
+}
+
+function refreshParticipantTelemetry(){
+  const done=activities.filter(x=>x.state==='done').length;
+  const pending=demoDeliveries.filter(d=>d.EquipoID===team.EquipoID && d.EstadoEvaluacion==='Pendiente').length;
+  const p=document.querySelector('#pendingValidation'); if(p)p.textContent=pending;
+  const c=document.querySelector('#connectionCount'); if(c)c.textContent=participantConnectionCount();
+}
+
+function rememberConnectionLocal(item){
+  try{
+    const arr=JSON.parse(localStorage.getItem(CONNECTION_KEY)||'[]');
+    arr.push(item);
+    localStorage.setItem(CONNECTION_KEY,JSON.stringify(arr.slice(-100)));
+  }catch{}
+}
+
+function hydrateConnectionTeam(){
+  if(team?.EquipoID)return true;
+  try{
+    const saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
+    if(saved?.EquipoID){team=saved;return true}
+  }catch{}
+  return false;
+}
+
+function renderConnectionOriginSelector(){
+  const select=document.querySelector('#connectionOriginParticipant');
+  if(!select)return;
+  const members=Array.isArray(team?.Participantes)?team.Participantes:[];
+  select.innerHTML=members.map((p,i)=>`<option value="${i}">${p.Nombre}</option>`).join('');
+}
+
+async function openConnectionExperience(code){
+  activeConnectionCode=String(code||'').trim();
+  activeConnectionTarget=null;
+
+  show('connectionScreen');
+  document.querySelector('#connectionLoading')?.classList.remove('hidden');
+  document.querySelector('#connectionTarget')?.classList.add('hidden');
+  document.querySelector('#connectionError')?.classList.add('hidden');
+  document.querySelector('#connectionNeedPassport')?.classList.add('hidden');
+  document.querySelector('#qrConnectionForm')?.classList.add('hidden');
+  document.querySelector('#connectionSuccess')?.classList.add('hidden');
+
+  if(!activeConnectionCode){
+    document.querySelector('#connectionLoading')?.classList.add('hidden');
+    const box=document.querySelector('#connectionError');
+    box.textContent='No encontramos un código QR válido en este enlace.';
+    box.classList.remove('hidden');
+    return;
+  }
+
+  if(!API.registrarConexion){
+    document.querySelector('#connectionLoading')?.classList.add('hidden');
+    const box=document.querySelector('#connectionError');
+    box.textContent='El protocolo de conexiones no está configurado.';
+    box.classList.remove('hidden');
+    return;
+  }
+
+  try{
+    const result=await postJSON(API.registrarConexion,{
+      Accion:'consultar',
+      CodigoQRDestino:activeConnectionCode
+    });
+    if(!result?.ok)throw new Error(result?.error||'Código QR no encontrado.');
+
+    activeConnectionTarget=result;
+    document.querySelector('#connectionLoading')?.classList.add('hidden');
+    document.querySelector('#connectionTarget')?.classList.remove('hidden');
+    document.querySelector('#connectionTargetName').textContent=result.NombreDestino||'Participante Aceleratón';
+    document.querySelector('#connectionTargetMeta').textContent=(result.EquipoDestino||'')+' · '+activeConnectionCode;
+
+    if(hydrateConnectionTeam()){
+      renderConnectionOriginSelector();
+      document.querySelector('#qrConnectionForm')?.classList.remove('hidden');
+    }else{
+      document.querySelector('#connectionNeedPassport')?.classList.remove('hidden');
+    }
+  }catch(err){
+    document.querySelector('#connectionLoading')?.classList.add('hidden');
+    const box=document.querySelector('#connectionError');
+    box.textContent='No fue posible validar este QR: '+(err?.message||'error desconocido');
+    box.classList.remove('hidden');
+  }
+}
+
+document.querySelector('#connectionFollowUp')?.addEventListener('change',e=>{
+  const yes=e.target.value==='Sí';
+  document.querySelector('#connectionMeetingTypeWrap')?.classList.toggle('hidden',!yes);
+  const mt=document.querySelector('#connectionMeetingType');
+  if(mt){mt.required=yes;if(!yes)mt.value=''}
+});
+
+document.querySelector('#connectionRecoverBtn')?.addEventListener('click',()=>{
+  try{sessionStorage.setItem('idealab_pending_connection',activeConnectionCode)}catch{}
+  show('continueScreen');
+  refreshSavedPassportBox();
+});
+
+document.querySelector('#qrConnectionForm')?.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!activeConnectionTarget)return;
+
+  hydrateConnectionTeam();
+  const members=Array.isArray(team?.Participantes)?team.Participantes:[];
+  const idx=Number(document.querySelector('#connectionOriginParticipant')?.value||0);
+  const origin=members[idx];
+  const type=document.querySelector('input[name="connectionType"]:checked')?.value||'';
+  const follow=document.querySelector('#connectionFollowUp')?.value||'No';
+  const meeting=follow==='Sí'?(document.querySelector('#connectionMeetingType')?.value||''):'';
+  const toast=document.querySelector('#qrConnectionToast');
+  const btn=document.querySelector('#registerQrConnection');
+
+  if(!origin?.ParticipanteID){toast.textContent='Selecciona quién de tu equipo realizó la conexión.';return}
+  if(origin.CodigoQR && origin.CodigoQR===activeConnectionCode){toast.textContent='No puedes registrar una conexión contigo mismo.';return}
+  if(!type){toast.textContent='Selecciona el tipo de conexión.';return}
+  if(follow==='Sí'&&!meeting){toast.textContent='Selecciona el tipo de próximo encuentro.';return}
+
+  const old=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='REGISTRANDO…';
+  toast.textContent='Enviando señal…';
+
+  try{
+    const result=await postJSON(API.registrarConexion,{
+      Accion:'registrar',
+      CodigoQRDestino:activeConnectionCode,
+      ParticipanteOrigen:origin.ParticipanteID,
+      EquipoOrigen:team.EquipoID,
+      TipoConexion:type,
+      ProximoEncuentro:follow,
+      TipoEncuentro:meeting
+    });
+    if(!result?.ok)throw new Error(result?.error||'No fue posible registrar la conexión.');
+
+    rememberConnectionLocal({
+      ConexionID:result.ConexionID||'',
+      EquipoOrigen:team.EquipoID,
+      ParticipanteOrigen:origin.ParticipanteID,
+      CodigoQRDestino:activeConnectionCode,
+      TipoConexion:type,
+      ProximoEncuentro:follow,
+      Fecha:new Date().toISOString()
+    });
+    refreshParticipantTelemetry();
+
+    document.querySelector('#qrConnectionForm')?.classList.add('hidden');
+    document.querySelector('#connectionSuccess')?.classList.remove('hidden');
+    document.querySelector('#connectionSuccessText').textContent=`${origin.Nombre} registró una conexión con ${activeConnectionTarget.NombreDestino||'el participante'}.`;
+    toast.textContent='';
+  }catch(err){
+    toast.textContent='No fue posible registrar la conexión: '+(err?.message||'error desconocido');
+  }finally{
+    btn.disabled=false;
+    btn.textContent=old;
+  }
+});
+
+document.querySelector('#connectionBackPassport')?.addEventListener('click',()=>{
+  history.replaceState({},'',location.pathname);
+  hydrateTeam();
+  renderMissions();
+  refreshParticipantQR();
+  refreshParticipantTelemetry();
+  show('passport');
+});
+
+document.querySelector('#qrParticipant')?.addEventListener('change',refreshParticipantQR);
+
+async function resumePendingConnectionIfAny(){
+  let code='';
+  try{code=sessionStorage.getItem('idealab_pending_connection')||''}catch{}
+  if(!code)return false;
+  try{sessionStorage.removeItem('idealab_pending_connection')}catch{}
+  await openConnectionExperience(code);
+  return true;
+}
+
+function processConnectionRoute(){
+  const code=new URLSearchParams(location.search).get('connect');
+  if(code){
+    openConnectionExperience(code);
+    return true;
+  }
+  return false;
+}
+
+processConnectionRoute();
 </script>
+
 </body>
 </html>
