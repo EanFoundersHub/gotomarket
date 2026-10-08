@@ -70,6 +70,14 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 .pending-evidence-item small{color:var(--muted)}
 .file-limit-note{display:block;margin-top:6px;color:var(--muted);font-size:11px}
 
+.completed-delivery-actions{margin-top:18px;border:1px solid var(--cyan);background:rgba(89,220,225,.05);padding:18px}
+.completed-delivery-actions h3{margin:4px 0 8px}
+.completed-delivery-actions .evidence-current{margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.14);background:#0d0a08}
+.completed-delivery-actions .evidence-current b{display:block;word-break:break-word}
+.completed-delivery-actions .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.replacement-notice{margin:0 0 16px;padding:12px;border:1px solid var(--gold);background:rgba(255,208,0,.06);color:#f4e6b0}
+
+
 .large-upload-name{margin:12px 0;border:1px dashed var(--cyan);padding:12px;background:rgba(29,215,255,.05)}
 .large-upload-name code{display:block;word-break:break-all;font-size:12px;color:var(--cyan);margin-top:6px}
 .large-upload-steps{margin:12px 0 0;padding-left:20px;color:#eee}
@@ -241,6 +249,10 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 <form id="deliveryForm" onsubmit="return false;">
       <input id="activity" type="hidden"><input id="team" type="hidden">
       <div class="eyebrow">ENTREGA DE LA MISIÓN</div>
+      <div id="replacementNotice" class="replacement-notice hidden">
+        <b>REEMPLAZAR ENTREGA</b><br>
+        La nueva evidencia sustituirá la evidencia vigente de esta misión y volverá a quedar pendiente de validación.
+      </div>
       <p class="hint">Para completar la misión debes adjuntar un archivo o incluir un enlace. Con uno de los dos es suficiente.</p>
       <div class="delivery-requirement">✓ ENTREGA VÁLIDA: adjunta un archivo <b>o</b> pega un enlace. No necesitas completar ambos.</div><div class="delivery-options">
         <div class="full">
@@ -289,6 +301,23 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
       </div>
       <div class="toast" id="toast" aria-live="polite"></div>
     </form>
+
+    <div id="completedDeliveryActions" class="completed-delivery-actions hidden">
+      <div class="eyebrow">ENTREGA REGISTRADA</div>
+      <h3>Esta misión ya fue transmitida.</h3>
+      <p class="hint">Puedes consultar la evidencia vigente o reemplazarla si cargaste el archivo o enlace equivocado.</p>
+
+      <div class="evidence-current">
+        <span class="hint">EVIDENCIA VIGENTE</span>
+        <b id="currentEvidenceName">Consultando evidencia…</b>
+      </div>
+
+      <div class="action-row">
+        <a class="btn" id="viewEvidenceBtn" href="#" target="_blank" rel="noopener">VER EVIDENCIA ↗</a>
+        <button class="btn alt" id="replaceDeliveryBtn" type="button">REEMPLAZAR ENTREGA</button>
+      </div>
+      <div class="toast" id="evidenceToast" aria-live="polite"></div>
+    </div>
 
     <div id="missionSuccess" class="mission-success hidden">
       <img src="assets/rocky/rocky_01_cool.png" alt="Rocky celebrando">
@@ -459,12 +488,18 @@ async function verifyLargeUpload(){
     const entregas=Array.isArray(result?.Entregas)?result.Entregas:[];
     const key=`${team.EquipoID}|${a.id}`;
 
+    let pending=null;
+    try{pending=JSON.parse(localStorage.getItem('idealab_large_upload_pending')||'null')}catch{}
     const found=entregas.some(e=>{
       const title=String(e?.Title||'');
       const act=String(e?.ActividadID||e?.field_2||'');
-      return title===key || (title.startsWith(team.EquipoID+'|') && (act===a.id || title.endsWith('|'+a.id)));
+      const name=String(e?.NombreArchivo||'');
+      const sameMission=title===key || (title.startsWith(team.EquipoID+'|') && (act===a.id || title.endsWith('|'+a.id)));
+      const sameUpload=!pending?.UploadID || name.includes(pending.UploadID);
+      return sameMission && sameUpload;
     });
 
+    saveDeliveryCache(entregas);
     if(found){
       localStorage.removeItem('idealab_large_upload_pending');
       status.textContent='✅ Archivo procesado y entrega registrada.';
@@ -475,6 +510,113 @@ async function verifyLargeUpload(){
   }catch(err){
     status.textContent='No fue posible verificar la carga: '+(err?.message||'error desconocido');
   }
+}
+
+
+const DELIVERY_CACHE_KEY='idealab_current_deliveries';
+let currentDeliveryDetails=null;
+let isReplacingDelivery=false;
+
+function saveDeliveryCache(entregas){
+  const arr=Array.isArray(entregas)?entregas:[];
+  try{localStorage.setItem(DELIVERY_CACHE_KEY,JSON.stringify(arr))}catch{}
+  return arr;
+}
+function loadDeliveryCache(){
+  try{return JSON.parse(localStorage.getItem(DELIVERY_CACHE_KEY)||'[]')||[]}catch{return []}
+}
+function participantEmail(){
+  hydrateTeam();
+  return team?.Participantes?.find(p=>p?.Correo)?.Correo||'';
+}
+function deliveryActivityId(e){
+  const direct=String(e?.ActividadID||e?.field_2||'').toUpperCase();
+  if(/^M\d{2}$/.test(direct))return direct;
+  const parts=String(e?.Title||'').split('|');
+  return /^M\d{2}$/i.test(parts[1]||'')?String(parts[1]).toUpperCase():'';
+}
+function findDeliveryForActivity(entregas,activityId){
+  return (Array.isArray(entregas)?entregas:[]).find(e=>deliveryActivityId(e)===activityId)||null;
+}
+function evidenceInfo(e){
+  if(!e)return {url:'',name:'Evidencia registrada'};
+  const url=String(
+    e.EvidenciaURL ||
+    e.evidenciaURL ||
+    e.Enlace ||
+    e.enlace ||
+    ''
+  ).trim();
+  const name=String(
+    e.NombreArchivo ||
+    e.nombreArchivo ||
+    (e.Enlace?'Enlace de la entrega':'') ||
+    'Evidencia registrada'
+  ).trim();
+  return {url,name};
+}
+async function fetchLatestDeliveries(){
+  const email=participantEmail();
+  if(!email||!API?.recuperarEquipo)return loadDeliveryCache();
+  const result=await postJSON(API.recuperarEquipo,{Correo:email});
+  if(result?.ok!==true)return loadDeliveryCache();
+  return saveDeliveryCache(result.Entregas||[]);
+}
+async function refreshCompletedDeliveryPanel(activityId,force=true){
+  const panel=document.querySelector('#completedDeliveryActions');
+  const nameEl=document.querySelector('#currentEvidenceName');
+  const link=document.querySelector('#viewEvidenceBtn');
+  const toast=document.querySelector('#evidenceToast');
+  if(!panel||!nameEl||!link)return;
+
+  panel.classList.remove('hidden');
+  nameEl.textContent='Consultando evidencia…';
+  link.setAttribute('href','#');
+  link.classList.add('disabled');
+  if(toast)toast.textContent='';
+
+  try{
+    const deliveries=force?await fetchLatestDeliveries():loadDeliveryCache();
+    currentDeliveryDetails=findDeliveryForActivity(deliveries,activityId);
+    const info=evidenceInfo(currentDeliveryDetails);
+    nameEl.textContent=info.name||'Evidencia registrada';
+
+    if(info.url && /^https?:\/\//i.test(info.url)){
+      link.href=info.url;
+      link.classList.remove('disabled');
+    }else{
+      link.href='#';
+      link.classList.add('disabled');
+      if(toast)toast.textContent='La entrega está registrada, pero no tiene un vínculo directo disponible.';
+    }
+  }catch(err){
+    currentDeliveryDetails=findDeliveryForActivity(loadDeliveryCache(),activityId);
+    const info=evidenceInfo(currentDeliveryDetails);
+    nameEl.textContent=info.name||'Evidencia registrada';
+    if(info.url && /^https?:\/\//i.test(info.url)){
+      link.href=info.url;
+      link.classList.remove('disabled');
+    }else if(toast){
+      toast.textContent='No fue posible consultar el vínculo de la evidencia en este momento.';
+    }
+  }
+}
+function startReplacement(){
+  const a=activities.find(x=>x.id===selectedMission);
+  if(!a)return;
+  isReplacingDelivery=true;
+  document.querySelector('#completedDeliveryActions')?.classList.add('hidden');
+  document.querySelector('#missionSuccess')?.classList.add('hidden');
+  document.querySelector('#deliveryForm')?.classList.remove('hidden');
+  document.querySelector('#replacementNotice')?.classList.remove('hidden');
+  document.querySelector('#answer').value='';
+  document.querySelector('#deliveryUrl').value='';
+  document.querySelector('#deliveryFile').value='';
+  resetLargeFileUI();
+  const submit=document.querySelector('#deliveryForm button[type="submit"]');
+  if(submit)submit.textContent='ACTUALIZAR ENTREGA →';
+  document.querySelector('#toast').textContent='Carga la nueva evidencia. La entrega anterior no se borrará físicamente, pero dejará de ser la evidencia vigente.';
+  window.scrollTo({top:document.querySelector('#deliveryForm')?.offsetTop||0,behavior:'smooth'});
 }
 
 function markMissionCompleted(a){
@@ -488,6 +630,7 @@ function markMissionCompleted(a){
   resetLargeFileUI();
   renderMissions();
   document.querySelector('#deliveryForm').classList.add('hidden');
+  document.querySelector('#completedDeliveryActions')?.classList.add('hidden');
   document.querySelector('#successPoints').textContent='validación del mentor pendiente';
   document.querySelector('#missionSuccess').classList.remove('hidden');
   const nextBtn=document.querySelector('#nextMissionBtn');
@@ -495,6 +638,9 @@ function markMissionCompleted(a){
   else{nextBtn.classList.add('hidden')}
   document.querySelector('#toast').textContent='';
   document.querySelector('#missionScreenProgress').textContent=activities.filter(x=>x.state==='done').length+'/8 MISIONES';
+  isReplacingDelivery=false;
+  document.querySelector('#replacementNotice')?.classList.add('hidden');
+  fetchLatestDeliveries().catch(()=>{});
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -529,6 +675,7 @@ async function finishRegistration(){
     if(!team.EquipoID)throw new Error('IdeaLab no devolvió el código del equipo.');
     localStorage.setItem('idealab_team',JSON.stringify(team));
     localStorage.removeItem('idealab_progress');
+    localStorage.removeItem(DELIVERY_CACHE_KEY);
     activities.forEach((a,i)=>a.state=i===0?'open':'locked');
     document.querySelector('#bpCode').textContent=team.EquipoID;
     document.querySelector('#bpInitiative').textContent=initiative;
@@ -565,8 +712,21 @@ function populateMission(id){
   document.querySelector('#missionInstruction').textContent=a.instruction;
   document.querySelector('#activity').value=a.id;
   document.querySelector('#missionPoints').textContent='ENTREGA SUJETA A VALIDACIÓN';
-  document.querySelector('#deliveryForm').classList.toggle('hidden',a.state==='done');
+  isReplacingDelivery=false;
   document.querySelector('#missionSuccess').classList.add('hidden');
+  document.querySelector('#replacementNotice')?.classList.add('hidden');
+  const completedPanel=document.querySelector('#completedDeliveryActions');
+  const deliveryForm=document.querySelector('#deliveryForm');
+  const submit=document.querySelector('#deliveryForm button[type="submit"]');
+  if(submit)submit.textContent='TRANSMITIR ENTREGA →';
+  if(a.state==='done'){
+    deliveryForm.classList.add('hidden');
+    completedPanel?.classList.remove('hidden');
+    refreshCompletedDeliveryPanel(a.id,true);
+  }else{
+    deliveryForm.classList.remove('hidden');
+    completedPanel?.classList.add('hidden');
+  }
   resetLargeFileUI();
   refreshLargeUploadUI();
   document.querySelector('#missionScreenTeam').textContent=(team.NombreIniciativa||'')+' · '+(team.EquipoID||'');
@@ -643,7 +803,7 @@ document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
   const url=document.querySelector('#deliveryUrl').value.trim();
   const file=document.querySelector('#deliveryFile').files[0];
   if(!url&&!file){document.querySelector('#toast').textContent='Para completar la misión debes adjuntar un archivo o incluir un enlace.';return}
-  if(file && file.size>DIRECT_FILE_LIMIT){document.querySelector('#largeFileBox').classList.remove('hidden');refreshLargeUploadUI();document.querySelector('#toast').textContent='Este archivo supera 50 MB. Cárgalo en la carpeta de evidencias y luego asócialo a esta misión.';return}
+  if(file && file.size>DIRECT_FILE_LIMIT){document.querySelector('#largeFileBox').classList.remove('hidden');refreshLargeUploadUI();document.querySelector('#toast').textContent='Este archivo supera 50 MB. Usa CARGAR ARCHIVO GRANDE y luego VERIFICAR MI CARGA.';return}
   const submitBtn=e.submitter||document.querySelector('#deliveryForm button[type="submit"]');
   const oldText=submitBtn?.textContent||'';
   try{
@@ -665,6 +825,16 @@ document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
   }catch(err){
     document.querySelector('#toast').textContent='No fue posible transmitir la entrega: '+(err?.message||'error desconocido');
   }finally{if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=oldText}}
+});
+
+
+document.querySelector('#replaceDeliveryBtn')?.addEventListener('click',startReplacement);
+document.querySelector('#viewEvidenceBtn')?.addEventListener('click',e=>{
+  const href=e.currentTarget.getAttribute('href')||'#';
+  if(href==='#'){
+    e.preventDefault();
+    document.querySelector('#evidenceToast').textContent='Esta entrega no tiene un vínculo directo disponible todavía.';
+  }
 });
 
 document.querySelector('#backToPassportTop').addEventListener('click',()=>{renderMissions();show('passport')});
@@ -704,6 +874,7 @@ function normalizeRecoveredTeam(result){
 }
 
 function restoreMissionProgress(entregas){
+  saveDeliveryCache(entregas);
   const delivered=new Set((Array.isArray(entregas)?entregas:[]).map(e=>{
     const direct=e.ActividadID||e.field_2||'';
     if(/^M\d{2}$/i.test(String(direct))) return String(direct).toUpperCase();
