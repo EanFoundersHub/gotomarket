@@ -524,16 +524,53 @@ const stepEls=[...document.querySelectorAll('.step')];
 function memberTemplate(i){return `<div class="member" data-member="${i}"><div class="member-head"><b>TRIPULANTE ${i}</b></div><div class="formgrid">
 <div><label>Nombre completo</label><input name="nombre" required></div><div><label>Rol en la universidad</label><select name="rol" class="role" required><option value="">Selecciona</option><option>Estudiante</option><option>Graduado</option><option>Docente</option><option>Colaborador</option><option>Externo, integrante de equipo eanista</option></select></div>
 <div><label>Tipo de documento</label><select name="tipoDocumento" required><option>Cédula de ciudadanía</option><option>Tarjeta de identidad</option><option>Pasaporte</option><option>Otro</option></select></div><div><label>Número de documento</label><input name="documento" required></div>
-<div><label>Correo electrónico</label><input name="correo" type="email" required></div><div><label>Número de teléfono</label><input name="telefono" type="tel" required></div>
+<div><label>Correo electrónico</label><input name="correo" type="email" required><span class="hint student-email-note hidden">Si eres estudiante, debes usar tu correo institucional terminado en <b>@universidadean.edu.co</b>.</span></div><div><label>Número de teléfono</label><input name="telefono" type="tel" required></div>
 <div class="conditional academic"><label>Programa / carrera</label><input name="programa"></div><div class="conditional academic"><label>Modalidad</label><select name="modalidad"><option value="">Selecciona</option><option>Presencial</option><option>Virtual</option></select></div>
 <div class="conditional student"><label>Semestre</label><input name="semestre" type="number" min="1" max="20"></div><div class="conditional graduate"><label>Año de graduación</label><input name="graduacion" type="number" min="1950" max="2035"></div></div></div>`}
-function addMember(){memberN++;document.querySelector('#members').insertAdjacentHTML('beforeend',memberTemplate(memberN));const b=document.querySelector(`[data-member="${memberN}"]`);b.querySelector('.role').addEventListener('change',e=>updateRole(b,e.target.value));document.querySelector('#memberCount').value=memberN}
-function updateRole(b,r){b.querySelectorAll('.conditional').forEach(x=>x.classList.remove('show'));if(r==='Estudiante')b.querySelectorAll('.academic,.student').forEach(x=>x.classList.add('show'));if(r==='Graduado')b.querySelectorAll('.academic,.graduate').forEach(x=>x.classList.add('show'))}
+function validateStudentEmail(b){
+  const role=b.querySelector('[name="rol"]')?.value||'';
+  const email=b.querySelector('[name="correo"]');
+  if(!email)return true;
+  const value=email.value.trim().toLowerCase();
+  if(role==='Estudiante' && value && !value.endsWith('@universidadean.edu.co')){
+    email.setCustomValidity('Si eres estudiante, debes registrarte con tu correo institucional terminado en @universidadean.edu.co');
+    return false;
+  }
+  email.setCustomValidity('');
+  return true;
+}
+function addMember(){
+  memberN++;
+  document.querySelector('#members').insertAdjacentHTML('beforeend',memberTemplate(memberN));
+  const b=document.querySelector(`[data-member="${memberN}"]`);
+  const role=b.querySelector('.role');
+  const email=b.querySelector('[name="correo"]');
+  role.addEventListener('change',e=>updateRole(b,e.target.value));
+  email.addEventListener('input',()=>validateStudentEmail(b));
+  email.addEventListener('blur',()=>validateStudentEmail(b));
+  document.querySelector('#memberCount').value=memberN;
+}
+function updateRole(b,r){
+  b.querySelectorAll('.conditional').forEach(x=>x.classList.remove('show'));
+  if(r==='Estudiante')b.querySelectorAll('.academic,.student').forEach(x=>x.classList.add('show'));
+  if(r==='Graduado')b.querySelectorAll('.academic,.graduate').forEach(x=>x.classList.add('show'));
+  const note=b.querySelector('.student-email-note');
+  if(note)note.classList.toggle('hidden',r!=='Estudiante');
+  validateStudentEmail(b);
+}
 addMember();
 document.querySelector('#addMember').addEventListener('click',()=>{if(memberN<10)addMember()});
 document.querySelector('#memberCount').addEventListener('change',e=>{let n=Math.max(1,Math.min(10,Number(e.target.value)||1));while(memberN<n)addMember();while(memberN>n){document.querySelector(`[data-member="${memberN}"]`).remove();memberN--}});
 function setStep(n){step=n;['regStep1','regStep2','regStep3'].forEach((id,i)=>document.querySelector('#'+id).hidden=i!==n-1);stepEls.forEach((s,i)=>s.classList.toggle('on',i<n));document.querySelector('#backBtn').hidden=n===1;document.querySelector('#nextBtn').textContent=n===3?'GENERAR BOARDING PASS →':'CONTINUAR →'}
-function validateVisible(){for(const f of document.querySelector('#regStep'+step).querySelectorAll('input,select,textarea'))if(f.required&&!f.checkValidity()){f.reportValidity();return false}return true}
+function validateVisible(){
+  if(step===2){
+    for(const b of document.querySelectorAll('.member'))validateStudentEmail(b);
+  }
+  for(const f of document.querySelector('#regStep'+step).querySelectorAll('input,select,textarea')){
+    if(!f.checkValidity()){f.reportValidity();return false}
+  }
+  return true;
+}
 document.querySelector('#nextBtn').addEventListener('click',()=>{if(!validateVisible())return;if(step<3)return setStep(step+1);finishRegistration()});
 document.querySelector('#backBtn').addEventListener('click',()=>setStep(Math.max(1,step-1)));
 function collectMembers(){return [...document.querySelectorAll('.member')].map(b=>{const q=n=>b.querySelector(`[name="${n}"]`)?.value||'';return {ParticipanteID:"",Nombre:q('nombre'),Rol:q('rol'),TipoDocumento:q('tipoDocumento'),Documento:q('documento'),Correo:q('correo'),Telefono:q('telefono'),Programa:q('programa'),Modalidad:q('modalidad'),Semestre:q('semestre'),AnoGraduacion:q('graduacion')}})}
