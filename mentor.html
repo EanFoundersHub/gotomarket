@@ -211,9 +211,28 @@ const $=s=>document.querySelector(s);
 function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
 async function post(payload){
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json;charset=utf-8'},body:JSON.stringify(payload)});
-  let data={}; try{data=await r.json()}catch{}
-  if(!r.ok||data?.ok===false)throw new Error(data?.error||data?.message||'No fue posible completar la operación.');
+  const r=await fetch(API,{
+    method:'POST',
+    headers:{'Content-Type':'application/json;charset=utf-8'},
+    body:JSON.stringify(payload)
+  });
+
+  const raw=await r.text();
+  let data={};
+  try{ data=raw ? JSON.parse(raw) : {}; }
+  catch{ data={raw}; }
+
+  if(!r.ok || data?.ok===false){
+    const detail =
+      data?.error?.message ||
+      data?.error?.details?.[0]?.message ||
+      data?.message ||
+      data?.Mensaje ||
+      (typeof data?.error==='string' ? data.error : '') ||
+      raw ||
+      'No fue posible completar la operación.';
+    throw new Error(String(detail));
+  }
   return data;
 }
 function validDelivery(d){return /^M0[1-8]$/.test(String(d.ActividadID||'')) && String(d.EquipoID||'').startsWith('IDEALAB-')}
@@ -227,7 +246,10 @@ async function openEvidence(teamId, activityId, btn){
 
   const viewer=window.open('about:blank','_blank');
   if(viewer){
-    viewer.document.write('<!doctype html><title>Cargando evidencia…</title><body style="font-family:Arial;padding:30px">Cargando evidencia…</body>');
+    viewer.document.write(
+      '<!doctype html><title>Cargando evidencia…</title>'+
+      '<body style="font-family:Arial;padding:30px">Cargando evidencia…</body>'
+    );
   }
 
   try{
@@ -238,17 +260,71 @@ async function openEvidence(teamId, activityId, btn){
       ActividadID:activityId
     });
 
-    if(!data.ContenidoBase64)throw new Error('El servidor no devolvió el archivo.');
+    // Power Automate puede devolver el contenido como string base64
+    // o como objeto binario {$content-type, $content}.
+    let payload=data?.ContenidoBase64;
+    let contentType=data?.ContentType || 'application/octet-stream';
 
-    const raw=atob(data.ContenidoBase64);
+    if(payload && typeof payload==='object'){
+      contentType =
+        payload['$content-type'] ||
+        payload.contentType ||
+        contentType;
+      payload =
+        payload['$content'] ||
+        payload.content ||
+        payload.body?.['$content'] ||
+        '';
+    }
+
+    // Respaldo por si el cuerpo binario vino en otra propiedad.
+    if(!payload && data?.body && typeof data.body==='object'){
+      contentType=data.body['$content-type'] || contentType;
+      payload=data.body['$content'] || '';
+    }
+    if(!payload && data?.['$content']){
+      contentType=data['$content-type'] || contentType;
+      payload=data['$content'];
+    }
+
+    if(typeof payload!=='string' || !payload.trim()){
+      throw new Error(
+        'Power Automate respondió, pero no devolvió el contenido del archivo. '+
+        'Revisa la salida de Respuesta_5.'
+      );
+    }
+
+    // Aceptar también un data URL si Power Automate lo devuelve de esa forma.
+    const comma=payload.indexOf(',');
+    if(payload.startsWith('data:') && comma>-1){
+      const meta=payload.slice(5,comma);
+      if(meta.includes(';base64')){
+        contentType=meta.split(';')[0] || contentType;
+        payload=payload.slice(comma+1);
+      }
+    }
+
+    payload=payload.replace(/\s/g,'');
+
+    let raw;
+    try{
+      raw=atob(payload);
+    }catch{
+      throw new Error(
+        'El contenido recibido no está en Base64 válido. '+
+        'En Respuesta_5 usa el contenido del archivo, no el objeto completo.'
+      );
+    }
+
     const bytes=new Uint8Array(raw.length);
     for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
 
-    const blob=new Blob([bytes],{type:data.ContentType||'application/octet-stream'});
+    const blob=new Blob([bytes],{type:contentType});
     const url=URL.createObjectURL(blob);
 
-    if(viewer) viewer.location.href=url;
-    else {
+    if(viewer){
+      viewer.location.replace(url);
+    }else{
       const a=document.createElement('a');
       a.href=url;
       a.target='_blank';
@@ -256,16 +332,15 @@ async function openEvidence(teamId, activityId, btn){
       a.click();
     }
 
-    setTimeout(()=>URL.revokeObjectURL(url),120000);
+    setTimeout(()=>URL.revokeObjectURL(url),180000);
   }catch(e){
     if(viewer)viewer.close();
-    alert('No fue posible abrir la evidencia: '+e.message);
+    alert('No fue posible abrir la evidencia: '+(e?.message || String(e)));
   }finally{
     btn.disabled=false;
     btn.textContent=original;
   }
 }
-
 function evidenceHTML(d){
   const bits=[];
   if(d.Respuesta)bits.push(`<p><b>Texto:</b> ${esc(d.Respuesta)}</p>`);
