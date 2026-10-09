@@ -206,6 +206,50 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
   .day2-banner strong{font-size:20px}
 }
 
+
+.connection-history{
+  margin-top:18px;border-top:1px solid var(--line);padding-top:18px
+}
+.connection-history-head{
+  display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap
+}
+.connection-history-head h3{
+  margin:4px 0 0;font-family:"Black Ops One";color:var(--gold);font-size:20px
+}
+.connection-list{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px
+}
+.connection-person{
+  border:1px solid var(--line);background:#0d0a08;padding:14px;
+  position:relative;overflow:hidden
+}
+.connection-person:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)
+}
+.connection-person h4{margin:0 0 4px;font-size:14px;color:var(--text)}
+.connection-person .team-name{font-size:10px;color:var(--gold);margin-bottom:9px}
+.connection-person .meta{font-size:10px;color:var(--muted);line-height:1.55}
+.connection-person .contact-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.connection-person .contact-link{
+  display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(89,220,225,.32);
+  padding:6px 8px;text-decoration:none;color:var(--cyan);font-size:10px;background:rgba(89,220,225,.035)
+}
+.connection-person .contact-missing{
+  display:inline-block;color:#81756b;font-size:10px;padding:6px 0
+}
+.connection-type-pill{
+  display:inline-block;border:1px solid rgba(255,201,74,.36);color:var(--gold);
+  padding:3px 6px;font-size:9px;margin-top:6px
+}
+.connection-empty{
+  grid-column:1/-1;border:1px dashed #4b392d;padding:16px;color:var(--muted);font-size:11px
+}
+.connection-history-status{font-size:10px;color:var(--cyan);margin-top:8px}
+@media(max-width:760px){
+  .connection-list{grid-template-columns:1fr}
+  .connection-history-head .btn{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -219,7 +263,7 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 </header>
 <div class="day2-banner">
   <strong>¡BIENVENIDOS AL DÍA 2!</strong>
-  <span>ESTAMOS EN LA RONDA FINAL</span>
+  <span>ESTAMOS EN LA RONDA FINAL · REVISA LAS CONEXIONES QUE HAS REALIZADO Y SIGUE AMPLIANDO TU RED</span>
 </div>
 
 
@@ -386,6 +430,19 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
             <img id="participantQR" alt="QR personal de conexión" style="width:190px;height:190px;background:#fff;padding:8px">
             <div><b id="qrOwner">QR PERSONAL</b><br><small id="qrOwnerMeta">Conexiones Aceleratón</small></div>
           </div>
+        </div>
+
+        <div class="connection-history">
+          <div class="connection-history-head">
+            <div>
+              <div class="eyebrow">TU RED EN LA ACELERATÓN</div>
+              <h3>MIS CONEXIONES</h3>
+              <p class="hint" style="margin:5px 0 0">Consulta con quién conectaste y conserva sus datos de contacto para continuar la conversación después del evento.</p>
+            </div>
+            <button class="btn alt" id="refreshConnectionsBtn" type="button">ACTUALIZAR CONEXIONES</button>
+          </div>
+          <div id="connectionHistoryStatus" class="connection-history-status"></div>
+          <div id="connectionHistoryList" class="connection-list"></div>
         </div>
       </article>
     </div>
@@ -1122,7 +1179,7 @@ document.querySelector('#prototypeFile')?.addEventListener('change',e=>{
 document.querySelector('#confirmPrototypeLarge')?.addEventListener('click',()=>{
   team.PrototipoPendiente=false;localStorage.setItem('idealab_team',JSON.stringify(team));localStorage.removeItem('idealab_prototype_large_pending');finalizeRegistrationBoarding();
 });
-document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();renderMissions();show('passport');refreshParticipantResults()});
+document.querySelector('#enterPassport').addEventListener('click',()=>{hydrateTeam();renderMissions();show('passport');refreshParticipantResults();refreshConnectionsList()});
 
 const activities=[
 {id:"M01",name:"Escaneo de la misión",rocky:"rocky_04_aprendizaje.png",instruction:"Antes de despegar, necesitamos saber dónde está su iniciativa. Completen el Diagnóstico Go-To-Market e identifiquen fortalezas, oportunidades y bloqueos para salir al mercado.",points:10,state:"open"},
@@ -1555,9 +1612,11 @@ async function openLocalPassport(){
   try{renderMissions()}catch(e){console.warn('renderMissions:',e)}
   try{refreshParticipantQR()}catch(e){console.warn('refreshParticipantQR:',e)}
   try{refreshParticipantTelemetry()}catch(e){console.warn('refreshParticipantTelemetry:',e)}
+  try{refreshConnectionsList()}catch(e){console.warn('refreshConnectionsList:',e)}
 
   if(synced){
     setPassportSyncNotice('Tus misiones y entregas fueron reconstruidas desde Microsoft 365. No necesitas volver a cargar archivos ya registrados.');
+      refreshConnectionsList();
   }else{
     setPassportSyncNotice('No fue posible consultar Microsoft 365 en este momento. Se muestra el estado guardado en este dispositivo. Puedes volver a intentar desde “Continuar mi misión”.','warn');
   }
@@ -1705,6 +1764,7 @@ document.querySelector('#initiative').addEventListener('change',checkExistingPro
 const CONNECTION_KEY='idealab_connections_v2';
 let activeConnectionCode='';
 let activeConnectionTarget=null;
+let participantConnections=[];
 
 function connectionUrlForParticipant(p){
   const code=String(p?.CodigoQR||'').trim();
@@ -1784,11 +1844,15 @@ document.querySelector('#headerQrModal')?.addEventListener('click',e=>{if(e.targ
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHeaderQR()});
 document.querySelector('#refreshResultsBtn')?.addEventListener('click',refreshParticipantResults);
 
-function participantConnectionCount(){
+function localConnectionsForTeam(){
   try{
     const arr=JSON.parse(localStorage.getItem(CONNECTION_KEY)||'[]');
-    return arr.filter(x=>x.EquipoOrigen===team.EquipoID).length;
-  }catch{return 0}
+    return arr.filter(x=>String(x.EquipoOrigen||'')===String(team?.EquipoID||''));
+  }catch{return []}
+}
+function participantConnectionCount(){
+  if(Array.isArray(participantConnections) && participantConnections.length)return participantConnections.length;
+  return localConnectionsForTeam().length;
 }
 
 function refreshParticipantTelemetry(){
@@ -1796,6 +1860,140 @@ function refreshParticipantTelemetry(){
   const pending=demoDeliveries.filter(d=>d.EquipoID===team.EquipoID && d.EstadoEvaluacion==='Pendiente').length;
   const p=document.querySelector('#pendingValidation'); if(p)p.textContent=pending;
   const c=document.querySelector('#connectionCount'); if(c)c.textContent=participantConnectionCount();
+}
+
+
+function normalizeConnectionRecord(c){
+  return {
+    ConexionID:c?.ConexionID||c?.Title||'',
+    ParticipanteOrigen:c?.ParticipanteOrigen||c?.field_1||'',
+    EquipoOrigen:c?.EquipoOrigen||c?.field_2||team?.EquipoID||'',
+    ParticipanteDestino:c?.ParticipanteDestino||c?.field_3||'',
+    EquipoDestino:c?.EquipoDestino||c?.IniciativaDestino||c?.field_4||'',
+    CodigoQRDestino:c?.CodigoQRDestino||c?.CodigoQR||c?.field_5||'',
+    NombreDestino:c?.NombreDestino||c?.Nombre||c?.ContactoNombre||'',
+    CorreoDestino:c?.CorreoDestino||c?.Correo||c?.EmailDestino||'',
+    TelefonoDestino:c?.TelefonoDestino||c?.Telefono||c?.CelularDestino||'',
+    TipoConexion:c?.TipoConexion||c?.field_6||'',
+    ProximoEncuentro:c?.ProximoEncuentro||c?.field_7||'No',
+    TipoEncuentro:c?.TipoEncuentro||c?.field_8||'',
+    Fecha:c?.Fecha||c?.FechaConexion||c?.field_9||c?.Created||''
+  };
+}
+function escAttr(v=''){
+  return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function renderConnectionHistory(){
+  const wrap=document.querySelector('#connectionHistoryList');
+  const status=document.querySelector('#connectionHistoryStatus');
+  if(!wrap)return;
+
+  const rows=(participantConnections||[]).slice().sort((a,b)=>{
+    const da=new Date(a.Fecha||0).getTime()||0, db=new Date(b.Fecha||0).getTime()||0;
+    return db-da;
+  });
+
+  const counter=document.querySelector('#connectionCount');
+  if(counter)counter.textContent=rows.length;
+
+  if(!rows.length){
+    wrap.innerHTML='<div class="connection-empty">Aún no aparecen conexiones registradas para tu equipo. Cuando escanees un QR y completes el registro, la persona aparecerá aquí.</div>';
+    if(status)status.textContent='';
+    return;
+  }
+
+  wrap.innerHTML=rows.map(c=>{
+    const name=c.NombreDestino||'Contacto Aceleratón';
+    const teamName=c.EquipoDestino||'Iniciativa no identificada';
+    const email=String(c.CorreoDestino||'').trim();
+    const phone=String(c.TelefonoDestino||'').trim();
+    const phoneHref=phone.replace(/[^\d+]/g,'');
+    const date=c.Fecha?formatConnectionDate(c.Fecha):'';
+    const extra=[
+      c.TipoConexion?`Tipo: ${escHtml(c.TipoConexion)}`:'',
+      c.ProximoEncuentro==='Sí'?`Próximo encuentro: ${escHtml(c.TipoEncuentro||'Sí')}`:'',
+      date?`Registrada: ${escHtml(date)}`:''
+    ].filter(Boolean).join(' · ');
+
+    return `<article class="connection-person">
+      <h4>${escHtml(name)}</h4>
+      <div class="team-name">${escHtml(teamName)}</div>
+      ${c.TipoConexion?`<span class="connection-type-pill">${escHtml(c.TipoConexion)}</span>`:''}
+      <div class="meta">${extra}</div>
+      <div class="contact-row">
+        ${email?`<a class="contact-link" href="mailto:${escAttr(email)}">✉ ${escHtml(email)}</a>`:'<span class="contact-missing">Correo no disponible</span>'}
+        ${phone?`<a class="contact-link" href="tel:${escAttr(phoneHref)}">☎ ${escHtml(phone)}</a>`:'<span class="contact-missing">Celular no disponible</span>'}
+      </div>
+    </article>`;
+  }).join('');
+
+  if(status)status.textContent=`${rows.length} conexión${rows.length===1?'':'es'} registrada${rows.length===1?'':'s'}.`;
+}
+function formatConnectionDate(raw){
+  try{
+    const d=new Date(raw);
+    if(Number.isNaN(d.getTime()))return String(raw||'');
+    return new Intl.DateTimeFormat('es-CO',{
+      timeZone:'America/Bogota',day:'2-digit',month:'short',
+      hour:'numeric',minute:'2-digit',hour12:true
+    }).format(d);
+  }catch{return String(raw||'')}
+}
+async function enrichConnectionFromQr(c){
+  if(!c?.CodigoQRDestino || !API?.registrarConexion)return c;
+  if(c.NombreDestino && c.CorreoDestino && c.TelefonoDestino)return c;
+  try{
+    const r=await postJSON(API.registrarConexion,{
+      Accion:'consultar',
+      CodigoQRDestino:c.CodigoQRDestino
+    });
+    if(r?.ok){
+      return normalizeConnectionRecord({...c,...r});
+    }
+  }catch{}
+  return c;
+}
+async function refreshConnectionsList(){
+  const status=document.querySelector('#connectionHistoryStatus');
+  const btn=document.querySelector('#refreshConnectionsBtn');
+  if(!team?.EquipoID){
+    participantConnections=[];
+    renderConnectionHistory();
+    return;
+  }
+
+  const old=btn?.textContent;
+  if(btn){btn.disabled=true;btn.textContent='ACTUALIZANDO…'}
+  if(status)status.textContent='Sincronizando tu red…';
+
+  let loaded=null;
+
+  // Si el flujo ya soporta listar conexiones por equipo, lo usamos.
+  try{
+    const r=await postJSON(API.registrarConexion,{
+      Accion:'listar',
+      EquipoOrigen:team.EquipoID
+    });
+    const arr=Array.isArray(r?.Conexiones)?r.Conexiones:(Array.isArray(r?.conexiones)?r.conexiones:null);
+    if(r?.ok && arr){
+      const base=arr.map(normalizeConnectionRecord);
+      loaded=await Promise.all(base.map(enrichConnectionFromQr));
+    }
+  }catch{}
+
+  // Fallback compatible con el flujo actual: usa las conexiones registradas en este navegador
+  // y consulta cada QR para completar nombre, iniciativa y datos de contacto.
+  if(!loaded){
+    const local=localConnectionsForTeam().map(normalizeConnectionRecord);
+    const settled=await Promise.all(local.map(enrichConnectionFromQr));
+    loaded=settled;
+  }
+
+  participantConnections=loaded||[];
+  renderConnectionHistory();
+  refreshParticipantTelemetry();
+
+  if(btn){btn.disabled=false;btn.textContent=old||'ACTUALIZAR CONEXIONES'}
 }
 
 function rememberConnectionLocal(item){
@@ -1931,10 +2129,16 @@ document.querySelector('#qrConnectionForm')?.addEventListener('submit',async e=>
       EquipoOrigen:team.EquipoID,
       ParticipanteOrigen:origin.ParticipanteID,
       CodigoQRDestino:activeConnectionCode,
+      NombreDestino:activeConnectionTarget?.NombreDestino||result?.NombreDestino||'',
+      EquipoDestino:activeConnectionTarget?.EquipoDestino||result?.EquipoDestino||'',
+      CorreoDestino:activeConnectionTarget?.CorreoDestino||result?.CorreoDestino||'',
+      TelefonoDestino:activeConnectionTarget?.TelefonoDestino||result?.TelefonoDestino||'',
       TipoConexion:type,
       ProximoEncuentro:follow,
+      TipoEncuentro:meeting,
       Fecha:new Date().toISOString()
     });
+    await refreshConnectionsList();
     refreshParticipantTelemetry();
 
     document.querySelector('#qrConnectionForm')?.classList.add('hidden');
@@ -1955,10 +2159,12 @@ document.querySelector('#connectionBackPassport')?.addEventListener('click',()=>
   renderMissions();
   refreshParticipantQR();
   refreshParticipantTelemetry();
+  refreshConnectionsList();
   show('passport');
 });
 
 document.querySelector('#qrParticipant')?.addEventListener('change',refreshParticipantQR);
+document.querySelector('#refreshConnectionsBtn')?.addEventListener('click',refreshConnectionsList);
 
 async function resumePendingConnectionIfAny(){
   let code='';
