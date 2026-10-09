@@ -1953,47 +1953,64 @@ async function enrichConnectionFromQr(c){
   }catch{}
   return c;
 }
+let connectionsRefreshPromise=null;
 async function refreshConnectionsList(){
+  // Evita dos sincronizaciones simultáneas. Esto puede ocurrir al recuperar el pasaporte
+  // y era la causa de que el botón pudiera quedarse visualmente en “ACTUALIZANDO…”.
+  if(connectionsRefreshPromise)return connectionsRefreshPromise;
+
   const status=document.querySelector('#connectionHistoryStatus');
   const btn=document.querySelector('#refreshConnectionsBtn');
+
   if(!team?.EquipoID){
     participantConnections=[];
     renderConnectionHistory();
+    if(btn){btn.disabled=false;btn.textContent='ACTUALIZAR CONEXIONES'}
     return;
   }
 
-  const old=btn?.textContent;
-  if(btn){btn.disabled=true;btn.textContent='ACTUALIZANDO…'}
-  if(status)status.textContent='Sincronizando tu red…';
+  connectionsRefreshPromise=(async()=>{
+    if(btn){btn.disabled=true;btn.textContent='ACTUALIZANDO…'}
+    if(status)status.textContent='Sincronizando tu red…';
 
-  let loaded=null;
+    let loaded=null;
 
-  // Si el flujo ya soporta listar conexiones por equipo, lo usamos.
-  try{
-    const r=await postJSON(API.registrarConexion,{
-      Accion:'listar',
-      EquipoOrigen:team.EquipoID
-    });
-    const arr=Array.isArray(r?.Conexiones)?r.Conexiones:(Array.isArray(r?.conexiones)?r.conexiones:null);
-    if(r?.ok && arr){
-      const base=arr.map(normalizeConnectionRecord);
-      loaded=await Promise.all(base.map(enrichConnectionFromQr));
+    // Fuente principal: conexiones guardadas en SharePoint para el equipo.
+    try{
+      const r=await postJSON(API.registrarConexion,{
+        Accion:'listar',
+        EquipoOrigen:team.EquipoID
+      });
+      const arr=Array.isArray(r?.Conexiones)?r.Conexiones:(Array.isArray(r?.conexiones)?r.conexiones:null);
+      if(r?.ok && arr){
+        const base=arr.map(normalizeConnectionRecord);
+        loaded=await Promise.all(base.map(enrichConnectionFromQr));
+      }
+    }catch(e){
+      console.warn('listar conexiones:',e);
     }
-  }catch{}
 
-  // Fallback compatible con el flujo actual: usa las conexiones registradas en este navegador
-  // y consulta cada QR para completar nombre, iniciativa y datos de contacto.
-  if(!loaded){
-    const local=localConnectionsForTeam().map(normalizeConnectionRecord);
-    const settled=await Promise.all(local.map(enrichConnectionFromQr));
-    loaded=settled;
+    // Fallback local si el backend no respondió con una lista válida.
+    if(!loaded){
+      const local=localConnectionsForTeam().map(normalizeConnectionRecord);
+      loaded=await Promise.all(local.map(enrichConnectionFromQr));
+    }
+
+    participantConnections=loaded||[];
+    renderConnectionHistory();
+    refreshParticipantTelemetry();
+  })();
+
+  try{
+    return await connectionsRefreshPromise;
+  }finally{
+    // Siempre recupera el estado normal, incluso si alguna consulta falla.
+    connectionsRefreshPromise=null;
+    if(btn){btn.disabled=false;btn.textContent='ACTUALIZAR CONEXIONES'}
+    if(status && status.textContent==='Sincronizando tu red…'){
+      status.textContent=`${participantConnections.length} conexión${participantConnections.length===1?'':'es'} registrada${participantConnections.length===1?'':'s'}.`;
+    }
   }
-
-  participantConnections=loaded||[];
-  renderConnectionHistory();
-  refreshParticipantTelemetry();
-
-  if(btn){btn.disabled=false;btn.textContent=old||'ACTUALIZAR CONEXIONES'}
 }
 
 function rememberConnectionLocal(item){
