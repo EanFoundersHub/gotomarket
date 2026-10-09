@@ -176,6 +176,36 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 .logo{line-height:.92;max-width:520px}
 @media(max-width:760px){.logo{font-size:clamp(26px,9vw,42px)}}
 
+
+.day2-banner{
+  margin:14px 0 18px;
+  border:1px solid var(--gold);
+  background:linear-gradient(135deg,rgba(255,201,74,.14),rgba(89,220,225,.05));
+  padding:14px 18px;
+  text-align:center;
+  box-shadow:0 14px 30px rgba(0,0,0,.16);
+}
+.day2-banner strong{
+  display:block;
+  font-family:"Black Ops One",sans-serif;
+  color:var(--gold);
+  font-size:clamp(18px,3vw,28px);
+  letter-spacing:.04em;
+  line-height:1.15;
+}
+.day2-banner span{
+  display:block;
+  margin-top:5px;
+  color:var(--cyan);
+  font-weight:800;
+  letter-spacing:.08em;
+  font-size:12px;
+}
+@media(max-width:760px){
+  .day2-banner{padding:12px 10px}
+  .day2-banner strong{font-size:20px}
+}
+
 </style>
 </head>
 <body>
@@ -187,6 +217,11 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
     <div class="chip">MICROSOFT 365 READY</div>
   </div>
 </header>
+<div class="day2-banner">
+  <strong>¡BIENVENIDOS AL DÍA 2!</strong>
+  <span>ESTAMOS EN LA RONDA FINAL</span>
+</div>
+
 
 <div id="headerQrModal" class="qr-modal hidden" role="dialog" aria-modal="true" aria-labelledby="headerQrTitle">
   <div class="qr-modal-card">
@@ -328,9 +363,10 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
         <h2 class="title" id="dashInitiative">INICIATIVA</h2>
         <div style="display:flex;justify-content:space-between;gap:12px"><span id="dashCode"></span><b id="pct">0%</b></div>
         <div class="progress"><span id="bar" style="width:0%"></span></div>
+        <div id="passportSyncNotice" class="validation-note hidden" style="margin:12px 0 8px"></div>
         <div class="validation-note" style="margin:12px 0 8px">
-          <b>MODO RECUPERACIÓN ACTIVO</b><br>
-          Las Misiones 1, 2 y 3 están disponibles al mismo tiempo. Puedes completar las que tengas pendientes y seguir avanzando desde la Misión 3.
+          <b>PONTE AL DÍA</b><br>
+          Las Misiones 1 a 6 están disponibles al mismo tiempo. Puedes completar las que tengas pendientes y, al terminar la Misión 6, continuar con las siguientes.
         </div>
         <div id="missions"></div>
       </article>
@@ -558,12 +594,12 @@ button,input,select,textarea{font:inherit}.shell{max-width:1120px;margin:auto;pa
 
 <section id="continueScreen" class="screen">
   <article class="card admin-login"><div class="eyebrow">RECUPERACIÓN DE PASAPORTE</div><h2 class="title">CONTINUAR MI MISIÓN</h2>
-  <div class="rocky-dialog"><img src="assets/rocky/rocky_03_silencio.png" alt="Rocky"><div><h3>ROCKY TE AYUDA</h3><p>Si registraste tu equipo en este mismo navegador, puedes volver directamente a tu pasaporte. También puedes recuperar tu equipo por correo desde otro navegador.</p></div></div>
+  <div class="rocky-dialog"><img src="assets/rocky/rocky_03_silencio.png" alt="Rocky"><div><h3>ROCKY TE AYUDA</h3><p>Si registraste tu equipo en este navegador, la plataforma sincronizará primero con Microsoft 365 y reconstruirá tus entregas antes de abrir el pasaporte. También puedes recuperar tu equipo por correo desde otro navegador.</p></div></div>
 
   <div id="savedPassportBox" style="margin:18px 0;padding:16px;border:1px solid var(--cyan);background:rgba(89,220,225,.05)">
     <div class="eyebrow">PASAPORTE EN ESTE DISPOSITIVO</div>
     <div id="savedPassportText" style="margin:8px 0 14px">Buscando registro local...</div>
-    <button class="btn" id="openSavedPassport" type="button" onclick="openLocalPassport()">ABRIR MI PASAPORTE →</button>
+    <button class="btn" id="openSavedPassport" type="button" onclick="openLocalPassport()">SINCRONIZAR Y ABRIR →</button>
   </div>
 
   <div style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)">
@@ -867,9 +903,19 @@ function evidenceInfo(e){
 async function fetchLatestDeliveries(){
   const email=participantEmail();
   if(!email||!API?.recuperarEquipo)return loadDeliveryCache();
+
   const result=await postJSON(API.recuperarEquipo,{Correo:email});
   if(result?.ok!==true)return loadDeliveryCache();
-  return saveDeliveryCache(result.Entregas||[]);
+
+  const recovered=mergeRecoveredTeam(team,result);
+  if(recovered?.EquipoID){
+    team=recovered;
+    try{localStorage.setItem('idealab_team',JSON.stringify(team))}catch{}
+  }
+
+  const entregas=Array.isArray(result.Entregas)?result.Entregas:[];
+  restoreMissionProgress(entregas);
+  return entregas;
 }
 async function refreshCompletedDeliveryPanel(activityId,force=true){
   const panel=document.querySelector('#completedDeliveryActions');
@@ -1089,17 +1135,17 @@ const activities=[
 {id:"M08",name:"Operación primer cliente",rocky:"rocky_01_cool.png",instruction:"Salgan al mercado. Contacten un prospecto, hagan una demostración, gestionen una reunión, pedido o venta y registren qué ocurrió.",points:15,state:"locked"}
 ];
 
-const CATCH_UP_THROUGH_INDEX=2; // Misión 3
+const CATCH_UP_THROUGH_INDEX=5; // Misión 6
 
 function applyCatchUpUnlock(){
   // Reconstruye el estado sin obligar a completar M1 y M2 antes de M3.
-  // M1, M2 y M3 quedan abiertas si todavía no han sido entregadas.
+  // M1 a M6 quedan abiertas si todavía no han sido entregadas.
   activities.forEach((a,i)=>{
     if(a.state!=='done') a.state=i<=CATCH_UP_THROUGH_INDEX?'open':'locked';
   });
 
-  // Una vez entregada M3, el flujo continúa normalmente:
-  // M4, luego M5, etc. Las misiones anteriores pendientes permanecen abiertas.
+  // Una vez entregada M6, el flujo continúa normalmente:
+  // M7 y luego M8. Las misiones anteriores pendientes permanecen abiertas.
   let highestDone=-1;
   activities.forEach((a,i)=>{ if(a.state==='done') highestDone=Math.max(highestDone,i); });
 
@@ -1186,7 +1232,7 @@ function renderMissions(){
     row.setAttribute('data-activity',a.id);
 
     let statusText=a.state==='done'?'ENTREGADA':a.state==='open'?'DISPONIBLE':'BLOQUEADA';
-    let description=a.state==='done'?'Entregada · pendiente de evaluación':a.state==='open'?'Lista para trabajar':'Se habilitará al avanzar desde la Misión 3';
+    let description=a.state==='done'?'Entregada · pendiente de evaluación':a.state==='open'?'Lista para trabajar':'Se habilitará al completar la Misión 6';
     if(a.state==='done' && evaluated){
       statusText='EVALUADA';
       description=`Calificación ${score.toFixed(1)} / ${a.points}`;
@@ -1268,6 +1314,41 @@ document.querySelector('#deliveryFile')?.addEventListener('change',e=>{
 document.querySelector('#prepareAndOpenUpload')?.addEventListener('click',prepareAndOpenLargeUpload);
 document.querySelector('#verifyLargeUpload')?.addEventListener('click',verifyLargeUpload);
 
+
+function wait(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
+
+async function confirmDeliveryOnServer(activityId, attempts=5){
+  const email=participantEmail();
+  if(!email || !API?.recuperarEquipo) return {confirmed:false, reason:'no-recovery-api'};
+
+  let lastResult=null;
+  for(let i=0;i<attempts;i++){
+    if(i>0) await wait(1800 + (i*700));
+    try{
+      const result=await postJSON(API.recuperarEquipo,{Correo:email});
+      lastResult=result;
+      const entregas=Array.isArray(result?.Entregas)?result.Entregas:[];
+      const found=entregas.find(e=>{
+        const direct=String(e?.ActividadID||e?.field_2||'').toUpperCase();
+        const title=String(e?.Title||'');
+        return String(e?.EquipoID||team?.EquipoID||'')===String(team?.EquipoID||'')
+          && (direct===String(activityId).toUpperCase() || title===`${team.EquipoID}|${activityId}`);
+      });
+
+      if(found){
+        // Rebuild from the authoritative server state, not only localStorage.
+        team=mergeRecoveredTeam(team,result);
+        try{localStorage.setItem('idealab_team',JSON.stringify(team))}catch{}
+        restoreMissionProgress(entregas);
+        return {confirmed:true, delivery:found, result};
+      }
+    }catch(e){
+      // Retry. We do not mark completed until SharePoint confirms it.
+    }
+  }
+  return {confirmed:false, result:lastResult};
+}
+
 document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
   e.preventDefault();
   hydrateTeam();
@@ -1294,10 +1375,25 @@ document.querySelector('#deliveryForm').addEventListener('submit',async e=>{
       FechaHoraEntrega:new Date().toISOString()
     };
     const result=await postJSON(API.guardarEntrega,payload);
-    if(result.ok===false)throw new Error(result.error||'No fue posible guardar la entrega.');
-    markMissionCompleted(a);
+    if(result?.ok===false)throw new Error(result.error||result.mensaje||'No fue posible guardar la entrega.');
+
+    document.querySelector('#toast').textContent='Entrega recibida. Confirmando que quedó guardada en Microsoft 365…';
+
+    const confirmation=await confirmDeliveryOnServer(a.id,5);
+    if(!confirmation.confirmed){
+      throw new Error(
+        'Power Automate respondió, pero todavía no encontramos la entrega en SharePoint. '+
+        'Por seguridad NO se marcará la misión como completada. Espera unos segundos y vuelve a transmitirla.'
+      );
+    }
+
+    // restoreMissionProgress() inside confirmDeliveryOnServer already marks the mission
+    // from the authoritative SharePoint delivery record.
+    renderMissions();
+    document.querySelector('#toast').textContent='✅ Entrega confirmada en Microsoft 365.';
+    setPassportSyncNotice(`La ${missionDisplayLabel(a)} quedó confirmada en Microsoft 365. Ya puedes salir o refrescar sin perder este avance.`);
   }catch(err){
-    document.querySelector('#toast').textContent='No fue posible transmitir la entrega: '+(err?.message||'error desconocido');
+    document.querySelector('#toast').textContent='No fue posible confirmar la entrega: '+(err?.message||'error desconocido');
   }finally{if(submitBtn){submitBtn.disabled=false;submitBtn.textContent=oldText}}
 });
 
@@ -1345,6 +1441,29 @@ function normalizeRecoveredTeam(result){
   };
 }
 
+
+function mergeRecoveredTeam(localTeam,recovered){
+  const remote=normalizeRecoveredTeam(recovered);
+  return {
+    ...(localTeam||{}),
+    ...remote,
+    Participantes:Array.isArray(remote.Participantes)&&remote.Participantes.length
+      ? remote.Participantes
+      : (localTeam?.Participantes||[])
+  };
+}
+function setPassportSyncNotice(message,type='ok'){
+  const el=document.querySelector('#passportSyncNotice');
+  if(!el)return;
+  if(!message){
+    el.textContent='';
+    el.classList.add('hidden');
+    return;
+  }
+  el.innerHTML=(type==='ok'?'<b>PROGRESO SINCRONIZADO</b><br>':'<b>AVISO DE SINCRONIZACIÓN</b><br>')+escHtml(message);
+  el.classList.remove('hidden');
+}
+
 function restoreMissionProgress(entregas){
   saveDeliveryCache(entregas);
   const delivered=new Set((Array.isArray(entregas)?entregas:[]).map(e=>{
@@ -1377,9 +1496,11 @@ function refreshSavedPassportBox(){
   text.textContent='No hay un pasaporte guardado en este navegador.';
   btn.disabled=true;
 }
-function openLocalPassport(){
+async function openLocalPassport(){
   const toast=document.querySelector('#recoverToast');
+  const btn=document.querySelector('#openSavedPassport');
   let saved=null;
+
   try{
     saved=JSON.parse(localStorage.getItem('idealab_team')||'null');
   }catch(e){
@@ -1392,17 +1513,57 @@ function openLocalPassport(){
     return;
   }
 
-  team=saved;
+  const oldText=btn?.textContent||'SINCRONIZAR Y ABRIR →';
+  if(btn){btn.disabled=true;btn.textContent='SINCRONIZANDO…'}
+  if(toast)toast.textContent='Consultando las entregas guardadas en Microsoft 365…';
 
-  // Primero navegamos al pasaporte. Las funciones auxiliares no deben impedir el acceso.
+  team=saved;
+  let synced=false;
+
+  try{
+    const email=(saved?.Participantes||[]).find(p=>p?.Correo)?.Correo||'';
+
+    if(email && API?.recuperarEquipo){
+      const result=await postJSON(API.recuperarEquipo,{Correo:email});
+
+      if(result?.ok===true){
+        team=mergeRecoveredTeam(saved,result);
+        localStorage.setItem('idealab_team',JSON.stringify(team));
+        restoreMissionProgress(result.Entregas||[]);
+        synced=true;
+      }
+    }
+  }catch(e){
+    console.warn('Sincronización del pasaporte:',e);
+  }
+
+  // Si Microsoft 365 no respondió, conservamos el estado local en vez de bloquear al participante.
+  if(!synced){
+    try{
+      const p=JSON.parse(localStorage.getItem('idealab_progress')||'[]');
+      p.forEach(st=>{
+        const a=activities.find(x=>x.id===st.id);
+        if(a)a.state=st.state;
+      });
+    }catch{}
+    applyCatchUpUnlock();
+  }
+
   show('passport');
 
-  try{ hydrateTeam(); }catch(e){ console.warn('hydrateTeam:',e); }
-  try{ renderMissions(); }catch(e){ console.warn('renderMissions:',e); }
-  try{ refreshParticipantQR(); }catch(e){ console.warn('refreshParticipantQR:',e); }
-  try{ refreshParticipantTelemetry(); }catch(e){ console.warn('refreshParticipantTelemetry:',e); }
+  try{hydrateTeam()}catch(e){console.warn('hydrateTeam:',e)}
+  try{renderMissions()}catch(e){console.warn('renderMissions:',e)}
+  try{refreshParticipantQR()}catch(e){console.warn('refreshParticipantQR:',e)}
+  try{refreshParticipantTelemetry()}catch(e){console.warn('refreshParticipantTelemetry:',e)}
+
+  if(synced){
+    setPassportSyncNotice('Tus misiones y entregas fueron reconstruidas desde Microsoft 365. No necesitas volver a cargar archivos ya registrados.');
+  }else{
+    setPassportSyncNotice('No fue posible consultar Microsoft 365 en este momento. Se muestra el estado guardado en este dispositivo. Puedes volver a intentar desde “Continuar mi misión”.','warn');
+  }
 
   if(toast)toast.textContent='';
+  if(btn){btn.disabled=false;btn.textContent=oldText}
   resumePendingConnectionIfAny();
 }
 window.openLocalPassport=openLocalPassport;
@@ -1435,7 +1596,7 @@ async function recoverByEmail(event){
       throw new Error(result?.mensaje||result?.message||'No fue posible recuperar el equipo.');
     }
 
-    team=normalizeRecoveredTeam(result);
+    team=mergeRecoveredTeam(team,result);
     if(!team.EquipoID)throw new Error('La plataforma encontró el registro, pero no devolvió el EquipoID.');
 
     localStorage.setItem('idealab_team',JSON.stringify(team));
@@ -1448,7 +1609,10 @@ async function recoverByEmail(event){
 
     if(toast)toast.textContent='Pasaporte recuperado.';
     refreshSavedPassportBox();
-    if(!(await resumePendingConnectionIfAny())) show('passport');
+    if(!(await resumePendingConnectionIfAny())){
+      show('passport');
+      setPassportSyncNotice('Tus misiones y entregas fueron reconstruidas desde Microsoft 365. No necesitas volver a cargar archivos ya registrados.');
+    }
   }catch(err){
     console.error('IdeaLab recuperación:',err);
     if(toast)toast.textContent=err?.message||'No fue posible recuperar el equipo.';
