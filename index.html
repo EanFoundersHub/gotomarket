@@ -1847,7 +1847,11 @@ document.querySelector('#refreshResultsBtn')?.addEventListener('click',refreshPa
 function localConnectionsForTeam(){
   try{
     const arr=JSON.parse(localStorage.getItem(CONNECTION_KEY)||'[]');
-    return arr.filter(x=>String(x.EquipoOrigen||'')===String(team?.EquipoID||''));
+    const myTeam=String(team?.EquipoID||'');
+    return arr.filter(x=>
+      String(x.EquipoOrigen||'')===myTeam ||
+      String(x.EquipoDestino||'')===myTeam
+    );
   }catch{return []}
 }
 function participantConnectionCount(){
@@ -1864,16 +1868,28 @@ function refreshParticipantTelemetry(){
 
 
 function normalizeConnectionRecord(c){
+  const equipoOrigen=c?.EquipoOrigen||c?.field_2||'';
+  const equipoDestino=c?.EquipoDestino||c?.IniciativaDestino||c?.field_4||'';
+  const myTeam=String(team?.EquipoID||'');
+  const direccion=c?.Direccion||(
+    myTeam && String(equipoDestino)===myTeam && String(equipoOrigen)!==myTeam
+      ? 'entrante'
+      : 'saliente'
+  );
+
   return {
     ConexionID:c?.ConexionID||c?.Title||'',
     ParticipanteOrigen:c?.ParticipanteOrigen||c?.field_1||'',
-    EquipoOrigen:c?.EquipoOrigen||c?.field_2||team?.EquipoID||'',
+    EquipoOrigen:equipoOrigen||team?.EquipoID||'',
     ParticipanteDestino:c?.ParticipanteDestino||c?.field_3||'',
-    EquipoDestino:c?.EquipoDestino||c?.IniciativaDestino||c?.field_4||'',
+    EquipoDestino:equipoDestino,
     CodigoQRDestino:c?.CodigoQRDestino||c?.CodigoQR||c?.field_5||'',
     NombreDestino:c?.NombreDestino||c?.Nombre||c?.ContactoNombre||'',
     CorreoDestino:c?.CorreoDestino||c?.Correo||c?.EmailDestino||'',
     TelefonoDestino:c?.TelefonoDestino||c?.Telefono||c?.CelularDestino||'',
+    EquipoContacto:c?.EquipoContacto||'',
+    ParticipanteContacto:c?.ParticipanteContacto||'',
+    Direccion:direccion,
     TipoConexion:c?.TipoConexion||c?.field_6||'',
     ProximoEncuentro:c?.ProximoEncuentro||c?.field_7||'No',
     TipoEncuentro:c?.TipoEncuentro||c?.field_8||'',
@@ -1897,20 +1913,23 @@ function renderConnectionHistory(){
   if(counter)counter.textContent=rows.length;
 
   if(!rows.length){
-    wrap.innerHTML='<div class="connection-empty">Aún no aparecen conexiones registradas para tu equipo. Cuando escanees un QR y completes el registro, la persona aparecerá aquí.</div>';
+    wrap.innerHTML='<div class="connection-empty">Aún no aparecen conexiones registradas para tu equipo. Cuando tú u otra persona registre una conexión, aparecerá aquí.</div>';
     if(status)status.textContent='';
     return;
   }
 
   wrap.innerHTML=rows.map(c=>{
     const name=c.NombreDestino||'Contacto Aceleratón';
-    const teamName=c.EquipoDestino||'Iniciativa no identificada';
+    const teamName=c.EquipoContacto||c.EquipoDestino||c.EquipoOrigen||'Iniciativa no identificada';
     const email=String(c.CorreoDestino||'').trim();
     const phone=String(c.TelefonoDestino||'').trim();
     const phoneHref=phone.replace(/[^\d+]/g,'');
     const date=c.Fecha?formatConnectionDate(c.Fecha):'';
+    const incoming=c.Direccion==='entrante';
     const extra=[
-      c.TipoConexion?`Tipo: ${escHtml(c.TipoConexion)}`:'',
+      incoming
+        ? (c.TipoConexion?`Te registraron como: ${escHtml(c.TipoConexion)}`:'Conexión recibida')
+        : (c.TipoConexion?`Tipo: ${escHtml(c.TipoConexion)}`:''),
       c.ProximoEncuentro==='Sí'?`Próximo encuentro: ${escHtml(c.TipoEncuentro||'Sí')}`:'',
       date?`Registrada: ${escHtml(date)}`:''
     ].filter(Boolean).join(' · ');
@@ -1918,7 +1937,9 @@ function renderConnectionHistory(){
     return `<article class="connection-person">
       <h4>${escHtml(name)}</h4>
       <div class="team-name">${escHtml(teamName)}</div>
-      ${c.TipoConexion?`<span class="connection-type-pill">${escHtml(c.TipoConexion)}</span>`:''}
+      ${incoming
+        ? '<span class="connection-type-pill">CONEXIÓN RECIBIDA</span>'
+        : (c.TipoConexion?`<span class="connection-type-pill">${escHtml(c.TipoConexion)}</span>`:'')}
       <div class="meta">${extra}</div>
       <div class="contact-row">
         ${email?`<a class="contact-link" href="mailto:${escAttr(email)}">✉ ${escHtml(email)}</a>`:'<span class="contact-missing">Correo no disponible</span>'}
@@ -1939,19 +1960,42 @@ function formatConnectionDate(raw){
     }).format(d);
   }catch{return String(raw||'')}
 }
-async function enrichConnectionFromQr(c){
-  if(!c?.CodigoQRDestino || !API?.registrarConexion)return c;
-  if(c.NombreDestino && c.CorreoDestino && c.TelefonoDestino)return c;
+async function enrichConnectionContact(c){
+  if(!c || !API?.registrarConexion)return c;
+
+  const incoming=c.Direccion==='entrante';
+  const alreadyComplete=Boolean(c.NombreDestino && c.CorreoDestino && c.TelefonoDestino && c.EquipoContacto);
+  if(alreadyComplete)return c;
+
+  const payload=incoming
+    ? {Accion:'consultar',ParticipanteID:c.ParticipanteOrigen}
+    : {Accion:'consultar',CodigoQRDestino:c.CodigoQRDestino};
+
+  if(incoming && !c.ParticipanteOrigen)return c;
+  if(!incoming && !c.CodigoQRDestino)return c;
+
   try{
-    const r=await postJSON(API.registrarConexion,{
-      Accion:'consultar',
-      CodigoQRDestino:c.CodigoQRDestino
-    });
+    const r=await postJSON(API.registrarConexion,payload);
     if(r?.ok){
-      return normalizeConnectionRecord({...c,...r});
+      return normalizeConnectionRecord({
+        ...c,
+        NombreDestino:r.NombreDestino||c.NombreDestino||'',
+        CorreoDestino:r.CorreoDestino||c.CorreoDestino||'',
+        TelefonoDestino:r.TelefonoDestino||c.TelefonoDestino||'',
+        EquipoContacto:r.EquipoDestino||c.EquipoContacto||(incoming?c.EquipoOrigen:c.EquipoDestino)||'',
+        ParticipanteContacto:r.ParticipanteDestino||c.ParticipanteContacto||(incoming?c.ParticipanteOrigen:c.ParticipanteDestino)||'',
+        Direccion:incoming?'entrante':'saliente'
+      });
     }
-  }catch{}
-  return c;
+  }catch(e){
+    console.warn('enriquecer conexión:',e);
+  }
+
+  return normalizeConnectionRecord({
+    ...c,
+    EquipoContacto:c.EquipoContacto||(incoming?c.EquipoOrigen:c.EquipoDestino)||'',
+    ParticipanteContacto:c.ParticipanteContacto||(incoming?c.ParticipanteOrigen:c.ParticipanteDestino)||''
+  });
 }
 let connectionsRefreshPromise=null;
 async function refreshConnectionsList(){
@@ -1984,7 +2028,7 @@ async function refreshConnectionsList(){
       const arr=Array.isArray(r?.Conexiones)?r.Conexiones:(Array.isArray(r?.conexiones)?r.conexiones:null);
       if(r?.ok && arr){
         const base=arr.map(normalizeConnectionRecord);
-        loaded=await Promise.all(base.map(enrichConnectionFromQr));
+        loaded=await Promise.all(base.map(enrichConnectionContact));
       }
     }catch(e){
       console.warn('listar conexiones:',e);
@@ -1993,7 +2037,7 @@ async function refreshConnectionsList(){
     // Fallback local si el backend no respondió con una lista válida.
     if(!loaded){
       const local=localConnectionsForTeam().map(normalizeConnectionRecord);
-      loaded=await Promise.all(local.map(enrichConnectionFromQr));
+      loaded=await Promise.all(local.map(enrichConnectionContact));
     }
 
     participantConnections=loaded||[];
